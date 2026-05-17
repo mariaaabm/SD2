@@ -1,0 +1,77 @@
+package pt.ubi.gruposd.loja.service;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ubi.gruposd.loja.dto.AuthResponse;
+import pt.ubi.gruposd.loja.dto.CustomerResponse;
+import pt.ubi.gruposd.loja.dto.LoginRequest;
+import pt.ubi.gruposd.loja.dto.RegisterRequest;
+import pt.ubi.gruposd.loja.exception.ConflictException;
+import pt.ubi.gruposd.loja.model.Customer;
+import pt.ubi.gruposd.loja.model.UserRole;
+import pt.ubi.gruposd.loja.repository.CustomerRepository;
+import pt.ubi.gruposd.loja.security.CustomerUserDetails;
+import pt.ubi.gruposd.loja.security.JwtService;
+
+@Service
+public class AuthService {
+    private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    public AuthService(
+        CustomerRepository customerRepository,
+        PasswordEncoder passwordEncoder,
+        AuthenticationManager authenticationManager,
+        JwtService jwtService
+    ) {
+        this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    @Transactional
+    public AuthResponse register(RegisterRequest request) {
+        if (customerRepository.existsByEmailIgnoreCase(request.email())) {
+            throw new ConflictException("Ja existe uma conta com esse email.");
+        }
+
+        Customer customer = new Customer();
+        customer.setName(request.name());
+        customer.setEmail(request.email().toLowerCase());
+        customer.setPasswordHash(passwordEncoder.encode(request.password()));
+        customer.setRole(UserRole.CLIENT);
+
+        Customer saved = customerRepository.save(customer);
+        return new AuthResponse(jwtService.generateToken(saved), toResponse(saved));
+    }
+
+    @Transactional(readOnly = true)
+    public AuthResponse login(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password())
+        );
+
+        Customer customer = ((CustomerUserDetails) authentication.getPrincipal()).customer();
+        return new AuthResponse(jwtService.generateToken(customer), toResponse(customer));
+    }
+
+    public CustomerResponse me(CustomerUserDetails userDetails) {
+        return toResponse(userDetails.customer());
+    }
+
+    private CustomerResponse toResponse(Customer customer) {
+        return new CustomerResponse(
+            customer.getId(),
+            customer.getName(),
+            customer.getEmail(),
+            customer.getRole()
+        );
+    }
+}

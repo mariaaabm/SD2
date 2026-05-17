@@ -1,0 +1,33 @@
+INSERT INTO categories (name, description) VALUES
+('Padaria', 'Pao fresco, bolos simples e pastelaria do dia'),
+('Laticinios', 'Leite, iogurtes, queijo e manteiga'),
+('Bebidas', 'Aguas, sumos e bebidas para refeicao'),
+('Congelados', 'Produtos congelados prontos a conservar'),
+('Biologico', 'Produtos biologicos e de producao sustentavel');
+
+INSERT INTO products (name, description, price, stock, active, category_id) VALUES
+('Laranja', 'Laranja nacional vendida ao kg', 1.79, 90, TRUE, (SELECT id FROM categories WHERE name = 'Fruta')),
+('Pera Rocha', 'Pera rocha fresca vendida ao kg', 2.19, 70, TRUE, (SELECT id FROM categories WHERE name = 'Fruta')),
+('Morango', 'Caixa de morangos frescos 500 g', 3.49, 35, TRUE, (SELECT id FROM categories WHERE name = 'Fruta')),
+('Alface', 'Alface fresca unidade', 1.09, 45, TRUE, (SELECT id FROM categories WHERE name = 'Legumes')),
+('Tomate', 'Tomate maduro vendido ao kg', 1.89, 85, TRUE, (SELECT id FROM categories WHERE name = 'Legumes')),
+('Batata', 'Batata branca vendida ao kg', 0.89, 140, TRUE, (SELECT id FROM categories WHERE name = 'Legumes')),
+('Massa Esparguete', 'Embalagem de esparguete 500 g', 0.99, 75, TRUE, (SELECT id FROM categories WHERE name = 'Mercearia')),
+('Azeite Virgem Extra', 'Garrafa de azeite virgem extra 750 ml', 6.49, 30, TRUE, (SELECT id FROM categories WHERE name = 'Mercearia')),
+('Feijao Encarnado', 'Lata de feijao encarnado cozido 420 g', 1.15, 65, TRUE, (SELECT id FROM categories WHERE name = 'Mercearia')),
+('Pao de Mistura', 'Pao de mistura fresco unidade', 0.35, 160, TRUE, (SELECT id FROM categories WHERE name = 'Padaria')),
+('Broa de Milho', 'Broa de milho artesanal 500 g', 2.25, 25, TRUE, (SELECT id FROM categories WHERE name = 'Padaria')),
+('Croissant Simples', 'Croissant simples de padaria', 0.95, 50, TRUE, (SELECT id FROM categories WHERE name = 'Padaria')),
+('Leite Meio Gordo', 'Pacote de leite meio gordo 1 L', 0.92, 110, TRUE, (SELECT id FROM categories WHERE name = 'Laticinios')),
+('Iogurte Natural', 'Pack de 4 iogurtes naturais', 1.89, 55, TRUE, (SELECT id FROM categories WHERE name = 'Laticinios')),
+('Queijo Flamengo', 'Queijo flamengo fatiado 200 g', 2.39, 40, TRUE, (SELECT id FROM categories WHERE name = 'Laticinios')),
+('Agua Mineral', 'Garrafa de agua mineral 1.5 L', 0.49, 180, TRUE, (SELECT id FROM categories WHERE name = 'Bebidas')),
+('Sumo de Laranja', 'Garrafa de sumo de laranja 1 L', 1.69, 60, TRUE, (SELECT id FROM categories WHERE name = 'Bebidas')),
+('Cha Frio Limao', 'Garrafa de cha frio de limao 1.5 L', 1.29, 55, TRUE, (SELECT id FROM categories WHERE name = 'Bebidas')),
+('Ervilhas Congeladas', 'Saco de ervilhas congeladas 750 g', 1.79, 45, TRUE, (SELECT id FROM categories WHERE name = 'Congelados')),
+('Filetes de Pescada', 'Filetes de pescada congelados 400 g', 4.99, 28, TRUE, (SELECT id FROM categories WHERE name = 'Congelados')),
+('Pizza Margherita', 'Pizza margherita congelada 350 g', 2.99, 32, TRUE, (SELECT id FROM categories WHERE name = 'Congelados')),
+('Ovos Biologicos', 'Meia duzia de ovos biologicos', 2.79, 35, TRUE, (SELECT id FROM categories WHERE name = 'Biologico')),
+('Aveia Biologica', 'Flocos de aveia biologica 500 g', 1.99, 40, TRUE, (SELECT id FROM categories WHERE name = 'Biologico')),
+('Maca Biologica', 'Maca biologica vendida ao kg', 2.89, 30, TRUE, (SELECT id FROM categories WHERE name = 'Biologico')),
+('Produto Descontinuado', 'Produto inativo para demonstrar gestao de disponibilidade', 9.99, 0, FALSE, (SELECT id FROM categories WHERE name = 'Mercearia'));

@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: shopping_food_store_db
+    environment:
+      POSTGRES_DB: shopping_food_store
+      POSTGRES_USER: store_user
+      POSTGRES_PASSWORD: store_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U store_user -d shopping_food_store"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+    container_name: shopping_food_store_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shopping_food_store
+      SPRING_DATASOURCE_USERNAME: store_user
+      SPRING_DATASOURCE_PASSWORD: store_password
+      JWT_SECRET: change-this-secret-in-production-change-this-secret
+      JWT_EXPIRATION_MINUTES: 120
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+    container_name: shopping_food_store_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
