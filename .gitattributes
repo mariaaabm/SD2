@@ -1,0 +1,20 @@
+# Forcar LF em todos os ficheiros de texto
+* text=auto eol=lf
+
+# Scripts Linux — sempre LF
+*.sh    text eol=lf
+mvnw    text eol=lf
+
+# Scripts Windows — manter CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+mvnw.cmd text eol=crlf
+
+# Binarios — sem conversao
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.jar   binary
+*.class binary
