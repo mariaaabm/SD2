@@ -4,6 +4,10 @@ Aplicacao web para uma loja online de artigos desportivos, desenvolvida para a u
 
 ## Estrutura
 
+
+
+olá mundo
+
 ```text
 SD2/
 ├─ backend/      # Spring Boot REST API
