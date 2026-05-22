@@ -1,12 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { listCategories, type Category } from "../../services/category.service";
-import {
-  createProduct,
-  deleteProduct,
-  listProducts,
-  updateProduct,
-  type Product
-} from "../../services/product.service";
+import { createProduct, deleteProduct, listProducts, updateProduct, type Product } from "../../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
 
 type ProductForm = {
   name: string;
@@ -15,16 +10,10 @@ type ProductForm = {
   stock: string;
   categoryId: string;
   active: boolean;
+  imageUrl: string;
 };
 
-const emptyForm: ProductForm = {
-  name: "",
-  description: "",
-  price: "",
-  stock: "",
-  categoryId: "",
-  active: true
-};
+const emptyForm: ProductForm = { name: "", description: "", price: "", stock: "", categoryId: "", active: true, imageUrl: "" };
 
 export function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,20 +25,15 @@ export function AdminProductsPage() {
   const [saving, setSaving] = useState(false);
 
   async function loadData() {
-    const [productData, categoryData] = await Promise.all([
-      listProducts(),
-      listCategories()
-    ]);
+    const [productData, categoryData] = await Promise.all([listProducts(), listCategories()]);
     setProducts(productData);
     setCategories(categoryData);
   }
 
-  useEffect(() => {
-    loadData().catch(() => setError("Nao foi possivel carregar produtos."));
-  }, []);
+  useEffect(() => { loadData().catch(() => setError("Nao foi possivel carregar produtos.")); }, []);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError(null);
     setSuccess(null);
     setSaving(true);
@@ -60,19 +44,21 @@ export function AdminProductsPage() {
       price: Number(form.price),
       stock: Number(form.stock),
       categoryId: Number(form.categoryId),
-      active: form.active
+      active: form.active,
+      imageUrl: form.imageUrl || undefined,
     };
 
     try {
       if (editing) {
         await updateProduct(editing.id, payload);
+        setSuccess("Produto atualizado com sucesso.");
       } else {
         await createProduct(payload);
+        setSuccess("Produto criado com sucesso.");
       }
       setEditing(null);
       setForm(emptyForm);
       await loadData();
-      setSuccess(editing ? "Produto atualizado com sucesso." : "Produto criado com sucesso.");
     } catch {
       setError("Nao foi possivel guardar o produto.");
     } finally {
@@ -88,14 +74,14 @@ export function AdminProductsPage() {
       price: String(product.price),
       stock: String(product.stock),
       categoryId: String(product.categoryId),
-      active: product.active
+      active: product.active,
+      imageUrl: product.imageUrl ?? "",
     });
   }
 
   async function handleDelete(id: number) {
     setError(null);
     setSuccess(null);
-
     try {
       await deleteProduct(id);
       await loadData();
@@ -104,6 +90,9 @@ export function AdminProductsPage() {
       setError("Nao foi possivel remover o produto.");
     }
   }
+
+  const f = (key: keyof ProductForm, value: string | boolean) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
 
   return (
     <section className="admin-page">
@@ -117,33 +106,49 @@ export function AdminProductsPage() {
       {error && <div className="status-message status-message--error">{error}</div>}
       {success && <div className="status-message status-message--success">{success}</div>}
 
-      <form className="admin-form admin-form--products" onSubmit={handleSubmit}>
-        <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Nome" required />
-        <input value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} placeholder="Preco" type="number" step="0.01" min="0" required />
-        <input value={form.stock} onChange={(event) => setForm({ ...form, stock: event.target.value })} placeholder="Stock" type="number" min="0" required />
-        <select value={form.categoryId} onChange={(event) => setForm({ ...form, categoryId: event.target.value })} required>
-          <option value="">Categoria</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))}
-        </select>
-        <input value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} placeholder="Descricao" />
-        <label className="checkbox-control">
-          <input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />
-          <span>Ativo</span>
-        </label>
-        <button type="submit" disabled={saving}>{saving ? "A guardar..." : editing ? "Atualizar" : "Criar"}</button>
-        {editing && <button type="button" className="secondary-button" onClick={() => { setEditing(null); setForm(emptyForm); }}>Cancelar</button>}
+      <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12, padding: 20, background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--radius)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 160px", gap: 12 }}>
+          <input value={form.name} onChange={(e) => f("name", e.target.value)} placeholder="Nome do produto" required style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }} />
+          <input value={form.price} onChange={(e) => f("price", e.target.value)} placeholder="Preco (€)" type="number" step="0.01" min="0" required style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }} />
+          <input value={form.stock} onChange={(e) => f("stock", e.target.value)} placeholder="Stock" type="number" min="0" required style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }} />
+          <select value={form.categoryId} onChange={(e) => f("categoryId", e.target.value)} required style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }}>
+            <option value="">Categoria</option>
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
+          <input value={form.description} onChange={(e) => f("description", e.target.value)} placeholder="Descricao" style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }} />
+          <input value={form.imageUrl} onChange={(e) => f("imageUrl", e.target.value)} placeholder="URL da imagem (opcional)" style={{ height: 40, padding: "0 12px", border: "1.5px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--bg)" }} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <label className="checkbox-control">
+            <input type="checkbox" checked={form.active} onChange={(e) => f("active", e.target.checked)} />
+            <span>Produto ativo</span>
+          </label>
+          <button type="submit" disabled={saving}>{saving ? "A guardar..." : editing ? "Atualizar produto" : "Criar produto"}</button>
+          {editing && <button type="button" className="secondary-button" onClick={() => { setEditing(null); setForm(emptyForm); }}>Cancelar</button>}
+        </div>
       </form>
 
       <div className="admin-table">
         {products.map((product) => (
           <div className="admin-row admin-row--product" key={product.id}>
+            {product.imageUrl ? (
+              <img className="admin-row__thumb" src={product.imageUrl} alt={product.name} />
+            ) : (
+              <div className="admin-row__thumb-placeholder" style={{ background: getCategoryBg(product.categoryName) }}>
+                <span style={{ fontWeight: 900, color: getCategoryColor(product.categoryName) }}>
+                  {getCategoryIcon(product.categoryName)}
+                </span>
+              </div>
+            )}
             <div>
               <strong>{product.name}</strong>
-              <span>{product.categoryName} · {product.price.toFixed(2)} EUR · stock {product.stock}</span>
+              <span>{product.categoryName} · {product.price.toFixed(2)} € · stock: {product.stock}</span>
             </div>
-            <span>{product.active ? "Ativo" : "Inativo"}</span>
+            <span className={`badge badge--${product.active ? "active" : "inactive"}`}>
+              {product.active ? "Ativo" : "Inativo"}
+            </span>
             <button type="button" className="secondary-button" onClick={() => startEdit(product)}>Editar</button>
             <button type="button" className="secondary-button" onClick={() => handleDelete(product.id)}>Remover</button>
           </div>

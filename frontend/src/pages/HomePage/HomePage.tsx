@@ -1,0 +1,90 @@
+import { useEffect, useState } from "react";
+import { useCart } from "../../contexts/CartContext";
+import { listCategories, type Category } from "../../services/category.service";
+import { listProducts, type Product } from "../../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { ProductCard } from "../../components/ProductCard/ProductCard";
+
+function navigate(path: string) {
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new PopStateEvent("popstate"));
+}
+
+export function HomePage() {
+  const { addProduct } = useCart();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [featured, setFeatured] = useState<Product[]>([]);
+
+  useEffect(() => {
+    listCategories().then(setCategories).catch(() => {});
+    listProducts({ activeOnly: true }).then((data) => setFeatured(data.slice(0, 8))).catch(() => {});
+  }, []);
+
+  return (
+    <div>
+      {/* Hero */}
+      <section className="hero">
+        <div className="hero__content">
+          <p className="hero__eyebrow">SportFlow — A tua loja desportiva</p>
+          <h1 className="hero__title">
+            Equipa-te para <span>qualquer desporto.</span>
+          </h1>
+          <p className="hero__subtitle">
+            Do running ao fitness, do futebol ao ciclismo — encontra o equipamento certo para o teu nivel e objetivo.
+          </p>
+          <div className="hero__actions">
+            <button className="hero__cta" onClick={() => navigate("/catalog")}>
+              Ver catalogo
+            </button>
+            <a className="hero__cta hero__cta--secondary" href="/register">
+              Criar conta gratis
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section style={{ marginBottom: 48 }}>
+          <div className="section-heading">
+            <h2>Categorias</h2>
+            <a href="/catalog">Ver todos os produtos</a>
+          </div>
+          <div className="category-grid">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                className="category-card"
+                onClick={() => navigate(`/catalog?categoryId=${cat.id}`)}
+                style={{ border: `1.5px solid ${getCategoryBg(cat.name)}` }}
+              >
+                <div
+                  className="category-card__icon"
+                  style={{ background: getCategoryBg(cat.name), color: getCategoryColor(cat.name) }}
+                >
+                  <span style={{ fontWeight: 900, fontSize: 18 }}>{getCategoryIcon(cat.name)}</span>
+                </div>
+                <span className="category-card__name">{cat.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Featured products */}
+      {featured.length > 0 && (
+        <section>
+          <div className="section-heading">
+            <h2>Produtos em destaque</h2>
+            <a href="/catalog">Ver todos</a>
+          </div>
+          <div className="product-grid">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} onAdd={addProduct} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}

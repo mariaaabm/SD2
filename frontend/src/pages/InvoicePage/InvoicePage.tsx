@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSale, type Sale } from "../../services/sale.service";
 
-type InvoicePageProps = {
-  saleId: number;
-};
+type InvoicePageProps = { saleId: number };
 
 export function InvoicePage({ saleId }: InvoicePageProps) {
   const [sale, setSale] = useState<Sale | null>(null);
@@ -11,26 +9,13 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadSale() {
-      try {
-        setSale(await getSale(saleId));
-      } catch {
-        setError("Nao foi possivel carregar a fatura.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadSale();
+    getSale(saleId)
+      .then(setSale)
+      .catch(() => setError("Nao foi possivel carregar a fatura."))
+      .finally(() => setLoading(false));
   }, [saleId]);
 
-  if (loading) {
-    return (
-      <section className="invoice-page">
-        <div className="status-message">A carregar fatura...</div>
-      </section>
-    );
-  }
+  if (loading) return <section className="invoice-page"><div className="status-message">A carregar fatura...</div></section>;
 
   if (error || !sale || !sale.invoice) {
     return (
@@ -46,7 +31,7 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
       <div className="invoice-document">
         <div className="invoice-document__header">
           <div>
-            <span className="brand">SportFlow</span>
+            <div className="brand">Sport<span style={{ color: "var(--orange)" }}>Flow</span></div>
             <h1>Fatura {sale.invoice.invoiceNumber}</h1>
           </div>
           <button className="secondary-button print-button" type="button" onClick={() => window.print()}>
@@ -61,7 +46,7 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
             <small>Cliente #{sale.customerId}</small>
           </div>
           <div>
-            <span>Venda</span>
+            <span>Encomenda</span>
             <strong>#{sale.id}</strong>
             <small>{new Date(sale.createdAt).toLocaleString("pt-PT")}</small>
           </div>
@@ -76,26 +61,26 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
           <div className="invoice-line invoice-line--head">
             <span>Produto</span>
             <span>Qtd.</span>
-            <span>Preco</span>
+            <span>Preco unit.</span>
             <span>Total</span>
           </div>
           {sale.items.map((item) => (
             <div className="invoice-line" key={item.id}>
               <strong>{item.productName}</strong>
               <span>{item.quantity}</span>
-              <span>{item.unitPrice.toFixed(2)} EUR</span>
-              <strong>{item.subtotal.toFixed(2)} EUR</strong>
+              <span>{item.unitPrice.toFixed(2)} €</span>
+              <strong>{item.subtotal.toFixed(2)} €</strong>
             </div>
           ))}
         </div>
 
         <div className="invoice-total">
           <span>Total</span>
-          <strong>{sale.total.toFixed(2)} EUR</strong>
+          <strong>{sale.total.toFixed(2)} €</strong>
         </div>
       </div>
 
-      <a className="secondary-link" href="/orders">Voltar as compras</a>
+      <a className="secondary-link" href="/orders">← Voltar as compras</a>
     </section>
   );
 }

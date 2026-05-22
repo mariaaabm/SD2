@@ -1,4 +1,5 @@
 import type { Product } from "../../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
 
 type ProductCardProps = {
   product: Product;
@@ -10,19 +11,68 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
 
   return (
     <article className="product-card">
-      <div className="product-card__content">
+      <a href={`/products/${product.id}`} className="product-card__image-wrap">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading="lazy"
+            onError={(e) => {
+              const el = e.currentTarget;
+              el.style.display = "none";
+              const placeholder = el.nextElementSibling as HTMLElement | null;
+              if (placeholder) placeholder.style.display = "flex";
+            }}
+          />
+        ) : null}
+        {product.imageUrl ? (
+          <div
+            className="product-card__placeholder"
+            style={{ background: getCategoryBg(product.categoryName), display: "none" }}
+          >
+            <span style={{ fontWeight: 900, fontSize: 40, color: getCategoryColor(product.categoryName) }}>
+              {getCategoryIcon(product.categoryName)}
+            </span>
+          </div>
+        ) : (
+          <div
+            className="product-card__placeholder"
+            style={{ background: getCategoryBg(product.categoryName) }}
+          >
+            <span style={{ fontWeight: 900, fontSize: 40, color: getCategoryColor(product.categoryName) }}>
+              {getCategoryIcon(product.categoryName)}
+            </span>
+          </div>
+        )}
+      </a>
+
+      <div className="product-card__body">
         <span className="product-card__category">{product.categoryName}</span>
-        <h2><a href={`/products/${product.id}`}>{product.name}</a></h2>
-        <p>{product.description || "Sem descricao disponivel."}</p>
-      </div>
-      <div className="product-card__footer">
-        <div>
-          <strong>{product.price.toFixed(2)} EUR</strong>
-          <span>{product.stock} em stock</span>
+        <div className="product-card__name">
+          <a href={`/products/${product.id}`}>{product.name}</a>
         </div>
-        <button type="button" disabled={!isAvailable} onClick={() => onAdd?.(product)}>
-          {isAvailable ? "Adicionar" : "Indisponivel"}
-        </button>
+        {product.description && (
+          <p className="product-card__desc">{product.description}</p>
+        )}
+
+        <div className="product-card__footer">
+          <div>
+            <div className="product-card__price">{product.price.toFixed(2)} €</div>
+            {isAvailable ? (
+              <div className="product-card__stock">{product.stock} em stock</div>
+            ) : (
+              <div className="product-card__stock" style={{ color: "#dc2626" }}>Indisponivel</div>
+            )}
+          </div>
+          <button
+            className="btn-add"
+            type="button"
+            disabled={!isAvailable}
+            onClick={(e) => { e.preventDefault(); onAdd?.(product); }}
+          >
+            + Adicionar
+          </button>
+        </div>
       </div>
     </article>
   );

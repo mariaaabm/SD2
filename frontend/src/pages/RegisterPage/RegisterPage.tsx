@@ -1,18 +1,28 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { register } from "../../services/auth.service";
+import type { AxiosError } from "axios";
+
+type ApiError = { messages: string[] };
 
 export function RegisterPage() {
   const { applyAuth } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
+    setErrors([]);
+
+    if (password !== confirm) {
+      setErrors(["As passwords nao coincidem."]);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -20,8 +30,14 @@ export function RegisterPage() {
       applyAuth(response);
       window.history.pushState({}, "", "/catalog");
       window.dispatchEvent(new PopStateEvent("popstate"));
-    } catch {
-      setError("Nao foi possivel criar a conta.");
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<ApiError>;
+      const msgs = axiosErr?.response?.data?.messages;
+      if (msgs && msgs.length > 0) {
+        setErrors(msgs);
+      } else {
+        setErrors(["Nao foi possivel criar a conta. Tenta novamente."]);
+      }
     } finally {
       setLoading(false);
     }
@@ -30,22 +46,64 @@ export function RegisterPage() {
   return (
     <section className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="auth-form__brand">
+          Sport<span style={{ color: "var(--orange)" }}>Flow</span>
+        </div>
         <h1>Criar conta</h1>
-        {error && <div className="status-message status-message--error">{error}</div>}
+
+        {errors.length > 0 && (
+          <div className="status-message status-message--error">
+            {errors.map((msg, i) => <div key={i}>{msg}</div>)}
+          </div>
+        )}
+
         <label>
-          <span>Nome</span>
-          <input value={name} onChange={(event) => setName(event.target.value)} required />
+          <span>Nome completo</span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="O teu nome"
+            required
+          />
         </label>
         <label>
           <span>Email</span>
-          <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" required />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="exemplo@email.com"
+            required
+          />
         </label>
         <label>
           <span>Password</span>
-          <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" minLength={8} required />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Minimo 8 caracteres"
+            minLength={8}
+            required
+          />
         </label>
-        <button type="submit" disabled={loading}>{loading ? "A criar..." : "Criar conta"}</button>
-        <a href="/login">Ja tenho conta</a>
+        <label>
+          <span>Confirmar password</span>
+          <input
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            type="password"
+            placeholder="Repete a password"
+            required
+          />
+        </label>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "A criar conta..." : "Criar conta"}
+        </button>
+        <div className="auth-form__footer">
+          Ja tens conta? <a href="/login">Entrar</a>
+        </div>
       </form>
     </section>
   );

@@ -9,11 +9,13 @@ export type Product = {
   active: boolean;
   categoryId: number;
   categoryName: string;
+  imageUrl?: string;
 };
 
 export type ListProductsParams = {
   categoryId?: number;
   activeOnly?: boolean;
+  search?: string;
 };
 
 export type ProductRequest = {
@@ -23,6 +25,7 @@ export type ProductRequest = {
   stock: number;
   categoryId: number;
   active: boolean;
+  imageUrl?: string;
 };
 
 export async function listProducts(params: ListProductsParams = {}) {

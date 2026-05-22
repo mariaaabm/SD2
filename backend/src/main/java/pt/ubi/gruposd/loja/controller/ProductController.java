@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
 import pt.ubi.gruposd.loja.dto.ProductRequest;
 import pt.ubi.gruposd.loja.dto.ProductResponse;
 import pt.ubi.gruposd.loja.service.ProductService;
@@ -29,9 +29,10 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> findAll(
         @RequestParam(required = false) Long categoryId,
-        @RequestParam(defaultValue = "false") Boolean activeOnly
+        @RequestParam(defaultValue = "false") Boolean activeOnly,
+        @RequestParam(required = false) String search
     ) {
-        return productService.findAll(categoryId, activeOnly);
+        return productService.findAll(categoryId, activeOnly, search);
     }
 
     @GetMapping("/{id}")

@@ -7,46 +7,47 @@ export function OrdersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadSales() {
-      try {
-        setSales(await listSales());
-      } catch {
-        setError("Nao foi possivel carregar o historico.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadSales();
+    listSales()
+      .then(setSales)
+      .catch(() => setError("Nao foi possivel carregar o historico."))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <section className="orders-page">
       <div className="page-heading">
         <div>
-          <h1>Compras</h1>
-          <p>Historico de compras do cliente autenticado.</p>
+          <h1>As minhas compras</h1>
+          <p>Historico de todas as compras realizadas.</p>
         </div>
       </div>
 
       {error && <div className="status-message status-message--error">{error}</div>}
+
       {loading ? (
         <div className="status-message">A carregar compras...</div>
       ) : sales.length === 0 ? (
-        <div className="status-message">Ainda nao existem compras.</div>
+        <div className="status-message">
+          Ainda nao realizaste nenhuma compra.{" "}
+          <a className="secondary-link" href="/catalog">Explorar produtos</a>
+        </div>
       ) : (
-        <div className="cart-list">
+        <div className="admin-table">
           {sales.map((sale) => (
-            <article className="cart-item" key={sale.id}>
+            <div className="order-card" key={sale.id}>
               <div>
-                <strong>Venda #{sale.id}</strong>
-                <span>{new Date(sale.createdAt).toLocaleString("pt-PT")}</span>
-                {sale.invoice && <span>Fatura {sale.invoice.invoiceNumber}</span>}
+                <strong className="order-card__id">Encomenda #{sale.id}</strong>
+                <span className="order-card__date">{new Date(sale.createdAt).toLocaleString("pt-PT")}</span>
+                {sale.invoice && <span className="order-card__invoice">Fatura {sale.invoice.invoiceNumber}</span>}
               </div>
-              <strong>{sale.total.toFixed(2)} EUR</strong>
-              <span>{sale.status}</span>
-              {sale.invoice && <a className="secondary-link" href={`/orders/${sale.id}/invoice`}>Fatura</a>}
-            </article>
+              <span className="order-card__status">{sale.status}</span>
+              <strong className="order-card__total">{sale.total.toFixed(2)} €</strong>
+              {sale.invoice && (
+                <a className="primary-link" href={`/orders/${sale.id}/invoice`} style={{ fontSize: 13, height: 36, padding: "0 16px" }}>
+                  Ver fatura
+                </a>
+              )}
+            </div>
           ))}
         </div>
       )}

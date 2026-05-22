@@ -1,4 +1,5 @@
 import { Header } from "./components/Header/Header";
+import { Footer } from "./components/Footer/Footer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { AdminCategoriesPage } from "./pages/AdminCategoriesPage/AdminCategoriesPage";
@@ -8,6 +9,7 @@ import { AdminStatsPage } from "./pages/AdminStatsPage/AdminStatsPage";
 import { CartPage } from "./pages/CartPage/CartPage";
 import { CatalogPage } from "./pages/CatalogPage/CatalogPage";
 import { CheckoutPage } from "./pages/CheckoutPage/CheckoutPage";
+import { HomePage } from "./pages/HomePage/HomePage";
 import { InvoicePage } from "./pages/InvoicePage/InvoicePage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { OrdersPage } from "./pages/OrdersPage/OrdersPage";
@@ -15,63 +17,41 @@ import { ProductPage } from "./pages/ProductPage/ProductPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
 import { type ReactNode, useEffect, useState } from "react";
 
-function usePathname() {
-  const [pathname, setPathname] = useState(window.location.pathname);
+function useLocation() {
+  const [location, setLocation] = useState({ pathname: window.location.pathname, search: window.location.search });
 
   useEffect(() => {
-    function handlePopState() {
-      setPathname(window.location.pathname);
+    function handle() {
+      setLocation({ pathname: window.location.pathname, search: window.location.search });
     }
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    window.addEventListener("popstate", handle);
+    return () => window.removeEventListener("popstate", handle);
   }, []);
 
-  return pathname;
+  return location;
 }
 
 function Page() {
-  const pathname = usePathname();
+  const { pathname, search } = useLocation();
+  const params = new URLSearchParams(search);
 
-  if (pathname === "/login") {
-    return <LoginPage />;
-  }
-
-  if (pathname === "/register") {
-    return <RegisterPage />;
-  }
-
-  if (pathname === "/cart") {
-    return <CartPage />;
-  }
+  if (pathname === "/login") return <LoginPage />;
+  if (pathname === "/register") return <RegisterPage />;
+  if (pathname === "/cart") return <CartPage />;
 
   if (pathname === "/checkout") {
-    return (
-      <RequireAuth>
-        <CheckoutPage />
-      </RequireAuth>
-    );
+    return <RequireAuth><CheckoutPage /></RequireAuth>;
   }
 
   if (pathname === "/orders") {
-    return (
-      <RequireAuth>
-        <OrdersPage />
-      </RequireAuth>
-    );
+    return <RequireAuth><OrdersPage /></RequireAuth>;
   }
 
   if (pathname.startsWith("/orders/") && pathname.endsWith("/invoice")) {
     const saleId = Number(pathname.replace("/orders/", "").replace("/invoice", ""));
-    return Number.isFinite(saleId) ? (
-      <RequireAuth>
-        <InvoicePage saleId={saleId} />
-      </RequireAuth>
-    ) : (
-      <RequireAuth>
-        <OrdersPage />
-      </RequireAuth>
-    );
+    return Number.isFinite(saleId)
+      ? <RequireAuth><InvoicePage saleId={saleId} /></RequireAuth>
+      : <RequireAuth><OrdersPage /></RequireAuth>;
   }
 
   if (pathname.startsWith("/products/")) {
@@ -79,52 +59,23 @@ function Page() {
     return Number.isFinite(productId) ? <ProductPage productId={productId} /> : <CatalogPage />;
   }
 
-  if (pathname === "/admin/products") {
-    return (
-      <RequireAdmin>
-        <AdminProductsPage />
-      </RequireAdmin>
-    );
+  if (pathname === "/catalog") {
+    const categoryId = params.get("categoryId") ? Number(params.get("categoryId")) : undefined;
+    const search = params.get("search") ?? undefined;
+    return <CatalogPage initialCategoryId={categoryId} initialSearch={search} />;
   }
 
-  if (pathname === "/admin/categories") {
-    return (
-      <RequireAdmin>
-        <AdminCategoriesPage />
-      </RequireAdmin>
-    );
-  }
+  if (pathname === "/admin/products") return <RequireAdmin><AdminProductsPage /></RequireAdmin>;
+  if (pathname === "/admin/categories") return <RequireAdmin><AdminCategoriesPage /></RequireAdmin>;
+  if (pathname === "/admin/sales") return <RequireAdmin><AdminSalesPage /></RequireAdmin>;
+  if (pathname === "/admin/stats") return <RequireAdmin><AdminStatsPage /></RequireAdmin>;
 
-  if (pathname === "/admin/sales") {
-    return (
-      <RequireAdmin>
-        <AdminSalesPage />
-      </RequireAdmin>
-    );
-  }
-
-  if (pathname === "/admin/stats") {
-    return (
-      <RequireAdmin>
-        <AdminStatsPage />
-      </RequireAdmin>
-    );
-  }
-
-  return <CatalogPage />;
+  return <HomePage />;
 }
 
-type GuardProps = {
-  children: ReactNode;
-};
-
-function RequireAuth({ children }: GuardProps) {
+function RequireAuth({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div className="status-message">A validar sessao...</div>;
-  }
-
+  if (isLoading) return <div className="status-message">A validar sessao...</div>;
   if (!isAuthenticated) {
     return (
       <section className="access-card">
@@ -134,17 +85,12 @@ function RequireAuth({ children }: GuardProps) {
       </section>
     );
   }
-
   return children;
 }
 
-function RequireAdmin({ children }: GuardProps) {
+function RequireAdmin({ children }: { children: ReactNode }) {
   const { customer, isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div className="status-message">A validar sessao...</div>;
-  }
-
+  if (isLoading) return <div className="status-message">A validar sessao...</div>;
   if (!isAuthenticated) {
     return (
       <section className="access-card">
@@ -154,7 +100,6 @@ function RequireAdmin({ children }: GuardProps) {
       </section>
     );
   }
-
   if (customer?.role !== "ADMIN") {
     return (
       <section className="access-card">
@@ -164,7 +109,6 @@ function RequireAdmin({ children }: GuardProps) {
       </section>
     );
   }
-
   return children;
 }
 
@@ -176,6 +120,7 @@ export default function App() {
         <main className="app-main">
           <Page />
         </main>
+        <Footer />
       </CartProvider>
     </AuthProvider>
   );

@@ -13,7 +13,8 @@ public record ProductRequest(
     @NotNull @DecimalMin("0.00") BigDecimal price,
     @NotNull @Min(0) Integer stock,
     @NotNull Long categoryId,
-    Boolean active
+    Boolean active,
+    @Size(max = 500) String imageUrl
 ) {
 }
 

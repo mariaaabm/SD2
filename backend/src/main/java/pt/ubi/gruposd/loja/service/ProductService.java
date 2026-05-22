@@ -21,10 +21,17 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> findAll(Long categoryId, Boolean activeOnly) {
+    public List<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search) {
         List<Product> products;
+        boolean hasSearch = search != null && !search.isBlank();
 
-        if (categoryId != null && Boolean.TRUE.equals(activeOnly)) {
+        if (hasSearch && categoryId != null) {
+            products = productRepository.searchByCategoryActive(categoryId, search.trim());
+        } else if (hasSearch && Boolean.TRUE.equals(activeOnly)) {
+            products = productRepository.searchActive(search.trim());
+        } else if (hasSearch) {
+            products = productRepository.search(search.trim());
+        } else if (categoryId != null && Boolean.TRUE.equals(activeOnly)) {
             products = productRepository.findByCategoryIdAndActiveTrue(categoryId);
         } else if (categoryId != null) {
             products = productRepository.findByCategoryId(categoryId);
@@ -34,9 +41,7 @@ public class ProductService {
             products = productRepository.findAll();
         }
 
-        return products.stream()
-            .map(this::toResponse)
-            .toList();
+        return products.stream().map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +53,6 @@ public class ProductService {
     public ProductResponse create(ProductRequest request) {
         Product product = new Product();
         applyRequest(product, request);
-
         return toResponse(productRepository.save(product));
     }
 
@@ -56,14 +60,12 @@ public class ProductService {
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = findEntityById(id);
         applyRequest(product, request);
-
         return toResponse(product);
     }
 
     @Transactional
     public void delete(Long id) {
-        Product product = findEntityById(id);
-        productRepository.delete(product);
+        productRepository.delete(findEntityById(id));
     }
 
     @Transactional(readOnly = true)
@@ -74,18 +76,17 @@ public class ProductService {
 
     private void applyRequest(Product product, ProductRequest request) {
         Category category = categoryService.findEntityById(request.categoryId());
-
         product.setName(request.name());
         product.setDescription(request.description());
         product.setPrice(request.price());
         product.setStock(request.stock());
         product.setCategory(category);
         product.setActive(request.active() == null || request.active());
+        product.setImageUrl(request.imageUrl());
     }
 
     private ProductResponse toResponse(Product product) {
         Category category = product.getCategory();
-
         return new ProductResponse(
             product.getId(),
             product.getName(),
@@ -94,7 +95,8 @@ public class ProductService {
             product.getStock(),
             product.getActive(),
             category.getId(),
-            category.getName()
+            category.getName(),
+            product.getImageUrl()
         );
     }
 }
