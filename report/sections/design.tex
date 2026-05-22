@@ -1,4 +1,48 @@
 \section{Modelo de Dados e Arquitetura}
+\label{sec:design}
 
-O sistema e composto por frontend React, backend Spring Boot e base de dados PostgreSQL.
+\subsection{Arquitetura Geral}
 
+O sistema segue uma arquitetura de três camadas:
+
+\begin{enumerate}
+    \item \textbf{Apresentação} — Single Page Application (SPA) em React 18 com TypeScript, servida pelo Vite na porta 5173;
+    \item \textbf{Lógica de Negócio} — API REST em Spring Boot 3.3 (Java 21), na porta 8080;
+    \item \textbf{Persistência} — Base de dados relacional MySQL 8.0, com migrações geridas pelo Flyway.
+\end{enumerate}
+
+A comunicação entre o frontend e o backend é feita exclusivamente via HTTP/REST com payloads JSON. A autenticação é stateless, baseada em tokens JWT com validade configurável.
+
+\subsection{Modelo de Dados}
+
+O esquema relacional é composto por seis tabelas:
+
+\begin{itemize}
+    \item \textbf{customers} — utilizadores registados com nome, email, hash da password e papel (CLIENT/ADMIN);
+    \item \textbf{categories} — categorias de produtos (ex.: Calçado, Vestuário, Fitness);
+    \item \textbf{products} — artigos com nome, descrição, preço, stock, estado (ativo/inativo), categoria e URL de imagem;
+    \item \textbf{sales} — cabeçalho de cada venda (cliente, data, total, estado);
+    \item \textbf{sale\_items} — linhas de cada venda (produto, quantidade, preço unitário);
+    \item \textbf{invoices} — fatura associada a cada venda com número único e data de emissão.
+\end{itemize}
+
+A integridade referencial é garantida por chaves estrangeiras com \texttt{ENGINE=InnoDB}. As migrações são versionadas (V1 a V4) e executadas automaticamente na inicialização pelo Flyway.
+
+\subsection{Segurança}
+
+\begin{itemize}
+    \item Passwords armazenadas com BCrypt (fator de custo 12);
+    \item Autenticação via JWT assinado com chave HMAC-SHA256;
+    \item Autorização baseada em papéis: endpoints de administração requerem papel \texttt{ADMIN};
+    \item CSRF desativado (API stateless); CORS configurado para permitir o frontend local.
+\end{itemize}
+
+\subsection{Componentes Frontend}
+
+O frontend organiza-se em:
+\begin{itemize}
+    \item \textbf{Contextos} — \texttt{AuthContext} (sessão JWT) e \texttt{CartContext} (carrinho persistido em \texttt{localStorage});
+    \item \textbf{Serviços} — camada de abstração sobre o Axios para cada recurso REST;
+    \item \textbf{Páginas} — HomePage, CatalogPage, ProductPage, CartPage, CheckoutPage, OrdersPage, InvoicePage, ProfilePage e páginas de administração;
+    \item \textbf{Componentes} — Header (categorias dinâmicas, pesquisa, carrinho), Footer, ProductCard.
+\end{itemize}

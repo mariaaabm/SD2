@@ -15,6 +15,7 @@ import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { OrdersPage } from "./pages/OrdersPage/OrdersPage";
 import { ProductPage } from "./pages/ProductPage/ProductPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
+import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
 import { type ReactNode, useEffect, useState } from "react";
 
 function useLocation() {
@@ -45,6 +46,10 @@ function Page() {
 
   if (pathname === "/orders") {
     return <RequireAuth><OrdersPage /></RequireAuth>;
+  }
+
+  if (pathname === "/profile") {
+    return <RequireAuth><ProfilePage /></RequireAuth>;
   }
 
   if (pathname.startsWith("/orders/") && pathname.endsWith("/invoice")) {

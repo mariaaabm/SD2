@@ -1,4 +1,74 @@
-\section{Implementacao}
+\section{Implementação}
+\label{sec:impl}
 
-Esta seccao descrevera as funcionalidades implementadas, os endpoints REST e as opcoes de seguranca.
+\subsection{API REST}
 
+A API é disponibilizada sob o prefixo \texttt{/api} e documentada automaticamente via OpenAPI 3 (Swagger UI em \texttt{/swagger-ui.html}). Os principais recursos são:
+
+\subsubsection{Autenticação (\texttt{/api/auth})}
+
+\begin{itemize}
+    \item \texttt{POST /register} — registo com nome, email e password. Retorna token JWT e dados do utilizador. Valida duplicação de email (HTTP 409);
+    \item \texttt{POST /login} — autenticação com email e password. Retorna token JWT;
+    \item \texttt{GET /me} — perfil do utilizador autenticado;
+    \item \texttt{PATCH /profile} — atualização de nome e/ou password (requer password atual).
+\end{itemize}
+
+\subsubsection{Produtos (\texttt{/api/products})}
+
+Listagem pública com suporte a filtros opcionais: \texttt{categoryId}, \texttt{activeOnly} e \texttt{search} (pesquisa por nome e descrição via JPQL). Operações de criação, edição e eliminação requerem papel \texttt{ADMIN}.
+
+\subsubsection{Categorias (\texttt{/api/categories})}
+
+CRUD completo. Leitura pública; escrita restrita a \texttt{ADMIN}.
+
+\subsubsection{Vendas (\texttt{/api/sales})}
+
+\begin{itemize}
+    \item \texttt{POST /checkout} — cria uma venda a partir do carrinho. Valida stock, reduz quantidades e gera fatura automaticamente na mesma transação;
+    \item \texttt{GET /} e \texttt{GET /\{id\}} — histórico e detalhe da venda do utilizador autenticado;
+    \item \texttt{GET /\{id\}/invoice} — fatura da venda.
+\end{itemize}
+
+O endpoint de administração \texttt{GET /api/admin/sales} lista todas as vendas do sistema.
+
+\subsubsection{Estatísticas (\texttt{/api/stats})}
+
+Disponível apenas para \texttt{ADMIN}. Inclui: produtos mais e menos vendidos (top 10), melhores clientes por volume e valor, e faturação por período (dia/semana/mês).
+
+\subsection{Funcionalidades do Frontend}
+
+\subsubsection{Catálogo e Pesquisa}
+
+O catálogo carrega os produtos via API com suporte a paginação de categorias (pills dinâmicos) e pesquisa em tempo real. As categorias na barra de navegação são carregadas dinamicamente da API.
+
+\subsubsection{Carrinho e Checkout}
+
+O carrinho é persistido em \texttt{localStorage} para sobreviver a recarregamentos de página. O checkout apresenta um resumo dos artigos antes da confirmação, chama a API e exibe a confirmação com número de fatura.
+
+\subsubsection{Autenticação}
+
+O fluxo de registo valida a confirmação de password no cliente e apresenta as mensagens de erro retornadas pela API (ex.: email já registado). O login segue o mesmo padrão. O token JWT é armazenado em \texttt{localStorage} e enviado em cada pedido via header \texttt{Authorization: Bearer}.
+
+\subsubsection{Painel de Administração}
+
+O painel está acessível apenas a utilizadores com papel \texttt{ADMIN} e inclui:
+\begin{itemize}
+    \item Gestão de produtos — CRUD com preview de imagem e confirmação antes de eliminar;
+    \item Gestão de categorias — CRUD com aviso ao tentar eliminar categorias com produtos;
+    \item Vendas — listagem com pesquisa, total de faturação e expansão de cada venda para ver os artigos;
+    \item Estatísticas — produtos mais/menos vendidos, melhores clientes e faturação por período.
+\end{itemize}
+
+\subsection{Base de Dados e Migrações}
+
+As migrações Flyway garantem a evolução controlada do esquema:
+
+\begin{itemize}
+    \item \textbf{V1} — criação das 6 tabelas com restrições e índices;
+    \item \textbf{V2} — dados iniciais: 4 categorias, utilizador administrador e 4 produtos;
+    \item \textbf{V3} — 3 categorias adicionais (Natação, Ciclismo, Fitness) e 23 produtos desportivos;
+    \item \textbf{V4} — adição da coluna \texttt{image\_url} e preenchimento com URLs do Unsplash.
+\end{itemize}
+
+Os testes unitários de integração usam H2 em modo MySQL, permitindo a execução sem dependências externas.

@@ -4,9 +4,33 @@
 \usepackage[portuguese]{babel}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{booktabs}
 
-\title{SportFlow}
-\author{Grupo de Sistemas Distribuidos}
+\geometry{margin=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    urlcolor=blue!70!black
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!8}
+}
+
+\title{
+    \vspace{-1cm}
+    \Huge\textbf{SportFlow} \\[0.4em]
+    \large Loja Desportiva Online \\[0.6em]
+    \normalsize Sistemas Distribuídos --- Universidade da Beira Interior
+}
+\author{Grupo de Sistemas Distribuídos}
 \date{\today}
 
 \begin{document}
@@ -16,13 +40,13 @@
 \newpage
 
 \input{sections/introduction}
+\newpage
 \input{sections/design}
+\newpage
 \input{sections/implementation}
+\newpage
 \input{sections/evaluation}
+\newpage
 \input{sections/conclusion}
 
-\bibliographystyle{plain}
-\bibliography{bibliography}
-
 \end{document}
-

@@ -10,7 +10,9 @@ import pt.ubi.gruposd.loja.dto.AuthResponse;
 import pt.ubi.gruposd.loja.dto.CustomerResponse;
 import pt.ubi.gruposd.loja.dto.LoginRequest;
 import pt.ubi.gruposd.loja.dto.RegisterRequest;
+import pt.ubi.gruposd.loja.dto.UpdateProfileRequest;
 import pt.ubi.gruposd.loja.exception.ConflictException;
+import pt.ubi.gruposd.loja.exception.UnauthorizedException;
 import pt.ubi.gruposd.loja.model.Customer;
 import pt.ubi.gruposd.loja.model.UserRole;
 import pt.ubi.gruposd.loja.repository.CustomerRepository;
@@ -64,6 +66,26 @@ public class AuthService {
 
     public CustomerResponse me(CustomerUserDetails userDetails) {
         return toResponse(userDetails.customer());
+    }
+
+    @Transactional
+    public CustomerResponse updateProfile(Customer customer, UpdateProfileRequest request) {
+        Customer managed = customerRepository.findById(customer.getId())
+            .orElseThrow(() -> new UnauthorizedException("Utilizador nao encontrado."));
+
+        if (request.name() != null && !request.name().isBlank()) {
+            managed.setName(request.name().trim());
+        }
+
+        if (request.newPassword() != null && !request.newPassword().isBlank()) {
+            if (request.currentPassword() == null ||
+                !passwordEncoder.matches(request.currentPassword(), managed.getPasswordHash())) {
+                throw new UnauthorizedException("Password atual incorreta.");
+            }
+            managed.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        }
+
+        return toResponse(customerRepository.save(managed));
     }
 
     private CustomerResponse toResponse(Customer customer) {

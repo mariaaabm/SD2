@@ -3,6 +3,7 @@ package pt.ubi.gruposd.loja.controller;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import pt.ubi.gruposd.loja.dto.AuthResponse;
 import pt.ubi.gruposd.loja.dto.CustomerResponse;
 import pt.ubi.gruposd.loja.dto.LoginRequest;
 import pt.ubi.gruposd.loja.dto.RegisterRequest;
+import pt.ubi.gruposd.loja.dto.UpdateProfileRequest;
 import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.service.AuthService;
 
@@ -36,5 +38,13 @@ public class AuthController {
     @GetMapping("/me")
     public CustomerResponse me(@AuthenticationPrincipal CustomerUserDetails userDetails) {
         return authService.me(userDetails);
+    }
+
+    @PatchMapping("/profile")
+    public CustomerResponse updateProfile(
+        @AuthenticationPrincipal CustomerUserDetails userDetails,
+        @Valid @RequestBody UpdateProfileRequest request
+    ) {
+        return authService.updateProfile(userDetails.customer(), request);
     }
 }

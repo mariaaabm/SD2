@@ -56,7 +56,7 @@ export function Header() {
         <div className="site-header__actions">
           {isAuthenticated ? (
             <>
-              <a href="/orders" className="site-header__user">
+              <a href="/profile" className="site-header__user">
                 Ola, {customer?.name?.split(" ")[0]}
                 {customer?.role === "ADMIN" && <span className="admin-badge">Admin</span>}
               </a>

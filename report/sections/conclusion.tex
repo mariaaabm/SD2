@@ -1,4 +1,38 @@
-\section{Conclusao}
+\section{Conclusão}
+\label{sec:conc}
 
-Esta seccao apresentara uma sintese do trabalho desenvolvido e possiveis melhorias futuras.
+\subsection{Síntese do Trabalho}
 
+O projeto SportFlow implementa com sucesso uma aplicação de comércio eletrónico completa, integrando as três camadas típicas de um sistema distribuído: frontend React/TypeScript, backend Spring Boot e base de dados MySQL.
+
+As principais contribuições são:
+
+\begin{itemize}
+    \item API REST bem estruturada com autenticação JWT, autorização por papéis e validação de dados;
+    \item Interface moderna e responsiva com pesquisa, filtros por categoria, carrinho persistente e fluxo de checkout completo com geração automática de fatura;
+    \item Painel de administração funcional com gestão de produtos, categorias, consulta de vendas e estatísticas;
+    \item Base de dados relacional com esquema robusto, restrições de integridade e migrações versionadas;
+    \item Suite de testes de integração com cobertura dos fluxos principais.
+\end{itemize}
+
+\subsection{Dificuldades Encontradas}
+
+As principais dificuldades durante o desenvolvimento foram:
+
+\begin{itemize}
+    \item A compatibilidade entre o ambiente Windows (desenvolvimento) e o ambiente Linux/WSL (execução), nomeadamente questões de \textit{line endings} (CRLF vs LF) nos scripts;
+    \item A migração da base de dados de PostgreSQL/H2 para MySQL, que implicou a reescrita do esquema SQL e a atualização dos módulos Flyway;
+    \item A gestão do estado de autenticação no frontend sem recurso a bibliotecas de routing como o React Router.
+\end{itemize}
+
+\subsection{Trabalho Futuro}
+
+Identificam-se as seguintes melhorias para versões futuras:
+
+\begin{itemize}
+    \item \textbf{Paginação} — implementar paginação no catálogo e nos painéis de administração para suportar grandes volumes de dados;
+    \item \textbf{Estados de venda} — adicionar um fluxo de estados (em preparação, enviado, entregue) com notificações ao cliente;
+    \item \textbf{Upload de imagens} — substituir os URLs externos (Unsplash) por um sistema de upload e armazenamento local de imagens;
+    \item \textbf{Containerização} — empacotar a aplicação em Docker para simplificar a distribuição e o deployment;
+    \item \textbf{Integração de pagamentos} — integrar um gateway de pagamento real (ex.: Stripe) para suportar transações eletrónicas.
+\end{itemize}

@@ -40,6 +40,17 @@ export async function getCurrentUser() {
   return response.data;
 }
 
+export type UpdateProfileRequest = {
+  name?: string;
+  currentPassword?: string;
+  newPassword?: string;
+};
+
+export async function updateProfile(data: UpdateProfileRequest) {
+  const response = await apiClient.patch<Customer>("/auth/profile", data);
+  return response.data;
+}
+
 export function saveAuth(response: AuthResponse) {
   localStorage.setItem("authToken", response.token);
   localStorage.setItem("authCustomer", JSON.stringify(response.customer));

@@ -1196,6 +1196,84 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
   padding-top: 8px;
 }
 
+/* ── Profile page ───────────────────────────────────────────────── */
+.profile-page { display: grid; gap: 24px; }
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.profile-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-card h2 { font-size: 16px; font-weight: 700; }
+
+.profile-card form { display: flex; flex-direction: column; gap: 14px; }
+
+.profile-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.profile-card input {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  font-size: 14px;
+  background: var(--bg);
+  transition: border-color .2s;
+}
+
+.profile-card input:focus { outline: none; border-color: var(--blue); background: #fff; }
+.profile-card input:disabled { opacity: .6; cursor: not-allowed; }
+
+.profile-card button[type="submit"] {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s;
+  margin-top: 4px;
+}
+.profile-card button[type="submit"]:hover:not(:disabled) { background: var(--blue-dark); }
+.profile-card button[type="submit"]:disabled { opacity: .55; cursor: not-allowed; }
+
+.profile-card--links { gap: 10px; }
+.profile-card--links a {
+  display: block;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
+  transition: background .15s;
+}
+.profile-card--links a:hover { background: var(--blue-light); }
+
+@media (max-width: 720px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
+
 /* ── Access denied / RequireAuth card ──────────────────────────── */
 .access-card {
   max-width: 440px;
