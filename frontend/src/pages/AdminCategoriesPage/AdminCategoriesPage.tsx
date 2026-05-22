@@ -54,7 +54,8 @@ export function AdminCategoriesPage() {
     setDescription(category.description ?? "");
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: number, name: string) {
+    if (!window.confirm(`Remover a categoria "${name}"? Tem de remover os produtos associados primeiro.`)) return;
     setError(null);
     setSuccess(null);
 
@@ -63,7 +64,7 @@ export function AdminCategoriesPage() {
       await loadCategories();
       setSuccess("Categoria removida com sucesso.");
     } catch {
-      setError("Nao foi possivel remover a categoria. Pode ter produtos associados.");
+      setError("Nao foi possivel remover a categoria. Existem produtos associados.");
     }
   }
 
@@ -94,7 +95,7 @@ export function AdminCategoriesPage() {
               <span>{category.description}</span>
             </div>
             <button type="button" className="secondary-button" onClick={() => startEdit(category)}>Editar</button>
-            <button type="button" className="secondary-button" onClick={() => handleDelete(category.id)}>Remover</button>
+            <button type="button" className="secondary-button" onClick={() => handleDelete(category.id, category.name)}>Remover</button>
           </div>
         ))}
       </div>

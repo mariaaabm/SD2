@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
+import { listCategories, type Category } from "../../services/category.service";
 
 function navigate(path: string) {
   window.history.pushState({}, "", path);
@@ -11,8 +12,14 @@ export function Header() {
   const { customer, isAuthenticated, logout } = useAuth();
   const { items } = useCart();
   const [query, setQuery] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  useEffect(() => {
+    listCategories().then(setCategories).catch(() => {});
+  }, []);
 
   function handleLogout() {
     logout();
@@ -26,6 +33,7 @@ export function Header() {
     } else {
       navigate("/catalog");
     }
+    setMenuOpen(false);
   }
 
   return (
@@ -48,7 +56,10 @@ export function Header() {
         <div className="site-header__actions">
           {isAuthenticated ? (
             <>
-              <a href="/orders">Ola, {customer?.name?.split(" ")[0]}</a>
+              <a href="/orders" className="site-header__user">
+                Ola, {customer?.name?.split(" ")[0]}
+                {customer?.role === "ADMIN" && <span className="admin-badge">Admin</span>}
+              </a>
               <button className="link-button" type="button" onClick={handleLogout}>Sair</button>
             </>
           ) : (
@@ -61,24 +72,34 @@ export function Header() {
             Carrinho {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </a>
         </div>
+
+        <button
+          className="site-header__burger"
+          type="button"
+          aria-label="Menu"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          ☰
+        </button>
       </div>
 
-      <nav className="site-header__nav">
+      <nav className={`site-header__nav${menuOpen ? " site-header__nav--open" : ""}`}>
         <ul>
-          <li><a href="/catalog">Todos</a></li>
-          <li><a href="/catalog?categoryId=1">Calcado</a></li>
-          <li><a href="/catalog?categoryId=2">Vestuario</a></li>
-          <li><a href="/catalog?categoryId=3">Equipamento</a></li>
-          <li><a href="/catalog?categoryId=4">Acessorios</a></li>
-          <li><a href="/catalog?categoryId=5">Natacao</a></li>
-          <li><a href="/catalog?categoryId=6">Ciclismo</a></li>
-          <li><a href="/catalog?categoryId=7">Fitness</a></li>
+          <li><a href="/catalog" onClick={() => setMenuOpen(false)}>Todos</a></li>
+          {categories.map((cat) => (
+            <li key={cat.id}>
+              <a href={`/catalog?categoryId=${cat.id}`} onClick={() => setMenuOpen(false)}>
+                {cat.name}
+              </a>
+            </li>
+          ))}
           {customer?.role === "ADMIN" && (
             <>
-              <li><a href="/admin/products">Gerir Produtos</a></li>
-              <li><a href="/admin/categories">Categorias</a></li>
-              <li><a href="/admin/sales">Vendas</a></li>
-              <li><a href="/admin/stats">Stats</a></li>
+              <li className="nav-separator" />
+              <li><a href="/admin/products" onClick={() => setMenuOpen(false)}>Produtos</a></li>
+              <li><a href="/admin/categories" onClick={() => setMenuOpen(false)}>Categorias</a></li>
+              <li><a href="/admin/sales" onClick={() => setMenuOpen(false)}>Vendas</a></li>
+              <li><a href="/admin/stats" onClick={() => setMenuOpen(false)}>Stats</a></li>
             </>
           )}
         </ul>

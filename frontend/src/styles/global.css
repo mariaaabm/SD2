@@ -1107,6 +1107,135 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
   gap: 8px;
 }
 
+/* ── Header extras ──────────────────────────────────────────────── */
+.site-header__user { display: flex; align-items: center; gap: 6px; }
+
+.admin-badge {
+  background: var(--orange);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.nav-separator {
+  width: 1px;
+  background: rgba(255,255,255,.15);
+  margin: 0 4px;
+  align-self: stretch;
+}
+
+.site-header__burger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 4px 8px;
+}
+
+/* ── Admin extras ───────────────────────────────────────────────── */
+.admin-search {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 14px;
+  width: 280px;
+  background: var(--bg);
+  transition: border-color .2s;
+}
+.admin-search:focus { outline: none; border-color: var(--blue); }
+
+.admin-row--clickable { cursor: pointer; transition: background .15s; }
+.admin-row--clickable:hover { background: var(--blue-light); }
+
+.expand-icon { color: var(--text-muted); font-size: 12px; }
+
+.invoice-ref {
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.badge--status { font-size: 11px; padding: 3px 8px; border-radius: 99px; font-weight: 700; text-transform: uppercase; }
+.badge--completed, .badge--paid { background: #dcfce7; color: var(--success); }
+.badge--pending  { background: #fef3c7; color: #92400e; }
+.badge--cancelled { background: #fee2e2; color: var(--error); }
+
+.sale-detail {
+  background: var(--blue-light);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px 20px;
+}
+
+.sale-detail__items { display: grid; gap: 8px; margin-bottom: 12px; }
+
+.sale-detail__item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: center;
+  font-size: 14px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sale-detail__item:last-child { border-bottom: none; }
+.sale-detail__name { font-weight: 500; }
+
+.sale-detail__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  padding-top: 8px;
+}
+
+/* ── Access denied / RequireAuth card ──────────────────────────── */
+.access-card {
+  max-width: 440px;
+  margin: 80px auto;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+.access-card h1 { font-size: 22px; }
+.access-card p { color: var(--text-muted); font-size: 15px; }
+
+/* ── 404 page ────────────────────────────────────────────────────── */
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  text-align: center;
+}
+
+.not-found-page__code {
+  font-family: Montserrat, sans-serif;
+  font-size: 96px;
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1;
+  opacity: .15;
+}
+
+.not-found-page h1 { font-size: 28px; margin-top: -48px; }
+.not-found-page p { color: var(--text-muted); }
+
 /* ── Auth pages ────────────────────────────────────────────────── */
 .auth-page {
   min-height: 70vh;
@@ -1354,8 +1483,22 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 }
 
 @media (max-width: 720px) {
+  .site-header__burger { display: flex; }
+  .site-header__search { flex: 1; max-width: none; }
   .site-header__top { padding: 10px 16px; gap: 12px; }
-  .site-header__nav ul { padding: 0 16px; }
+  .site-header__nav { display: none; }
+  .site-header__nav--open {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    z-index: 200;
+  }
+  .site-header__nav--open ul { flex-direction: column; padding: 8px 0; gap: 0; }
+  .site-header__nav--open ul li a { display: block; padding: 12px 20px; }
+  .site-header__nav--open ul li a:hover { background: var(--bg); }
   .app-main { padding: 20px 16px 48px; }
   .hero { padding: 36px 24px; }
   .hero__title { font-size: 26px; }

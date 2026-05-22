@@ -79,7 +79,8 @@ export function AdminProductsPage() {
     });
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: number, name: string) {
+    if (!window.confirm(`Remover o produto "${name}"? Esta acao nao pode ser desfeita.`)) return;
     setError(null);
     setSuccess(null);
     try {
@@ -87,7 +88,7 @@ export function AdminProductsPage() {
       await loadData();
       setSuccess("Produto removido com sucesso.");
     } catch {
-      setError("Nao foi possivel remover o produto.");
+      setError("Nao foi possivel remover o produto. Pode ter vendas associadas.");
     }
   }
 
@@ -150,7 +151,7 @@ export function AdminProductsPage() {
               {product.active ? "Ativo" : "Inativo"}
             </span>
             <button type="button" className="secondary-button" onClick={() => startEdit(product)}>Editar</button>
-            <button type="button" className="secondary-button" onClick={() => handleDelete(product.id)}>Remover</button>
+            <button type="button" className="secondary-button" onClick={() => handleDelete(product.id, product.name)}>Remover</button>
           </div>
         ))}
       </div>

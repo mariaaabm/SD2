@@ -70,7 +70,23 @@ function Page() {
   if (pathname === "/admin/sales") return <RequireAdmin><AdminSalesPage /></RequireAdmin>;
   if (pathname === "/admin/stats") return <RequireAdmin><AdminStatsPage /></RequireAdmin>;
 
-  return <HomePage />;
+  if (pathname === "/") return <HomePage />;
+
+  return <NotFoundPage />;
+}
+
+function NotFoundPage() {
+  return (
+    <section className="not-found-page">
+      <div className="not-found-page__code">404</div>
+      <h1>Pagina nao encontrada</h1>
+      <p>A pagina que procuras nao existe ou foi movida.</p>
+      <div className="action-row">
+        <a className="primary-link" href="/">Pagina inicial</a>
+        <a className="secondary-link" href="/catalog">Ver catalogo</a>
+      </div>
+    </section>
+  );
 }
 
 function RequireAuth({ children }: { children: ReactNode }) {
