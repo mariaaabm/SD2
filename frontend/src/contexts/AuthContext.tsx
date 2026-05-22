@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getCurrentUser, getStoredCustomer, logout as clearAuth, saveAuth, type AuthResponse, type Customer } from "../services/auth.service";
+import { clearLocalAuth, getCurrentUser, getStoredCustomer, logoutApi, saveAuth, type AuthResponse, type Customer } from "../services/auth.service";
 
 type AuthContextValue = {
   customer: Customer | null;
@@ -11,11 +11,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-type AuthProviderProps = {
-  children: ReactNode;
-};
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(() => getStoredCustomer());
   const [isLoading, setIsLoading] = useState(() => getStoredCustomer() !== null);
 
@@ -28,26 +24,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     let active = true;
 
     getCurrentUser()
-      .then((currentCustomer) => {
-        if (active) {
-          setCustomer(currentCustomer);
-        }
+      .then((current) => {
+        if (active) setCustomer(current);
       })
       .catch(() => {
         if (active) {
-          clearAuth();
+          clearLocalAuth();
           setCustomer(null);
         }
       })
       .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
+        if (active) setIsLoading(false);
       });
 
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
@@ -60,10 +50,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
     },
     logout: () => {
-      clearAuth();
+      clearLocalAuth();
       setCustomer(null);
       setIsLoading(false);
-    }
+      logoutApi();
+    },
   }), [customer, isLoading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -71,10 +62,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider.");
-  }
-
+  if (!context) throw new Error("useAuth deve ser usado dentro de AuthProvider.");
   return context;
 }

@@ -51,6 +51,14 @@ export async function updateProfile(data: UpdateProfileRequest) {
   return response.data;
 }
 
+export async function logoutApi() {
+  try {
+    await apiClient.post("/auth/logout");
+  } catch {
+    // ignora — o cookie será limpo mesmo que o servidor não responda
+  }
+}
+
 export function saveAuth(response: AuthResponse) {
   localStorage.setItem("authToken", response.token);
   localStorage.setItem("authCustomer", JSON.stringify(response.customer));
@@ -61,7 +69,11 @@ export function getStoredCustomer() {
   return raw ? (JSON.parse(raw) as Customer) : null;
 }
 
-export function logout() {
+export function clearLocalAuth() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("authCustomer");
+}
+
+export function logout() {
+  clearLocalAuth();
 }

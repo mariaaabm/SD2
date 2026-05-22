@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { listCategories, type Category } from "../../services/category.service";
 import { listProducts, type Product } from "../../services/product.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { getCategoryBg, getCategoryColor, getCategoryIcon, getCategoryImage } from "../../utils/categoryUtils";
 import { ProductCard } from "../../components/ProductCard/ProductCard";
 
 function navigate(path: string) {
@@ -51,22 +51,46 @@ export function HomePage() {
             <a href="/catalog">Ver todos os produtos</a>
           </div>
           <div className="category-grid">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className="category-card"
-                onClick={() => navigate(`/catalog?categoryId=${cat.id}`)}
-                style={{ border: `1.5px solid ${getCategoryBg(cat.name)}` }}
-              >
-                <div
-                  className="category-card__icon"
-                  style={{ background: getCategoryBg(cat.name), color: getCategoryColor(cat.name) }}
+            {categories.map((cat) => {
+              const img = getCategoryImage(cat.name);
+              return (
+                <button
+                  key={cat.id}
+                  className="category-card"
+                  onClick={() => navigate(`/catalog?categoryId=${cat.id}`)}
                 >
-                  <span style={{ fontWeight: 900, fontSize: 18 }}>{getCategoryIcon(cat.name)}</span>
-                </div>
-                <span className="category-card__name">{cat.name}</span>
-              </button>
-            ))}
+                  <div className="category-card__image-wrap">
+                    {img ? (
+                      <img
+                        src={img}
+                        alt={cat.name}
+                        className="category-card__img"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = "none";
+                          const fb = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
+                          if (fb) fb.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="category-card__img-fallback"
+                      style={{
+                        background: getCategoryBg(cat.name),
+                        display: img ? "none" : "flex",
+                      }}
+                    >
+                      <span style={{ fontSize: 32 }}>{getCategoryIcon(cat.name)}</span>
+                    </div>
+                    <div
+                      className="category-card__overlay"
+                      style={{ background: `${getCategoryColor(cat.name)}cc` }}
+                    />
+                  </div>
+                  <span className="category-card__name">{cat.name}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
       )}

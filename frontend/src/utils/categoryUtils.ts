@@ -19,13 +19,23 @@ export const CATEGORY_BG: Record<string, string> = {
 };
 
 export const CATEGORY_ICON: Record<string, string> = {
-  "Calcado":    "C",
-  "Vestuario":  "V",
-  "Equipamento":"E",
-  "Acessorios": "A",
-  "Natacao":    "N",
-  "Ciclismo":   "Ci",
-  "Fitness":    "F",
+  "Calcado":    "👟",
+  "Vestuario":  "👕",
+  "Equipamento":"⚽",
+  "Acessorios": "🎒",
+  "Natacao":    "🏊",
+  "Ciclismo":   "🚴",
+  "Fitness":    "💪",
+};
+
+export const CATEGORY_IMAGE: Record<string, string> = {
+  "Calcado":    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=220&fit=crop&auto=format",
+  "Vestuario":  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=220&fit=crop&auto=format",
+  "Equipamento":"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&h=220&fit=crop&auto=format",
+  "Acessorios": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=220&fit=crop&auto=format",
+  "Natacao":    "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=220&fit=crop&auto=format",
+  "Ciclismo":   "https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=220&fit=crop&auto=format",
+  "Fitness":    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=220&fit=crop&auto=format",
 };
 
 export function getCategoryColor(name: string): string {
@@ -38,4 +48,8 @@ export function getCategoryBg(name: string): string {
 
 export function getCategoryIcon(name: string): string {
   return CATEGORY_ICON[name] ?? name.charAt(0).toUpperCase();
+}
+
+export function getCategoryImage(name: string): string | undefined {
+  return CATEGORY_IMAGE[name];
 }
