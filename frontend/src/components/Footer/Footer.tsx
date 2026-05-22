@@ -39,7 +39,7 @@ export function Footer() {
       </div>
 
       <div className="site-footer__bottom">
-        <span>2024 SportFlow. Todos os direitos reservados.</span>
+        <span>2025 SportFlow. Todos os direitos reservados.</span>
         <span>Sistemas Distribuidos — Universidade da Beira Interior</span>
       </div>
     </footer>

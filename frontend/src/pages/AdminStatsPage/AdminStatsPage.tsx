@@ -68,9 +68,9 @@ export function AdminStatsPage() {
         <>
           {revenue && (
             <div className="stats-card">
-              <span>Faturacao</span>
-              <strong>{revenue.revenue.toFixed(2)} EUR</strong>
-              <p>{revenue.periodStart} a {revenue.periodEnd}</p>
+              <span className="stats-card__label">Faturacao</span>
+              <span className="stats-card__value">{revenue.revenue.toFixed(2)} €</span>
+              <span className="stats-card__sub">{revenue.periodStart} a {revenue.periodEnd}</span>
             </div>
           )}
 
@@ -84,7 +84,7 @@ export function AdminStatsPage() {
                 <div className="stats-row" key={customer.customerId}>
                   <span>{customer.customerName}</span>
                   <span>{customer.totalPurchases} compras</span>
-                  <strong>{customer.totalSpent.toFixed(2)} EUR</strong>
+                  <strong>{customer.totalSpent.toFixed(2)} €</strong>
                 </div>
               ))}
             </div>
