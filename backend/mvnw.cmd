@@ -20,3 +20,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Force '%
 :run
 call "%MAVEN_HOME%\bin\mvn.cmd" %*
 
+ 

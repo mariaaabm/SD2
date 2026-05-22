@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Shopping Food Store API
+  title: SportFlow API
   version: 0.0.1
 paths:
   /api/auth/register:

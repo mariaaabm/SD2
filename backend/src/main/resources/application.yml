@@ -1,8 +1,8 @@
 spring:
   application:
-    name: shopping-food-store
+    name: sports-store
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/shopping_food_store}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sports_store}
     username: ${SPRING_DATASOURCE_USERNAME:store_user}
     password: ${SPRING_DATASOURCE_PASSWORD:store_password}
   jpa:

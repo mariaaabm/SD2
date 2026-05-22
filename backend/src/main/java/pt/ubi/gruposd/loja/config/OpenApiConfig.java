@@ -11,9 +11,9 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Shopping Food Store API")
+                .title("SportFlow API")
                 .version("0.0.1")
-                .description("REST API para loja online de produtos alimentares."));
+                .description("REST API para loja online de artigos desportivos."));
     }
 }
 

@@ -1,21 +1,27 @@
 # Demo pratica
 
-Este guiao valida o fluxo principal da aplicacao antes da apresentacao.
+Este guiao valida o fluxo principal da aplicacao SportFlow antes da apresentacao.
 
 ## Arranque sem Docker
 
-Backend com H2 em memoria:
+Backend com H2 em memoria (sem necessidade de PostgreSQL):
 
-```bash
+```powershell
 cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo"
 ```
 
 Frontend:
 
-```bash
+```powershell
 cd frontend
 npm run dev
+```
+
+Ou usar o script automatico (Windows):
+
+```powershell
+.\scripts\run-local.ps1
 ```
 
 URLs:
@@ -43,7 +49,7 @@ Com o backend a correr:
 O script confirma:
 
 - health check;
-- catalogo publico com seed demo;
+- catalogo publico com categorias e produtos desportivos;
 - login admin;
 - estatisticas admin;
 - registo de cliente;
@@ -55,7 +61,7 @@ O script confirma:
 ## Validacao manual no browser
 
 1. Abrir `http://localhost:5173/catalog`.
-2. Confirmar que existem varias categorias e produtos.
+2. Confirmar que existem categorias desportivas (Calcado, Vestuario, Equipamento, etc.) e produtos.
 3. Entrar com `admin@store.test` / `password`.
 4. Abrir `/admin/products` e criar ou editar um produto.
 5. Abrir `/admin/categories` e confirmar a listagem de categorias.

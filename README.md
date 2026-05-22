@@ -1,130 +1,103 @@
-# Shopping Food Store
+# SportFlow
 
-Aplicacao web para uma loja online de produtos alimentares, desenvolvida para a unidade curricular de Sistemas Distribuidos.
+Aplicacao web para uma loja online de artigos desportivos, desenvolvida para a unidade curricular de Sistemas Distribuidos.
 
 ## Estrutura
 
 ```text
-shopping-food-store/
+SD2/
 ├─ backend/      # Spring Boot REST API
-├─ frontend/     # React web app
-├─ infra/        # Docker Compose para desenvolvimento local
-├─ docs/         # documentacao tecnica auxiliar
-├─ report/       # relatorio em LaTeX
-└─ slides/       # apresentacao
+├─ frontend/     # React web app (Vite + TypeScript)
+├─ infra/        # Docker Compose
+├─ scripts/      # Scripts de arranque e validacao
+├─ docs/         # Documentacao tecnica auxiliar
+├─ report/       # Relatorio em LaTeX
+└─ slides/       # Apresentacao
 ```
 
 ## Requisitos
 
-- Java 21
-- Maven 3.9+
-- Node.js 20+
-- Docker e Docker Compose
+| Ferramenta | Versao minima |
+|---|---|
+| Java | 21 |
+| Node.js | 20 |
+| Docker + Docker Compose | qualquer versao recente (opcional) |
 
-## Execucao local
+---
 
-### Com PostgreSQL
+## Execucao sem Docker (recomendado para desenvolvimento)
 
-```bash
-docker compose -f infra/docker-compose.yml up -d db
+### Arranque automatico (Windows)
+
+```powershell
+.\scripts\run-local.ps1
 ```
 
-```bash
+O script abre duas janelas PowerShell (backend + frontend) e o browser em `http://localhost:5173`.
+
+### Arranque manual
+
+**Terminal 1 - Backend** (usa H2 em memoria, sem necessidade de PostgreSQL):
+
+```powershell
 cd backend
-./mvnw spring-boot:run
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=demo
 ```
 
-```bash
+**Terminal 2 - Frontend**:
+
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-### Demo sem Docker
+Aceder em: `http://localhost:5173`
 
-Para validar a aplicacao sem PostgreSQL/Docker, usa o perfil `demo` com H2 em memoria:
+**Credenciais de demo:**
 
-```bash
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
-```
+| Campo | Valor |
+|---|---|
+| Email | admin@store.test |
+| Password | password |
 
-Depois, noutro terminal:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Guiao completo: `docs/DEMO.md`.
-
-Por omissao:
-
-- Backend: `http://localhost:8080`
-- Frontend: `http://localhost:5173`
-- Base de dados: `localhost:5432`
-
-## Funcionalidades disponiveis
-
-- Catalogo publico com filtro por categoria.
-- Registo e login de clientes.
-- Carrinho e checkout para clientes autenticados.
-- Historico de compras e faturas.
-- Gestao admin de produtos e categorias.
-- Estatisticas admin de vendas, clientes e faturacao.
-
-## Testes
-
-Backend:
-
-```bash
-cd backend
-./mvnw test
-```
-
-Frontend:
-
-```bash
-cd frontend
-npm run build
-```
+---
 
 ## Execucao com Docker
 
-Quando o Docker estiver disponivel:
-
-```bash
+```powershell
 docker compose -f infra/docker-compose.yml up --build
 ```
 
-Verificacoes:
+| Servico | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend health | http://localhost:8080/actuator/health |
+| Swagger | http://localhost:8080/swagger-ui.html |
 
-- Health check do backend: `http://localhost:8080/actuator/health`
-- Swagger/OpenAPI: `http://localhost:8080/swagger-ui.html`
-- Frontend: `http://localhost:5173`
+> Em WSL, activa a integracao no Docker Desktop: Settings > Resources > WSL Integration
 
-Se estiveres em WSL e o comando `docker` nao existir, ativa a integracao no Docker Desktop:
+---
 
-```text
-Docker Desktop -> Settings -> Resources -> WSL Integration -> ativar a distro usada
+## Funcionalidades
+
+- Catalogo publico com filtro por categoria desportiva
+- Registo e login de clientes
+- Carrinho e checkout
+- Historico de compras e faturas
+- Gestao admin de produtos, categorias e vendas
+- Estatisticas admin (faturacao, produtos, clientes)
+
+## Testes
+
+```powershell
+cd backend
+.\mvnw.cmd test
 ```
 
-Depois reinicia o terminal WSL e confirma:
-
-```bash
-docker --version
-docker compose version
-```
-
-Tambem podes correr a validacao automatica da stack:
+## Validacao da stack Docker
 
 ```bash
 ./scripts/validate-stack.sh
+./scripts/validate-demo-api.sh
 ```
-
-Este script arranca os containers e confirma:
-
-- health check do backend;
-- OpenAPI em `/v3/api-docs`;
-- frontend;
-- login admin.

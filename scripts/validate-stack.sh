@@ -21,8 +21,8 @@ docker compose -f infra/docker-compose.yml up --build -d
 
 echo "A aguardar backend..."
 for attempt in {1..40}; do
-  if curl -fsS http://localhost:8080/actuator/health >/tmp/shopping-food-store-health.json; then
-    cat /tmp/shopping-food-store-health.json
+  if curl -fsS http://localhost:8080/actuator/health >/tmp/sports-store-health.json; then
+    cat /tmp/sports-store-health.json
     echo
     break
   fi
@@ -46,7 +46,7 @@ echo "A validar login admin..."
 curl -fsS \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@store.test","password":"password"}' \
-  http://localhost:8080/api/auth/login >/tmp/shopping-food-store-login.json
+  http://localhost:8080/api/auth/login >/tmp/sports-store-login.json
 
 echo "Stack validada com sucesso."
 echo "Frontend: http://localhost:5173"

@@ -78,7 +78,7 @@ export function CatalogPage() {
       <div className="page-heading">
         <div>
           <h1>Catalogo</h1>
-          <p>{selectedCategoryName ? `Produtos em ${selectedCategoryName}` : "Produtos alimentares disponiveis"}</p>
+          <p>{selectedCategoryName ? `Produtos em ${selectedCategoryName}` : "Artigos desportivos disponiveis"}</p>
         </div>
         <label className="filter-control">
           <span>Categoria</span>

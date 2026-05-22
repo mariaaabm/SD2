@@ -1,12 +1,12 @@
 # Arquitetura
 
-A aplicacao segue uma arquitetura web simples:
+A aplicacao segue uma arquitetura web em tres camadas:
 
 - Frontend React comunica com o backend por HTTP/REST.
 - Backend Spring Boot expoe endpoints em `/api`.
 - Spring Data JPA gere a persistencia em PostgreSQL.
 - Flyway cria e inicializa o esquema da base de dados.
-- Spring Security sera usado para autenticacao e controlo de acesso.
+- Spring Security gere autenticacao JWT e controlo de acesso por roles.
 
 ## Entidades principais
 
@@ -34,7 +34,7 @@ Campos principais:
 
 ### Category
 
-Agrupa produtos no catalogo.
+Agrupa produtos desportivos no catalogo (ex: Calcado, Vestuario, Equipamento, Acessorios).
 
 Campos principais:
 
@@ -44,7 +44,7 @@ Campos principais:
 
 ### Product
 
-Representa um produto alimentar disponivel no catalogo.
+Representa um artigo desportivo disponivel no catalogo.
 
 Campos principais:
 
@@ -93,7 +93,7 @@ Campos principais:
 
 ## Dados de demonstracao
 
-As migracoes Flyway incluem dados iniciais para demonstracao: administrador inicial, categorias alimentares, produtos ativos com stock e um produto inativo para validar a gestao de disponibilidade.
+As migracoes Flyway incluem dados iniciais: administrador, categorias desportivas e produtos ativos com stock. Um produto inativo valida a gestao de disponibilidade.
 
 ## Regras de integridade
 
@@ -106,7 +106,7 @@ As migracoes Flyway incluem dados iniciais para demonstracao: administrador inic
 - Emails de clientes sao unicos.
 - Nomes de categorias sao unicos.
 
-## Endpoints ja previstos
+## Endpoints
 
 ### Autenticacao
 
@@ -118,9 +118,9 @@ As migracoes Flyway incluem dados iniciais para demonstracao: administrador inic
 
 - `GET /api/categories`
 - `GET /api/categories/{id}`
-- `POST /api/categories`
-- `PUT /api/categories/{id}`
-- `DELETE /api/categories/{id}`
+- `POST /api/categories` (ADMIN)
+- `PUT /api/categories/{id}` (ADMIN)
+- `DELETE /api/categories/{id}` (ADMIN)
 
 ### Produtos
 
@@ -128,38 +128,37 @@ As migracoes Flyway incluem dados iniciais para demonstracao: administrador inic
 - `GET /api/products?categoryId={id}`
 - `GET /api/products?activeOnly=true`
 - `GET /api/products/{id}`
-- `POST /api/products`
-- `PUT /api/products/{id}`
-- `DELETE /api/products/{id}`
+- `POST /api/products` (ADMIN)
+- `PUT /api/products/{id}` (ADMIN)
+- `DELETE /api/products/{id}` (ADMIN)
 
 ### Vendas
 
-- `POST /api/sales/checkout`
-- `GET /api/sales`
-- `GET /api/sales/{id}`
-- `GET /api/sales/{id}/invoice`
-- `GET /api/admin/sales`
+- `POST /api/sales/checkout` (autenticado)
+- `GET /api/sales` (autenticado)
+- `GET /api/sales/{id}` (autenticado)
+- `GET /api/sales/{id}/invoice` (autenticado)
+- `GET /api/admin/sales` (ADMIN)
 
 ### Faturas
 
-- `GET /api/invoices/{id}`
+- `GET /api/invoices/{id}` (autenticado)
 
 ### Estatisticas
 
-- `GET /api/stats/products/top-selling`
-- `GET /api/stats/products/least-selling`
-- `GET /api/stats/customers/best`
-- `GET /api/stats/revenue?period=day`
-- `GET /api/stats/revenue?period=week`
-- `GET /api/stats/revenue?period=month`
+- `GET /api/stats/products/top-selling` (ADMIN)
+- `GET /api/stats/products/least-selling` (ADMIN)
+- `GET /api/stats/customers/best` (ADMIN)
+- `GET /api/stats/revenue?period=day|week|month` (ADMIN)
 
 ## Seguranca
 
 - Passwords guardadas com BCrypt.
 - Autenticacao por JWT no header `Authorization: Bearer <token>`.
 - Catalogo publico para consulta.
-- Operacoes de escrita em produtos e categorias restritas a utilizadores com role `ADMIN`.
-- Operacoes futuras de compras, faturas e historico exigirao utilizador autenticado.
+- Operacoes de escrita em produtos e categorias restritas a `ADMIN`.
+- Compras, faturas e historico requerem utilizador autenticado.
+- Estatisticas e vendas admin restritas a `ADMIN`.
 
 ## Frontend
 

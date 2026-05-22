@@ -11,7 +11,7 @@ export function Header() {
 
   return (
     <header className="site-header">
-      <a href="/">Shopping Food Store</a>
+      <a href="/">SportFlow</a>
       <nav>
         <a href="/catalog">Catalogo</a>
         <a href="/cart">Carrinho</a>

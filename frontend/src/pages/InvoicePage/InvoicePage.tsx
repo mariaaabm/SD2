@@ -46,7 +46,7 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
       <div className="invoice-document">
         <div className="invoice-document__header">
           <div>
-            <span>Shopping Food Store</span>
+            <span className="brand">SportFlow</span>
             <h1>Fatura {sale.invoice.invoiceNumber}</h1>
           </div>
           <button className="secondary-button print-button" type="button" onClick={() => window.print()}>

@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pt.ubi.gruposd</groupId>
-    <artifactId>shopping-food-store</artifactId>
+    <artifactId>sports-store</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>shopping-food-store</name>
-    <description>Online food store REST API</description>
+    <name>sports-store</name>
+    <description>Online sports store REST API</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

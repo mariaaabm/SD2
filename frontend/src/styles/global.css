@@ -1,3 +1,6 @@
+/* SportFlow Design System */
+/* Primary: #003ec7 | Accent: #fe6b00 | Surface: #f8f9fa | Text: #191c1d */
+
 * {
   box-sizing: border-box;
 }
@@ -5,8 +8,12 @@
 body {
   margin: 0;
   font-family: Inter, Arial, sans-serif;
-  color: #1f2933;
-  background: #f5f7f6;
+  color: #191c1d;
+  background: #f8f9fa;
+}
+
+h1, h2, h3 {
+  font-family: Montserrat, Inter, Arial, sans-serif;
 }
 
 a {
@@ -14,18 +21,27 @@ a {
   text-decoration: none;
 }
 
+/* ── Header ── */
+
 .site-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 16px 32px;
+  padding: 14px 32px;
   background: #ffffff;
-  border-bottom: 1px solid #d9dee5;
+  border-bottom: 2px solid #003ec7;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .site-header > a {
-  font-weight: 700;
+  font-family: Montserrat, Inter, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #003ec7;
+  letter-spacing: -0.02em;
 }
 
 .site-header nav {
@@ -33,14 +49,22 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  color: #52606d;
+  color: #434656;
 }
+
+.site-header nav a:hover {
+  color: #003ec7;
+}
+
+/* ── Layout ── */
 
 .app-main {
   max-width: 1120px;
   margin: 0 auto;
   padding: 32px;
 }
+
+/* ── Catalog ── */
 
 .catalog-page {
   display: grid;
@@ -57,28 +81,29 @@ a {
 .page-heading h1 {
   margin: 0 0 8px;
   font-size: 32px;
+  color: #191c1d;
 }
 
 .page-heading p {
   margin: 0;
-  color: #52606d;
+  color: #434656;
 }
 
 .filter-control {
   display: grid;
   gap: 6px;
   min-width: 220px;
-  color: #52606d;
+  color: #434656;
   font-size: 14px;
 }
 
 .filter-control select {
   height: 40px;
   padding: 0 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid #c3c5d9;
   border-radius: 6px;
   background: #ffffff;
-  color: #1f2933;
+  color: #191c1d;
 }
 
 .product-grid {
@@ -86,6 +111,8 @@ a {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
 }
+
+/* ── Product Card ── */
 
 .product-card {
   display: flex;
@@ -95,26 +122,33 @@ a {
   gap: 20px;
   padding: 18px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
+  transition: box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 62, 199, 0.10);
 }
 
 .product-card h2 {
   margin: 8px 0;
-  font-size: 20px;
+  font-size: 18px;
+  font-family: Montserrat, Inter, Arial, sans-serif;
 }
 
 .product-card p {
   margin: 0;
-  color: #52606d;
+  color: #434656;
   line-height: 1.5;
 }
 
 .product-card__category {
-  color: #2f855a;
-  font-size: 13px;
+  color: #003ec7;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .product-card__footer {
@@ -131,22 +165,30 @@ a {
 
 .product-card__footer strong {
   font-size: 18px;
+  color: #003ec7;
 }
 
 .product-card__footer span {
-  color: #52606d;
+  color: #434656;
   font-size: 13px;
 }
+
+/* ── Buttons ── */
 
 button {
   height: 38px;
   padding: 0 14px;
   border: 0;
   border-radius: 6px;
-  background: #2f855a;
+  background: #003ec7;
   color: #ffffff;
   cursor: pointer;
   font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  background: #0052ff;
 }
 
 button:disabled {
@@ -161,6 +203,13 @@ button:disabled {
   color: inherit;
 }
 
+.link-button:hover {
+  background: transparent;
+  color: #003ec7;
+}
+
+/* ── Auth Pages ── */
+
 .auth-page {
   display: flex;
   justify-content: center;
@@ -172,7 +221,7 @@ button:disabled {
   gap: 14px;
   padding: 24px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -182,7 +231,7 @@ button:disabled {
 }
 
 .access-card p {
-  color: #52606d;
+  color: #434656;
 }
 
 .auth-form {
@@ -191,7 +240,7 @@ button:disabled {
   gap: 16px;
   padding: 24px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -202,17 +251,19 @@ button:disabled {
 .auth-form label {
   display: grid;
   gap: 6px;
-  color: #52606d;
+  color: #434656;
   font-size: 14px;
 }
 
 .auth-form input {
   height: 40px;
   padding: 0 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid #c3c5d9;
   border-radius: 6px;
-  color: #1f2933;
+  color: #191c1d;
 }
+
+/* ── Cart / Checkout / Orders / Invoice ── */
 
 .cart-page,
 .checkout-page,
@@ -239,7 +290,7 @@ button:disabled {
   gap: 16px;
   padding: 16px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -249,13 +300,13 @@ button:disabled {
 }
 
 .cart-item span {
-  color: #52606d;
+  color: #434656;
 }
 
 .cart-item input {
   height: 38px;
   padding: 0 10px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid #c3c5d9;
   border-radius: 6px;
 }
 
@@ -266,7 +317,7 @@ button:disabled {
   gap: 16px;
   padding: 16px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -277,19 +328,33 @@ button:disabled {
   min-height: 38px;
   padding: 0 14px;
   border-radius: 6px;
-  background: #2f855a;
+  background: #003ec7;
   color: #ffffff;
   font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.primary-link:hover {
+  background: #0052ff;
+  color: #ffffff;
 }
 
 .secondary-button {
-  background: #edf2f7;
-  color: #1f2933;
+  background: #e7e8e9;
+  color: #191c1d;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #d9dadb;
 }
 
 .secondary-link {
-  color: #52606d;
+  color: #434656;
   font-weight: 700;
+}
+
+.secondary-link:hover {
+  color: #003ec7;
 }
 
 .action-row {
@@ -297,6 +362,8 @@ button:disabled {
   align-items: center;
   gap: 16px;
 }
+
+/* ── Product Detail ── */
 
 .product-page {
   display: grid;
@@ -309,15 +376,16 @@ button:disabled {
   gap: 12px;
   padding: 24px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
 .product-detail span {
-  color: #2f855a;
-  font-size: 13px;
+  color: #003ec7;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .product-detail h1,
@@ -327,14 +395,17 @@ button:disabled {
 
 .product-detail strong {
   font-size: 28px;
+  color: #003ec7;
 }
+
+/* ── Invoice ── */
 
 .invoice-box {
   display: grid;
   gap: 8px;
   padding: 24px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -348,7 +419,7 @@ button:disabled {
   gap: 24px;
   padding: 28px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -363,18 +434,25 @@ button:disabled {
 .invoice-document__header {
   grid-template-columns: 1fr auto;
   align-items: start;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid #e7e8e9;
   padding-bottom: 20px;
 }
 
 .invoice-document__header span,
 .invoice-meta span,
 .invoice-meta small {
-  color: #52606d;
+  color: #434656;
 }
 
 .invoice-document__header h1 {
   margin: 6px 0 0;
+}
+
+.invoice-document__header .brand {
+  font-family: Montserrat, Inter, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #003ec7;
 }
 
 .invoice-meta {
@@ -388,17 +466,17 @@ button:disabled {
 
 .invoice-lines {
   display: grid;
-  border-top: 1px solid #d9dee5;
+  border-top: 1px solid #c3c5d9;
 }
 
 .invoice-line {
   grid-template-columns: 1fr 80px 120px 120px;
   padding: 14px 0;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid #e7e8e9;
 }
 
 .invoice-line--head {
-  color: #52606d;
+  color: #434656;
   font-weight: 700;
 }
 
@@ -412,7 +490,10 @@ button:disabled {
 
 .invoice-total strong {
   font-size: 24px;
+  color: #003ec7;
 }
+
+/* ── Stats ── */
 
 .stats-card,
 .stats-section {
@@ -420,18 +501,19 @@ button:disabled {
   gap: 10px;
   padding: 18px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
 .stats-card span,
 .stats-card p {
   margin: 0;
-  color: #52606d;
+  color: #434656;
 }
 
 .stats-card strong {
   font-size: 28px;
+  color: #003ec7;
 }
 
 .stats-section h2 {
@@ -449,8 +531,10 @@ button:disabled {
   justify-content: space-between;
   gap: 16px;
   padding: 10px 0;
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid #e7e8e9;
 }
+
+/* ── Admin Forms ── */
 
 .admin-form {
   display: grid;
@@ -458,7 +542,7 @@ button:disabled {
   gap: 12px;
   padding: 16px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -470,7 +554,7 @@ button:disabled {
 .admin-form select {
   height: 40px;
   padding: 0 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid #c3c5d9;
   border-radius: 6px;
 }
 
@@ -496,7 +580,7 @@ button:disabled {
   gap: 12px;
   padding: 16px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
 }
 
@@ -514,26 +598,44 @@ button:disabled {
 }
 
 .admin-row span {
-  color: #52606d;
+  color: #434656;
 }
+
+/* ── Status Messages ── */
 
 .status-message {
   padding: 18px;
   background: #ffffff;
-  border: 1px solid #d9dee5;
+  border: 1px solid #c3c5d9;
   border-radius: 8px;
-  color: #52606d;
+  color: #434656;
 }
 
 .status-message--error {
   border-color: #f5b7b1;
-  color: #9b2c2c;
+  color: #ba1a1a;
 }
 
 .status-message--success {
   border-color: #9ae6b4;
   color: #276749;
 }
+
+/* ── Footer ── */
+
+.site-footer {
+  margin-top: 48px;
+  padding: 20px 32px;
+  background: #003ec7;
+  color: #ffffff;
+  font-family: Montserrat, Inter, Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Responsive ── */
 
 @media (max-width: 720px) {
   .site-header,
@@ -583,6 +685,7 @@ button:disabled {
 
 @media print {
   .site-header,
+  .site-footer,
   .print-button,
   .invoice-page > .secondary-link {
     display: none;
