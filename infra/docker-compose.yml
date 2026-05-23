@@ -1,17 +1,18 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: mysql:8.0
     container_name: sports_store_db
     environment:
-      POSTGRES_DB: sports_store
-      POSTGRES_USER: store_user
-      POSTGRES_PASSWORD: store_password
+      MYSQL_DATABASE: sports_store
+      MYSQL_USER: sportflow
+      MYSQL_PASSWORD: sportflow123
+      MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U store_user -d sports_store"]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,9 +22,9 @@ services:
       context: ../backend
     container_name: sports_store_backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sports_store
-      SPRING_DATASOURCE_USERNAME: store_user
-      SPRING_DATASOURCE_PASSWORD: store_password
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/sports_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: sportflow
+      SPRING_DATASOURCE_PASSWORD: sportflow123
       JWT_SECRET: change-this-secret-in-production-change-this-secret
       JWT_EXPIRATION_MINUTES: 120
     ports:
@@ -42,4 +43,4 @@ services:
       - backend
 
 volumes:
-  postgres_data:
+  mysql_data:

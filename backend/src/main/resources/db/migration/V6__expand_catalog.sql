@@ -4,11 +4,11 @@
 
 -- ── Novas categorias ────────────────────────────────────────────────
 INSERT INTO categories (name, description) VALUES
-('Futebol',              'Chuteiras, bolas e equipamento especifico de futebol'),
-('Running',              'Calcado, vestuario e acessorios para corredores'),
+('Futebol',              'Chuteiras, bolas e equipamento específico de futebol'),
+('Corrida',              'Calçado, vestuário e acessórios para corredores'),
 ('Montanhismo',          'Botas, mochilas e material para trekking e montanha'),
-('Artes Marciais',       'Equipamento de boxe, judo, karate e MMA'),
-('Golfe',                'Tacos, bolas e acessorios de golfe'),
+('Artes Marciais',       'Equipamento de boxe, judo, karaté e MMA'),
+('Golfe',                'Tacos, bolas e acessórios de golfe'),
 ('Desportos de Inverno', 'Ski, snowboard e equipamento para neve');
 
 -- ── Utilizadores demo (password: "password") ─────────────────────────
@@ -19,34 +19,34 @@ INSERT INTO customers (name, email, password_hash, role) VALUES
 
 -- ── Mais produtos — Calcado (id=1) ─────────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
-('Sapatilhas Fitness Indoor',      'Sapatilhas leves para treino em sala, palmilha gel ortopedica',                          54.99,  45, TRUE, 1, 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=500&fit=crop&auto=format'),
+('Sapatilhas Fitness Indoor',      'Sapatilhas leves para treino em sala, palmilha gel ortopédica',                          54.99,  45, TRUE, 1, 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=500&fit=crop&auto=format'),
 ('Sandálias Desportivas',          'Sandálias com sola de borracha EVA para uso casual e praia',                              34.99,  60, TRUE, 1, 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&h=500&fit=crop&auto=format'),
-('Sapatilhas Ténis Indoor',        'Calcado especifico para tenis indoor com borracha nao-raspante',                          64.99,  30, TRUE, 1, 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=500&fit=crop&auto=format'),
-('Sapatilhas de Caminhada',        'Sapatilhas confortaveis para caminhadas longas, impermeabilizadas',                       79.99,  35, TRUE, 1, 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop&auto=format&sat=-50'),
+('Sapatilhas Ténis Indoor',        'Calçado específico para ténis indoor com borracha não-raspante',                          64.99,  30, TRUE, 1, 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=500&fit=crop&auto=format'),
+('Sapatilhas de Caminhada',        'Sapatilhas confortáveis para caminhadas longas, impermeabilizadas',                       79.99,  35, TRUE, 1, 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop&auto=format&sat=-50'),
 ('Chuteiras de Futsal Profissão',  'Chuteiras de futsal com sola lisa para parquet e campos artificiais',                    49.99,  55, TRUE, 1, 'https://images.unsplash.com/photo-1614632537190-23e4a4479caf?w=500&h=500&fit=crop&auto=format');
 
 -- ── Mais produtos — Vestuário (id=2) ──────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
-('Hoodie Desporto Premium',        'Sweatshirt com capuz em algodão organico e fecho em ziper',                              44.99,  50, TRUE, 2, 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=500&h=500&fit=crop&auto=format'),
-('Fato de Treino Completo',        'Conjunto de calças e casaco em poliester reciclado, fato coordenado',                   69.99,  30, TRUE, 2, 'https://images.unsplash.com/photo-1611915387288-fd8d2f5f928b?w=500&h=500&fit=crop&auto=format'),
-('Camisola Manga Longa Térmica',   'Camisola de compressao termica para desportos de frio',                                  28.99,  65, TRUE, 2, 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&h=500&fit=crop&auto=format'),
-('Gorro Desportivo Lã Merino',     'Gorro de la merino antivento para desportos de inverno e montanha',                     16.99,  80, TRUE, 2, 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&h=500&fit=crop&auto=format'),
-('Collants Running Femininos',     'Collants de cintura alta com bolso lateral para chave ou cartao',                        32.99,  55, TRUE, 2, 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500&h=500&fit=crop&auto=format&sat=10'),
-('Camisola Futebol Replica',       'Camisola de futebol em tecido respiravel personalizada com numero',                     29.99,  70, TRUE, 2, 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=500&h=500&fit=crop&auto=format');
+('Hoodie Desporto Premium',        'Sweatshirt com capuz em algodão orgânico e fecho em zíper',                              44.99,  50, TRUE, 2, 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=500&h=500&fit=crop&auto=format'),
+('Fato de Treino Completo',        'Conjunto de calças e casaco em poliéster reciclado, fato coordenado',                   69.99,  30, TRUE, 2, 'https://images.unsplash.com/photo-1611915387288-fd8d2f5f928b?w=500&h=500&fit=crop&auto=format'),
+('Camisola Manga Longa Térmica',   'Camisola de compressão térmica para desportos de frio',                                  28.99,  65, TRUE, 2, 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&h=500&fit=crop&auto=format'),
+('Gorro Desportivo de Lã Merino',     'Gorro de lã merino antivento para desportos de inverno e montanha',                     16.99,  80, TRUE, 2, 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&h=500&fit=crop&auto=format'),
+('Collants Running Femininos',     'Collants de cintura alta com bolso lateral para chave ou cartão',                        32.99,  55, TRUE, 2, 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500&h=500&fit=crop&auto=format&sat=10'),
+('Camisola de Futebol Réplica',       'Camisola de futebol em tecido respirável personalizada com número',                     29.99,  70, TRUE, 2, 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=500&h=500&fit=crop&auto=format');
 
 -- ── Mais produtos — Equipamento (id=3) ───────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
 ('Bola de Voleibol Oficial',       'Bola de voleibol tamanho 5 para uso em exterior e interior',                             22.99,  40, TRUE, 3, 'https://images.unsplash.com/photo-1592553366374-12e4dc86e138?w=500&h=500&fit=crop&auto=format'),
 ('Bola de Andebol Competição',     'Bola de andebol tamanho 3 com grip texturado premium',                                  28.99,  25, TRUE, 3, 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&h=500&fit=crop&auto=format&sat=-30'),
 ('Rede de Badminton Portátil',     'Rede de badminton para jardim e praia com postes ajustaveis',                            34.99,  20, TRUE, 3, 'https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=500&h=500&fit=crop&auto=format'),
-('Raquete Squash Carbono',         'Raquete de squash em carbono para nivel intermedio/avancado',                            59.99,  15, TRUE, 3, 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=500&h=500&fit=crop&auto=format&sat=20');
+('Raquete de Squash Carbono',         'Raquete de squash em carbono para nivel intermedio/avancado',                            59.99,  15, TRUE, 3, 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=500&h=500&fit=crop&auto=format&sat=20');
 
 -- ── Mais produtos — Acessórios (id=4) ────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
 ('Cinto de Pesos 10kg',            'Cinto de mergulho com lastros de chumbo de 1kg cada, ajustavel',                         39.99,  20, TRUE, 4, 'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=500&h=500&fit=crop&auto=format'),
 ('Porta-Bidon de Bicicleta',       'Suporte de bidon em aluminio universal para qualquer bicicleta',                          9.99,  90, TRUE, 4, 'https://images.unsplash.com/photo-1557803175-a11f01aed3e3?w=500&h=500&fit=crop&auto=format&sat=-20'),
-('Toalha Microfibra Desporto',     'Toalha de microfibra extra-absorvente 80x160cm, secagem rapida',                         14.99,  75, TRUE, 4, 'https://images.unsplash.com/photo-1581647637898-0ec54ce29f36?w=500&h=500&fit=crop&auto=format'),
-('Suporte Telemóvel Bicicleta',    'Suporte universal para telemóvel compativel com todos os guiodoes',                      12.99,  60, TRUE, 4, 'https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=500&h=500&fit=crop&auto=format');
+('Toalha de Microfibra Desporto',     'Toalha de microfibra extra-absorvente 80x160cm, secagem rapida',                         14.99,  75, TRUE, 4, 'https://images.unsplash.com/photo-1581647637898-0ec54ce29f36?w=500&h=500&fit=crop&auto=format'),
+('Suporte de Telemóvel para Bicicleta',    'Suporte universal para telemóvel compativel com todos os guiodoes',                      12.99,  60, TRUE, 4, 'https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=500&h=500&fit=crop&auto=format');
 
 -- ── Mais produtos — Natação (id=5) ───────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
@@ -57,11 +57,11 @@ INSERT INTO products (name, description, price, stock, active, category_id, imag
 
 -- ── Mais produtos — Ciclismo (id=6) ──────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
-('Bomba de Ar Portátil',           'Bomba de ar manual com manometro compativel com valvulas Presta e Schrader', 19.99,  55, TRUE, 6, 'https://images.unsplash.com/photo-1571731956672-f2b94d7dd0cb?w=500&h=500&fit=crop&auto=format'),
+('Bomba de Ar Portátil',           'Bomba de ar manual com manómetro compativel com valvulas Presta e Schrader', 19.99,  55, TRUE, 6, 'https://images.unsplash.com/photo-1571731956672-f2b94d7dd0cb?w=500&h=500&fit=crop&auto=format'),
 ('Ciclocomputador GPS',            'Computador de bicicleta com GPS, cardio e integração com apps de treino',                79.99,  12, TRUE, 6, 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=500&h=500&fit=crop&auto=format&sat=15'),
 ('Luz LED Dianteira e Traseira',   'Set de luzes de bicicleta LED recarregaveis USB, 500 lumens',                            24.99,  70, TRUE, 6, 'https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=500&h=500&fit=crop&auto=format&sat=-10'),
-('Sela Conforto Gel',              'Sela ergonomica com gel de memoria para maior conforto em longos percursos',              34.99,  25, TRUE, 6, 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=500&fit=crop&auto=format&hue=200'),
-('Camisola Ciclismo Manga Curta',  'Camisola de ciclismo aerodinamica com 3 bolsos traseiros e fecho em ziper',              54.99,  30, TRUE, 6, 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=500&h=500&fit=crop&auto=format&hue=150');
+('Sela de Conforto Gel',              'Sela ergonomica com gel de memoria para maior conforto em longos percursos',              34.99,  25, TRUE, 6, 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=500&fit=crop&auto=format&hue=200'),
+('Camisola de Ciclismo Manga Curta',  'Camisola de ciclismo aerodinamica com 3 bolsos traseiros e fecho em zíper',              54.99,  30, TRUE, 6, 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=500&h=500&fit=crop&auto=format&hue=150');
 
 -- ── Mais produtos — Fitness (id=7) ────────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
@@ -76,14 +76,14 @@ INSERT INTO products (name, description, price, stock, active, category_id, imag
 
 -- ── Produtos — Futebol (id=8) ─────────────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
-('Chuteiras Campo Profissional',   'Chuteiras de futebol em pele sintetica para relva natural, sola TPU',                    89.99,  30, TRUE, 8, 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=500&h=500&fit=crop&auto=format'),
-('Chuteiras Relva Artificial',     'Chuteiras com sola multitravao para relva artificial e pisos sinteticos',                 69.99,  40, TRUE, 8, 'https://images.unsplash.com/photo-1551958219-acbc595b9e4f?w=500&h=500&fit=crop&auto=format'),
-('Luvas Guarda-Redes Pro',         'Luvas de guarda-redes com latex de alta aderencia e protecao dos dedos',                  34.99,  25, TRUE, 8, 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500&h=500&fit=crop&auto=format'),
-('Bola de Treino Futebol',         'Bola de futebol para treino em piso rigido, tamanho 5, duravel',                          17.99,  60, TRUE, 8, 'https://images.unsplash.com/photo-1529516548873-9ce57c8f155e?w=500&h=500&fit=crop&auto=format'),
-('Espinilleiras Carbon Pro',       'Espinilleiras em fibra de carbono com meias de compressao, tamanho M',                   22.99,  50, TRUE, 8, 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500&h=500&fit=crop&auto=format'),
-('Saco Mochila Futebol 40L',       'Mochila para equipamento de futebol com compartimento para bola e calcado', 39.99,  35, TRUE, 8, 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop&auto=format&sat=20'),
-('Baliza Portatil Mini Futebol',   'Baliza dobravel para treino individual ou em mini-campo, 1.2x0.8m',                      44.99,  15, TRUE, 8, 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&h=500&fit=crop&auto=format&sat=-10'),
-('Balizas de Treino Set 6',        'Set de 6 balizas de treino dobravels em plastico resistente',                             19.99,  30, TRUE, 8, 'https://images.unsplash.com/photo-1552667466-07770ae110d0?w=500&h=500&fit=crop&auto=format');
+('Chuteiras de Campo Profissional',   'Chuteiras de futebol em pele sintetica para relva natural, sola TPU',                    89.99,  30, TRUE, 8, 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=500&h=500&fit=crop&auto=format'),
+('Chuteiras de Relva Artificial',     'Chuteiras com sola multitravao para relva artificial e pisos sinteticos',                 69.99,  40, TRUE, 8, 'https://images.unsplash.com/photo-1551958219-acbc595b9e4f?w=500&h=500&fit=crop&auto=format'),
+('Luvas de Guarda-Redes Profissional',         'Luvas de guarda-redes com latex de alta aderencia e protecao dos dedos',                  34.99,  25, TRUE, 8, 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500&h=500&fit=crop&auto=format'),
+('Bola de Treino de Futebol',         'Bola de futebol para treino em piso rigido, tamanho 5, duravel',                          17.99,  60, TRUE, 8, 'https://images.unsplash.com/photo-1529516548873-9ce57c8f155e?w=500&h=500&fit=crop&auto=format'),
+('Espinilleiras de Carbono Pro',       'Espinilleiras em fibra de carbono com meias de compressao, tamanho M',                   22.99,  50, TRUE, 8, 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=500&h=500&fit=crop&auto=format'),
+('Saco Mochila de Futebol 40L',       'Mochila para equipamento de futebol com compartimento para bola e calcado', 39.99,  35, TRUE, 8, 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop&auto=format&sat=20'),
+('Baliza Portatil Mini de Futebol',   'Baliza dobravel para treino individual ou em mini-campo, 1.2x0.8m',                      44.99,  15, TRUE, 8, 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&h=500&fit=crop&auto=format&sat=-10'),
+('Balizas de Treino Set de 6',        'Set de 6 balizas de treino dobravels em plastico resistente',                             19.99,  30, TRUE, 8, 'https://images.unsplash.com/photo-1552667466-07770ae110d0?w=500&h=500&fit=crop&auto=format');
 
 -- ── Produtos — Running (id=9) ─────────────────────────────────────
 INSERT INTO products (name, description, price, stock, active, category_id, image_url) VALUES
