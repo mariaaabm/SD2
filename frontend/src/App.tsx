@@ -3,6 +3,7 @@ import { Footer } from "./components/Footer/Footer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { AdminCategoriesPage } from "./pages/AdminCategoriesPage/AdminCategoriesPage";
+import { AdminCustomersPage } from "./pages/AdminCustomersPage/AdminCustomersPage";
 import { AdminProductsPage } from "./pages/AdminProductsPage/AdminProductsPage";
 import { AdminSalesPage } from "./pages/AdminSalesPage/AdminSalesPage";
 import { AdminStatsPage } from "./pages/AdminStatsPage/AdminStatsPage";
@@ -73,6 +74,7 @@ function Page() {
   if (pathname === "/admin/products") return <RequireAdmin><AdminProductsPage /></RequireAdmin>;
   if (pathname === "/admin/categories") return <RequireAdmin><AdminCategoriesPage /></RequireAdmin>;
   if (pathname === "/admin/sales") return <RequireAdmin><AdminSalesPage /></RequireAdmin>;
+  if (pathname === "/admin/customers") return <RequireAdmin><AdminCustomersPage /></RequireAdmin>;
   if (pathname === "/admin/stats") return <RequireAdmin><AdminStatsPage /></RequireAdmin>;
 
   if (pathname === "/") return <HomePage />;

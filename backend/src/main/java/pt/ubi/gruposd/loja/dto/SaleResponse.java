@@ -3,6 +3,7 @@ package pt.ubi.gruposd.loja.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import pt.ubi.gruposd.loja.model.SaleStatus;
 
 public record SaleResponse(
     Long id,
@@ -10,9 +11,17 @@ public record SaleResponse(
     String customerName,
     LocalDateTime createdAt,
     BigDecimal total,
-    String status,
+    SaleStatus status,
     List<SaleItemResponse> items,
-    InvoiceResponse invoice
+    InvoiceResponse invoice,
+    String shippingName,
+    String shippingPhone,
+    String shippingAddress,
+    String shippingAddress2,
+    String shippingPostalCode,
+    String shippingCity,
+    String shippingRegion,
+    String shippingCountry,
+    String paymentMethod
 ) {
 }
-

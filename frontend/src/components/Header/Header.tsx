@@ -99,6 +99,7 @@ export function Header() {
               <li><a href="/admin/products" onClick={() => setMenuOpen(false)}>Produtos</a></li>
               <li><a href="/admin/categories" onClick={() => setMenuOpen(false)}>Categorias</a></li>
               <li><a href="/admin/sales" onClick={() => setMenuOpen(false)}>Vendas</a></li>
+              <li><a href="/admin/customers" onClick={() => setMenuOpen(false)}>Clientes</a></li>
               <li><a href="/admin/stats" onClick={() => setMenuOpen(false)}>Stats</a></li>
             </>
           )}

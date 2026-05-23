@@ -25,8 +25,8 @@ export function AdminProductsPage() {
   const [saving, setSaving] = useState(false);
 
   async function loadData() {
-    const [productData, categoryData] = await Promise.all([listProducts(), listCategories()]);
-    setProducts(productData);
+    const [productData, categoryData] = await Promise.all([listProducts({ size: 100 }), listCategories()]);
+    setProducts(productData.content);
     setCategories(categoryData);
   }
 

@@ -1,14 +1,19 @@
 package pt.ubi.gruposd.loja.service;
 
-import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ubi.gruposd.loja.dto.PageResponse;
 import pt.ubi.gruposd.loja.dto.ProductRequest;
 import pt.ubi.gruposd.loja.dto.ProductResponse;
 import pt.ubi.gruposd.loja.exception.NotFoundException;
 import pt.ubi.gruposd.loja.model.Category;
 import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
+import pt.ubi.gruposd.loja.repository.ProductSpecifications;
 
 @Service
 public class ProductService {
@@ -21,27 +26,10 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search) {
-        List<Product> products;
-        boolean hasSearch = search != null && !search.isBlank();
-
-        if (hasSearch && categoryId != null) {
-            products = productRepository.searchByCategoryActive(categoryId, search.trim());
-        } else if (hasSearch && Boolean.TRUE.equals(activeOnly)) {
-            products = productRepository.searchActive(search.trim());
-        } else if (hasSearch) {
-            products = productRepository.search(search.trim());
-        } else if (categoryId != null && Boolean.TRUE.equals(activeOnly)) {
-            products = productRepository.findByCategoryIdAndActiveTrue(categoryId);
-        } else if (categoryId != null) {
-            products = productRepository.findByCategoryId(categoryId);
-        } else if (Boolean.TRUE.equals(activeOnly)) {
-            products = productRepository.findByActiveTrue();
-        } else {
-            products = productRepository.findAll();
-        }
-
-        return products.stream().map(this::toResponse).toList();
+    public PageResponse<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(Sort.Direction.ASC, "name"));
+        Specification<Product> spec = ProductSpecifications.withFilters(categoryId, activeOnly, search);
+        return PageResponse.of(productRepository.findAll(spec, pageable).map(this::toResponse));
     }
 
     @Transactional(readOnly = true)

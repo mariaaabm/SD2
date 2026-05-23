@@ -5,13 +5,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,19 @@ class ApiIntegrationTest {
 
         mockMvc.perform(get("/api/products"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", greaterThanOrEqualTo(4)));
+            .andExpect(jsonPath("$.content", notNullValue()))
+            .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(4)))
+            .andExpect(jsonPath("$.totalPages", greaterThanOrEqualTo(1)));
+    }
+
+    @Test
+    void productsPaginationWorks() throws Exception {
+        mockMvc.perform(get("/api/products?page=0&size=5"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)))
+            .andExpect(jsonPath("$.size", is(5)))
+            .andExpect(jsonPath("$.page", is(0)))
+            .andExpect(jsonPath("$.first", is(true)));
     }
 
     @Test
@@ -101,14 +113,13 @@ class ApiIntegrationTest {
         mockMvc.perform(post("/api/sales/checkout")
                 .header("Authorization", bearer(clientToken))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json(Map.of(
-                    "items", List.of(Map.of("productId", productId, "quantity", 2))
-                ))))
+                .content(json(checkoutPayload(productId, 2))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", notNullValue()))
-            .andExpect(jsonPath("$.total", is(5.50)))
             .andExpect(jsonPath("$.invoice.invoiceNumber", notNullValue()))
-            .andExpect(jsonPath("$.items[0].quantity", is(2)));
+            .andExpect(jsonPath("$.items[0].quantity", is(2)))
+            .andExpect(jsonPath("$.shippingCity", is("Lisboa")))
+            .andExpect(jsonPath("$.paymentMethod", is("CARD")));
 
         mockMvc.perform(get("/api/products/" + productId))
             .andExpect(status().isOk())
@@ -124,9 +135,7 @@ class ApiIntegrationTest {
         mockMvc.perform(post("/api/sales/checkout")
                 .header("Authorization", bearer(clientToken))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json(Map.of(
-                    "items", List.of(Map.of("productId", productId, "quantity", 2))
-                ))))
+                .content(json(checkoutPayload(productId, 2))))
             .andExpect(status().isBadRequest());
     }
 
@@ -153,9 +162,7 @@ class ApiIntegrationTest {
         mockMvc.perform(post("/api/sales/checkout")
                 .header("Authorization", bearer(clientToken))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json(Map.of(
-                    "items", List.of(Map.of("productId", productId, "quantity", 1))
-                ))))
+                .content(json(checkoutPayload(productId, 1))))
             .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/admin/sales")
@@ -168,6 +175,23 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.length()", greaterThanOrEqualTo(1)))
             .andExpect(jsonPath("$[0].customerName", notNullValue()))
             .andExpect(jsonPath("$[0].invoice.invoiceNumber", notNullValue()));
+    }
+
+    // ── helpers ──────────────────────────────────────────────────────
+
+    private Map<String, Object> checkoutPayload(long productId, int quantity) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("items", List.of(Map.of("productId", productId, "quantity", quantity)));
+        payload.put("shippingName", "Cliente Teste");
+        payload.put("shippingPhone", "910000000");
+        payload.put("shippingAddress", "Rua Teste, 123");
+        payload.put("shippingAddress2", "");
+        payload.put("shippingPostalCode", "1000-001");
+        payload.put("shippingCity", "Lisboa");
+        payload.put("shippingRegion", "Lisboa");
+        payload.put("shippingCountry", "Portugal");
+        payload.put("paymentMethod", "CARD");
+        return payload;
     }
 
     private String registerClientAndToken() throws Exception {

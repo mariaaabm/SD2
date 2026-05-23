@@ -2,7 +2,6 @@ package pt.ubi.gruposd.loja.controller;
 
 import jakarta.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ubi.gruposd.loja.dto.PageResponse;
 import pt.ubi.gruposd.loja.dto.ProductRequest;
 import pt.ubi.gruposd.loja.dto.ProductResponse;
 import pt.ubi.gruposd.loja.service.ProductService;
@@ -27,12 +27,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> findAll(
+    public PageResponse<ProductResponse> findAll(
         @RequestParam(required = false) Long categoryId,
         @RequestParam(defaultValue = "false") Boolean activeOnly,
-        @RequestParam(required = false) String search
+        @RequestParam(required = false) String search,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size
     ) {
-        return productService.findAll(categoryId, activeOnly, search);
+        return productService.findAll(categoryId, activeOnly, search, page, size);
     }
 
     @GetMapping("/{id}")

@@ -17,7 +17,7 @@ export function HomePage() {
 
   useEffect(() => {
     listCategories().then(setCategories).catch(() => {});
-    listProducts({ activeOnly: true }).then((data) => setFeatured(data.slice(0, 8))).catch(() => {});
+    listProducts({ activeOnly: true, size: 8 }).then((data) => setFeatured(data.content)).catch(() => {});
   }, []);
 
   return (

@@ -17,6 +17,7 @@ import pt.ubi.gruposd.loja.model.Invoice;
 import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.model.Sale;
 import pt.ubi.gruposd.loja.model.SaleItem;
+import pt.ubi.gruposd.loja.model.SaleStatus;
 import pt.ubi.gruposd.loja.repository.InvoiceRepository;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
@@ -53,6 +54,15 @@ public class SaleService {
         Sale sale = new Sale();
         sale.setCustomer(customer);
         sale.setTotal(BigDecimal.ZERO);
+        sale.setShippingName(request.shippingName());
+        sale.setShippingPhone(request.shippingPhone());
+        sale.setShippingAddress(request.shippingAddress());
+        sale.setShippingAddress2(request.shippingAddress2());
+        sale.setShippingPostalCode(request.shippingPostalCode());
+        sale.setShippingCity(request.shippingCity());
+        sale.setShippingRegion(request.shippingRegion());
+        sale.setShippingCountry(request.shippingCountry());
+        sale.setPaymentMethod(request.paymentMethod());
         Sale savedSale = saleRepository.save(sale);
 
         BigDecimal total = BigDecimal.ZERO;
@@ -87,6 +97,14 @@ public class SaleService {
         Invoice invoice = invoiceService.createForSale(savedSale);
 
         return toResponse(savedSale, saleItems, invoice);
+    }
+
+    @Transactional
+    public SaleResponse updateStatus(Long saleId, SaleStatus status) {
+        Sale sale = saleRepository.findById(saleId)
+            .orElseThrow(() -> new NotFoundException("Venda nao encontrada."));
+        sale.setStatus(status);
+        return toResponse(sale, saleItemRepository.findBySaleId(sale.getId()), findInvoice(sale));
     }
 
     @Transactional(readOnly = true)
@@ -132,7 +150,16 @@ public class SaleService {
             sale.getTotal(),
             sale.getStatus(),
             itemResponses,
-            invoiceResponse
+            invoiceResponse,
+            sale.getShippingName(),
+            sale.getShippingPhone(),
+            sale.getShippingAddress(),
+            sale.getShippingAddress2(),
+            sale.getShippingPostalCode(),
+            sale.getShippingCity(),
+            sale.getShippingRegion(),
+            sale.getShippingCountry(),
+            sale.getPaymentMethod()
         );
     }
 

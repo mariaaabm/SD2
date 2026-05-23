@@ -12,10 +12,22 @@ export type Product = {
   imageUrl?: string;
 };
 
+export type PageResponse<T> = {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+};
+
 export type ListProductsParams = {
   categoryId?: number;
   activeOnly?: boolean;
   search?: string;
+  page?: number;
+  size?: number;
 };
 
 export type ProductRequest = {
@@ -28,8 +40,8 @@ export type ProductRequest = {
   imageUrl?: string;
 };
 
-export async function listProducts(params: ListProductsParams = {}) {
-  const response = await apiClient.get<Product[]>("/products", { params });
+export async function listProducts(params: ListProductsParams = {}): Promise<PageResponse<Product>> {
+  const response = await apiClient.get<PageResponse<Product>>("/products", { params });
   return response.data;
 }
 
