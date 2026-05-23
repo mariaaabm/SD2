@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { register } from "../../services/auth.service";
+import { Logo } from "../../components/Logo/Logo";
 import type { AxiosError } from "axios";
 
 type ApiError = { messages: string[] };
@@ -47,6 +48,7 @@ export function RegisterPage() {
     <section className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className="auth-form__brand">
+          <Logo size={40} />
           Sport<span style={{ color: "var(--orange)" }}>Flow</span>
         </div>
         <h1>Criar conta</h1>

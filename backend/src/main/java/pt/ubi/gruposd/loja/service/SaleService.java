@@ -30,19 +30,22 @@ public class SaleService {
     private final ProductRepository productRepository;
     private final InvoiceRepository invoiceRepository;
     private final InvoiceService invoiceService;
+    private final EmailService emailService;
 
     public SaleService(
         SaleRepository saleRepository,
         SaleItemRepository saleItemRepository,
         ProductRepository productRepository,
         InvoiceRepository invoiceRepository,
-        InvoiceService invoiceService
+        InvoiceService invoiceService,
+        EmailService emailService
     ) {
         this.saleRepository = saleRepository;
         this.saleItemRepository = saleItemRepository;
         this.productRepository = productRepository;
         this.invoiceRepository = invoiceRepository;
         this.invoiceService = invoiceService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -96,7 +99,9 @@ public class SaleService {
         saleItemRepository.saveAll(saleItems);
         Invoice invoice = invoiceService.createForSale(savedSale);
 
-        return toResponse(savedSale, saleItems, invoice);
+        SaleResponse response = toResponse(savedSale, saleItems, invoice);
+        emailService.sendOrderConfirmation(customer.getEmail(), customer.getName(), response);
+        return response;
     }
 
     @Transactional

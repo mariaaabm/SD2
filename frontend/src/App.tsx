@@ -2,6 +2,8 @@ import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
+import { WishlistPage } from "./pages/WishlistPage/WishlistPage";
 import { AdminCategoriesPage } from "./pages/AdminCategoriesPage/AdminCategoriesPage";
 import { AdminCustomersPage } from "./pages/AdminCustomersPage/AdminCustomersPage";
 import { AdminProductsPage } from "./pages/AdminProductsPage/AdminProductsPage";
@@ -51,6 +53,10 @@ function Page() {
 
   if (pathname === "/profile") {
     return <RequireAuth><ProfilePage /></RequireAuth>;
+  }
+
+  if (pathname === "/wishlist") {
+    return <RequireAuth><WishlistPage /></RequireAuth>;
   }
 
   if (pathname.startsWith("/orders/") && pathname.endsWith("/invoice")) {
@@ -139,11 +145,13 @@ export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Header />
-        <main className="app-main">
-          <Page />
-        </main>
-        <Footer />
+        <WishlistProvider>
+          <Header />
+          <main className="app-main">
+            <Page />
+          </main>
+          <Footer />
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );

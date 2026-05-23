@@ -86,23 +86,23 @@ cd "$ROOT/backend"
 # Corrigir line endings Windows (CRLF -> LF) para funcionar no WSL
 sed -i 's/\r//' mvnw
 chmod +x mvnw
-bash mvnw spring-boot:run \
+bash mvnw spring-boot:run -q \
   -Dspring-boot.run.profiles=dev \
-  -Dspring-boot.run.jvmArguments="-Xms256m -Xmx512m" \
+  -Dmaven.test.skip=true \
+  -Dspring-boot.run.jvmArguments="-Xms256m -Xmx512m -XX:TieredStopAtLevel=1 -noverify" \
   > "$BACKEND_LOG" 2>&1 &
 echo $! > "$BACKEND_PID_FILE"
 
 # ── Aguardar backend (máx 5 min) ─────────────────────────────
-echo "[2/3] A aguardar backend (maximo 5 minutos)..."
-echo "      (primeira execucao pode demorar — Maven descarrega dependencias)"
+echo "[2/3] A aguardar backend (maximo 2 minutos)..."
 READY=false
-for i in $(seq 1 150); do
+for i in $(seq 1 60); do
   sleep 2
   if curl -sf http://localhost:8080/actuator/health 2>/dev/null | grep -q '"UP"'; then
     READY=true
     break
   fi
-  if [ $((i % 15)) -eq 0 ]; then
+  if [ $((i % 10)) -eq 0 ]; then
     echo "  Decorridos $((i * 2))s..."
   fi
   # Parar se o processo morreu

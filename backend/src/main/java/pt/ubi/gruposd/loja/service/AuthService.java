@@ -39,7 +39,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public LoginResult register(RegisterRequest request) {
         if (customerRepository.existsByEmailIgnoreCase(request.email())) {
             throw new ConflictException("Ja existe uma conta com esse email.");
         }
@@ -51,17 +51,19 @@ public class AuthService {
         customer.setRole(UserRole.CLIENT);
 
         Customer saved = customerRepository.save(customer);
-        return new AuthResponse(jwtService.generateToken(saved), toResponse(saved));
+        AuthResponse auth = new AuthResponse(jwtService.generateToken(saved), toResponse(saved));
+        return new LoginResult(auth, saved);
     }
 
     @Transactional(readOnly = true)
-    public AuthResponse login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password())
         );
 
         Customer customer = ((CustomerUserDetails) authentication.getPrincipal()).customer();
-        return new AuthResponse(jwtService.generateToken(customer), toResponse(customer));
+        AuthResponse auth = new AuthResponse(jwtService.generateToken(customer), toResponse(customer));
+        return new LoginResult(auth, customer);
     }
 
     public CustomerResponse me(CustomerUserDetails userDetails) {
@@ -96,4 +98,6 @@ public class AuthService {
             customer.getRole()
         );
     }
+
+    public record LoginResult(AuthResponse auth, Customer customer) {}
 }

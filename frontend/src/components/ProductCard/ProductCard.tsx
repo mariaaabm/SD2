@@ -1,3 +1,4 @@
+import { useWishlist } from "../../contexts/WishlistContext";
 import type { Product } from "../../services/product.service";
 import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
 
@@ -8,6 +9,8 @@ type ProductCardProps = {
 
 export function ProductCard({ product, onAdd }: ProductCardProps) {
   const isAvailable = product.active && product.stock > 0;
+  const { toggle, isWishlisted } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
 
   return (
     <article className="product-card">
@@ -44,6 +47,15 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
             </span>
           </div>
         )}
+
+        <button
+          className={`btn-wishlist${wishlisted ? " btn-wishlist--active" : ""}`}
+          type="button"
+          title={wishlisted ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          onClick={(e) => { e.preventDefault(); toggle(product.id); }}
+        >
+          {wishlisted ? "♥" : "♡"}
+        </button>
       </a>
 
       <div className="product-card__body">

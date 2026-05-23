@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pt.ubi.gruposd.loja.dto.AuthResponse;
 import pt.ubi.gruposd.loja.dto.RegisterRequest;
+import pt.ubi.gruposd.loja.service.AuthService.LoginResult;
 import pt.ubi.gruposd.loja.dto.UpdateProfileRequest;
 import pt.ubi.gruposd.loja.exception.ConflictException;
 import pt.ubi.gruposd.loja.exception.UnauthorizedException;
@@ -61,11 +61,11 @@ class AuthServiceTest {
         when(customerRepository.save(any(Customer.class))).thenReturn(customer);
         when(jwtService.generateToken(customer)).thenReturn("jwt-token-abc");
 
-        AuthResponse result = authService.register(request);
+        LoginResult result = authService.register(request);
 
-        assertThat(result.token()).isEqualTo("jwt-token-abc");
-        assertThat(result.customer().email()).isEqualTo("joao@teste.pt");
-        assertThat(result.customer().role()).isEqualTo(UserRole.CLIENT);
+        assertThat(result.auth().token()).isEqualTo("jwt-token-abc");
+        assertThat(result.auth().customer().email()).isEqualTo("joao@teste.pt");
+        assertThat(result.auth().customer().role()).isEqualTo(UserRole.CLIENT);
     }
 
     @Test

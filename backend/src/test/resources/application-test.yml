@@ -16,6 +16,7 @@ app:
   security:
     jwt-secret: test-secret-key-test-secret-key-test-secret-key
     jwt-expiration-minutes: 120
+    refresh-expiration-days: 7
 
 logging:
   level:

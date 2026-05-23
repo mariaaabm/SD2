@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import { listCategories, type Category } from "../../services/category.service";
 import { Logo } from "../Logo/Logo";
+import { useWishlist } from "../../contexts/WishlistContext";
 
 function navigate(path: string) {
   window.history.pushState({}, "", path);
@@ -12,6 +13,7 @@ function navigate(path: string) {
 export function Header() {
   const { customer, isAuthenticated, logout } = useAuth();
   const { items } = useCart();
+  const { wishlistIds } = useWishlist();
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,6 +71,11 @@ export function Header() {
               <a href="/login">Entrar</a>
               <a href="/register">Registar</a>
             </>
+          )}
+          {isAuthenticated && (
+            <a className="btn-cart" href="/wishlist" title="Favoritos">
+              ♡ {wishlistIds.length > 0 && <span className="cart-badge">{wishlistIds.length}</span>}
+            </a>
           )}
           <a className="btn-cart" href="/cart">
             Carrinho {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

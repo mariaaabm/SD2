@@ -40,6 +40,7 @@ class SaleServiceTest {
     @Mock private ProductRepository productRepository;
     @Mock private InvoiceRepository invoiceRepository;
     @Mock private InvoiceService invoiceService;
+    @Mock private EmailService emailService;
 
     private SaleService saleService;
     private Customer customer;
@@ -49,7 +50,7 @@ class SaleServiceTest {
     @BeforeEach
     void setUp() {
         saleService = new SaleService(
-            saleRepository, saleItemRepository, productRepository, invoiceRepository, invoiceService
+            saleRepository, saleItemRepository, productRepository, invoiceRepository, invoiceService, emailService
         );
 
         Category category = new Category();
