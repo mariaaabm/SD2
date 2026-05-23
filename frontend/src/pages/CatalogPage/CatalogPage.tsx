@@ -68,6 +68,15 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
     navigate(`/catalog${params.toString() ? `?${params}` : ""}`);
   }
 
+  function clearSearch() {
+    setPage(0);
+    setSearchQuery("");
+    setActiveSearch("");
+    const params = new URLSearchParams();
+    if (selectedCategoryId) params.set("categoryId", String(selectedCategoryId));
+    navigate(`/catalog${params.toString() ? `?${params}` : ""}`);
+  }
+
   function selectCategory(id: number | undefined) {
     setPage(0);
     setSelectedCategoryId(id);
@@ -93,6 +102,8 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
     ? `Resultados para "${activeSearch}"`
     : selectedCategoryName ?? "Todos os produtos";
 
+  const hasFilters = !!activeSearch || selectedCategoryId !== undefined;
+
   return (
     <section className="catalog-page">
       <div className="catalog-toolbar">
@@ -109,6 +120,17 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          {searchQuery && (
+            <button
+              type="button"
+              className="search-clear-btn"
+              onClick={clearSearch}
+              title="Limpar pesquisa"
+              aria-label="Limpar pesquisa"
+            >
+              ✕
+            </button>
+          )}
           <button type="submit">Ir</button>
         </form>
       </div>
@@ -136,11 +158,23 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
       {loading ? (
         <div className="status-message">A carregar produtos…</div>
       ) : products.length === 0 ? (
-        <div className="status-message">
-          Nenhum produto encontrado.{" "}
-          <button className="link-button" onClick={clearFilters}>
-            Limpar filtros
-          </button>
+        <div className="empty-results">
+          <div className="empty-results__icon">🔍</div>
+          <h2 className="empty-results__title">
+            {activeSearch
+              ? `Nenhum resultado para "${activeSearch}"`
+              : "Nenhum produto nesta categoria"}
+          </h2>
+          <p className="empty-results__desc">
+            {activeSearch
+              ? "Experimenta outros termos de pesquisa ou navega pelas categorias."
+              : "Esta categoria não tem produtos disponíveis de momento."}
+          </p>
+          {hasFilters && (
+            <button className="empty-results__clear" onClick={clearFilters}>
+              ✕ Limpar filtros
+            </button>
+          )}
         </div>
       ) : (
         <>

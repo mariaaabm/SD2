@@ -61,6 +61,9 @@ button, input, select, textarea { font: inherit; }
 }
 
 .site-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: Montserrat, sans-serif;
   font-weight: 900;
   font-size: 22px;
@@ -591,6 +594,72 @@ button, input, select, textarea { font: inherit; }
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
+}
+
+.search-clear-btn {
+  height: 36px;
+  padding: 0 10px;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  font-size: 12px;
+  font-weight: 400;
+  flex-shrink: 0;
+  border-radius: 0;
+  transition: color .15s;
+}
+
+.search-clear-btn:hover:not(:disabled) {
+  background: transparent !important;
+  color: var(--error) !important;
+}
+
+/* ── Empty Results ────────────────────────────────────────────── */
+.empty-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.empty-results__icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.empty-results__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.empty-results__desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 340px;
+  line-height: 1.6;
+}
+
+.empty-results__clear {
+  margin-top: 8px;
+  height: 38px;
+  padding: 0 20px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.empty-results__clear:hover:not(:disabled) {
+  background: var(--error);
+  color: #fff;
+  border-color: var(--error);
 }
 
 /* ── Pagination ───────────────────────────────────────────────── */
@@ -1468,6 +1537,10 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 }
 
 .auth-form__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-family: Montserrat, sans-serif;
   font-size: 22px;
   font-weight: 900;
@@ -1498,12 +1571,19 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 }
 
 .auth-form input {
+  display: block;
+  width: 100%;
+  height: auto;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 11px 14px;
   font-size: 15px;
   transition: border-color .2s, box-shadow .2s;
   background: var(--bg);
+  pointer-events: auto;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .auth-form input:focus {

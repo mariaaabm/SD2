@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import { listCategories, type Category } from "../../services/category.service";
+import { Logo } from "../Logo/Logo";
 
 function navigate(path: string) {
   window.history.pushState({}, "", path);
@@ -40,6 +41,7 @@ export function Header() {
     <header className="site-header">
       <div className="site-header__top">
         <a className="site-header__logo" href="/">
+          <Logo size={30} />
           Sport<span>Flow</span>
         </a>
 
