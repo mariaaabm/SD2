@@ -1240,6 +1240,189 @@ button:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
   color: var(--blue);
 }
 
+/* Fatura PT — emitente / adquirente */
+.invoice-doc-id {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.invoice-doc-id strong { color: var(--blue); margin-right: 6px; }
+
+.invoice-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.invoice-party {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: grid;
+  gap: 4px;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.invoice-party__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.invoice-party strong { font-size: 15px; }
+
+.invoice-party__contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.invoice-party small {
+  color: var(--text-light);
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+/* Fatura PT — linhas detalhadas (com IVA) */
+.invoice-lines--detailed .invoice-line {
+  grid-template-columns: 1.8fr 60px 130px 80px 110px 120px;
+  font-size: 13.5px;
+}
+
+/* Fatura PT — resumo de IVA */
+.invoice-vat-summary {
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  background: var(--bg);
+}
+
+.invoice-vat-summary__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.invoice-vat-summary table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.invoice-vat-summary th,
+.invoice-vat-summary td {
+  text-align: right;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.invoice-vat-summary th:first-child,
+.invoice-vat-summary td:first-child { text-align: left; }
+.invoice-vat-summary th {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.invoice-vat-summary tr:last-child td { border-bottom: none; }
+
+/* Fatura PT — bloco de totais */
+.invoice-totals {
+  margin-left: auto;
+  min-width: 320px;
+  display: grid;
+  gap: 6px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.invoice-totals__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.invoice-totals__row--grand {
+  border-top: 1.5px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.invoice-totals__row--grand strong {
+  font-family: Montserrat, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--blue);
+}
+
+/* Fatura PT — rodape (pagamento + entrega + nota legal) */
+.invoice-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.invoice-footer-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: grid;
+  gap: 4px;
+  font-size: 13.5px;
+}
+
+.invoice-footer-block span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.invoice-footer-block strong { font-size: 15px; }
+.invoice-footer-block small { color: var(--text-light); font-size: 12px; }
+
+.invoice-legal {
+  border-top: 1.5px solid var(--border);
+  padding-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  display: grid;
+  gap: 4px;
+}
+
+.invoice-legal__hash { font-family: ui-monospace, SFMono-Regular, monospace; }
+
+.invoice-legal__cert {
+  font-style: italic;
+  color: var(--text-light);
+}
+
+@media (max-width: 720px) {
+  .invoice-parties,
+  .invoice-footer-grid { grid-template-columns: 1fr; }
+  .invoice-lines--detailed .invoice-line {
+    grid-template-columns: 1.6fr 50px 100px;
+  }
+  .invoice-lines--detailed .invoice-line > :nth-child(4),
+  .invoice-lines--detailed .invoice-line > :nth-child(5) { display: none; }
+  .invoice-totals { min-width: unset; width: 100%; }
+}
+
 /* ── Stats ────────────────────────────────────────────────────── */
 .stats-grid {
   display: grid;

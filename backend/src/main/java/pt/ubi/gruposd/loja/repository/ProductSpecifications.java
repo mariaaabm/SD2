@@ -22,10 +22,12 @@ public class ProductSpecifications {
             }
 
             if (search != null && !search.isBlank()) {
-                String pattern = "%" + search.toLowerCase() + "%";
+                // A colacao utf8mb4_0900_ai_ci aplicada em V10 torna o LIKE
+                // insensivel a maiusculas/minusculas e a acentos.
+                String pattern = "%" + search.trim() + "%";
                 predicates.add(cb.or(
-                    cb.like(cb.lower(root.get("name")), pattern),
-                    cb.like(cb.lower(root.get("description")), pattern)
+                    cb.like(root.get("name"), pattern),
+                    cb.like(root.get("description"), pattern)
                 ));
             }
 

@@ -54,6 +54,20 @@ export function Header() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          {query && (
+            <button
+              type="button"
+              className="search-clear-btn"
+              onClick={() => {
+                setQuery("");
+                navigate("/catalog");
+              }}
+              title="Limpar pesquisa"
+              aria-label="Limpar pesquisa"
+            >
+              ✕
+            </button>
+          )}
           <button type="submit">Pesquisar</button>
         </form>
 

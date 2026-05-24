@@ -1,5 +1,8 @@
 package pt.ubi.gruposd.loja.service;
 
+import java.util.Comparator;
+import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,10 +30,55 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(Sort.Direction.ASC, "name"));
+        int safeSize = Math.min(size, 100);
+        Pageable pageable = PageRequest.of(page, safeSize, Sort.by(Sort.Direction.ASC, "name"));
         Specification<Product> spec = ProductSpecifications.withFilters(categoryId, activeOnly, search);
-        return PageResponse.of(productRepository.findAll(spec, pageable).map(this::toResponse));
+        Page<Product> exact = productRepository.findAll(spec, pageable);
+
+        // Caminho rapido: ha resultados exatos (LIKE + colacao AI/CI) ou nao ha termo de pesquisa.
+        if (!exact.isEmpty() || search == null || search.isBlank()) {
+            return PageResponse.of(exact.map(this::toResponse));
+        }
+
+        // Fuzzy fallback: encontra produtos parecidos por distancia de Levenshtein.
+        return fuzzyFallback(categoryId, activeOnly, search, page, safeSize);
     }
+
+    private PageResponse<ProductResponse> fuzzyFallback(
+        Long categoryId, Boolean activeOnly, String search, int page, int size
+    ) {
+        String query = FuzzyMatcher.normalize(search.trim());
+        Specification<Product> baseSpec = ProductSpecifications.withFilters(categoryId, activeOnly, null);
+
+        List<Product> candidates = productRepository.findAll(baseSpec);
+        List<ScoredProduct> scored = candidates.stream()
+            .map(p -> {
+                double score = Math.max(
+                    FuzzyMatcher.bestScore(p.getName(), query),
+                    FuzzyMatcher.bestScore(p.getDescription(), query)
+                );
+                return new ScoredProduct(p, score);
+            })
+            .filter(sp -> sp.score >= FuzzyMatcher.MIN_RATIO)
+            .sorted(Comparator.comparingDouble((ScoredProduct sp) -> sp.score).reversed()
+                .thenComparing(sp -> sp.product.getName()))
+            .toList();
+
+        int total = scored.size();
+        int totalPages = total == 0 ? 0 : (int) Math.ceil(total / (double) size);
+        int from = Math.min(page * size, total);
+        int to = Math.min(from + size, total);
+        List<ProductResponse> content = scored.subList(from, to).stream()
+            .map(sp -> toResponse(sp.product))
+            .toList();
+
+        return new PageResponse<>(
+            content, page, size, total, totalPages,
+            page == 0, totalPages == 0 || page >= totalPages - 1
+        );
+    }
+
+    private record ScoredProduct(Product product, double score) {}
 
     @Transactional(readOnly = true)
     public ProductResponse findById(Long id) {

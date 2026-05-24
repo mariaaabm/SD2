@@ -31,6 +31,15 @@ public class Sale {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
+    @Column(name = "subtotal_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal = BigDecimal.ZERO;
+
+    @Column(name = "vat_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal vatAmount = BigDecimal.ZERO;
+
+    @Column(name = "vat_rate", nullable = false, precision = 5, scale = 2)
+    private BigDecimal vatRate = new BigDecimal("23.00");
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private SaleStatus status = SaleStatus.CONFIRMED;
@@ -73,6 +82,15 @@ public class Sale {
 
     public BigDecimal getTotal() { return total; }
     public void setTotal(BigDecimal total) { this.total = total; }
+
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+
+    public BigDecimal getVatAmount() { return vatAmount; }
+    public void setVatAmount(BigDecimal vatAmount) { this.vatAmount = vatAmount; }
+
+    public BigDecimal getVatRate() { return vatRate; }
+    public void setVatRate(BigDecimal vatRate) { this.vatRate = vatRate; }
 
     public SaleStatus getStatus() { return status; }
     public void setStatus(SaleStatus status) { this.status = status; }

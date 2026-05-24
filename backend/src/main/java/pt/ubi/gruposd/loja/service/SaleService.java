@@ -1,6 +1,7 @@
 package pt.ubi.gruposd.loja.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ import pt.ubi.gruposd.loja.repository.SaleRepository;
 
 @Service
 public class SaleService {
+    static final BigDecimal DEFAULT_VAT_RATE = new BigDecimal("23.00");
+    private static final BigDecimal HUNDRED = new BigDecimal("100");
+
     private final SaleRepository saleRepository;
     private final SaleItemRepository saleItemRepository;
     private final ProductRepository productRepository;
@@ -57,6 +61,9 @@ public class SaleService {
         Sale sale = new Sale();
         sale.setCustomer(customer);
         sale.setTotal(BigDecimal.ZERO);
+        sale.setSubtotal(BigDecimal.ZERO);
+        sale.setVatAmount(BigDecimal.ZERO);
+        sale.setVatRate(DEFAULT_VAT_RATE);
         sale.setShippingName(request.shippingName());
         sale.setShippingPhone(request.shippingPhone());
         sale.setShippingAddress(request.shippingAddress());
@@ -95,7 +102,14 @@ public class SaleService {
             saleItems.add(saleItem);
         }
 
+        BigDecimal subtotal = netFromGross(total, DEFAULT_VAT_RATE);
+        BigDecimal vatAmount = total.subtract(subtotal);
+
         savedSale.setTotal(total);
+        savedSale.setSubtotal(subtotal);
+        savedSale.setVatAmount(vatAmount);
+        savedSale.setVatRate(DEFAULT_VAT_RATE);
+
         saleItemRepository.saveAll(saleItems);
         Invoice invoice = invoiceService.createForSale(savedSale);
 
@@ -141,17 +155,29 @@ public class SaleService {
     }
 
     private SaleResponse toResponse(Sale sale, List<SaleItem> saleItems, Invoice invoice) {
+        BigDecimal vatRate = sale.getVatRate() == null ? DEFAULT_VAT_RATE : sale.getVatRate();
+
         List<SaleItemResponse> itemResponses = saleItems.stream()
-            .map(this::toItemResponse)
+            .map(item -> toItemResponse(item, vatRate))
             .toList();
 
-        InvoiceResponse invoiceResponse = invoice == null ? null : invoiceService.toResponse(invoice);
+        InvoiceResponse invoiceResponse = invoice == null
+            ? null
+            : invoiceService.toResponse(invoice, sale, itemResponses);
+
+        BigDecimal subtotal = sale.getSubtotal() != null ? sale.getSubtotal()
+            : netFromGross(sale.getTotal(), vatRate);
+        BigDecimal vatAmount = sale.getVatAmount() != null ? sale.getVatAmount()
+            : sale.getTotal().subtract(subtotal);
 
         return new SaleResponse(
             sale.getId(),
             sale.getCustomer().getId(),
             sale.getCustomer().getName(),
             sale.getCreatedAt(),
+            subtotal,
+            vatAmount,
+            vatRate,
             sale.getTotal(),
             sale.getStatus(),
             itemResponses,
@@ -172,16 +198,33 @@ public class SaleService {
         return invoiceRepository.findBySaleId(sale.getId()).orElse(null);
     }
 
-    private SaleItemResponse toItemResponse(SaleItem item) {
-        BigDecimal subtotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+    private SaleItemResponse toItemResponse(SaleItem item, BigDecimal vatRate) {
+        BigDecimal unitGross = item.getUnitPrice();
+        BigDecimal unitNet = netFromGross(unitGross, vatRate);
+        BigDecimal subtotalGross = unitGross.multiply(BigDecimal.valueOf(item.getQuantity()));
+        BigDecimal subtotalNet = unitNet.multiply(BigDecimal.valueOf(item.getQuantity()))
+            .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal vatAmount = subtotalGross.subtract(subtotalNet);
 
         return new SaleItemResponse(
             item.getId(),
             item.getProduct().getId(),
             item.getProduct().getName(),
             item.getQuantity(),
-            item.getUnitPrice(),
-            subtotal
+            unitGross,
+            unitNet,
+            vatRate,
+            vatAmount,
+            subtotalNet,
+            subtotalGross
         );
+    }
+
+    static BigDecimal netFromGross(BigDecimal gross, BigDecimal vatRatePercent) {
+        if (gross == null) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal divisor = BigDecimal.ONE.add(vatRatePercent.divide(HUNDRED, 6, RoundingMode.HALF_UP));
+        return gross.divide(divisor, 2, RoundingMode.HALF_UP);
     }
 }

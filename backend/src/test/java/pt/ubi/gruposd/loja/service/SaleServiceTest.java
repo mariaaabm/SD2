@@ -3,6 +3,7 @@ package pt.ubi.gruposd.loja.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,10 +96,15 @@ class SaleServiceTest {
         invoice.setId(1L);
         invoice.setInvoiceNumber("INV-001");
         when(invoiceService.createForSale(savedSale)).thenReturn(invoice);
-        when(invoiceService.toResponse(invoice)).thenReturn(
-            new pt.ubi.gruposd.loja.dto.InvoiceResponse(1L, 100L, "INV-001", null)
+        when(invoiceService.toResponse(any(Invoice.class), any(Sale.class), anyList())).thenReturn(
+            new pt.ubi.gruposd.loja.dto.InvoiceResponse(
+                1L, 100L, "Fatura", "SP", "INV-001", "Fatura INV-001",
+                null, null, null, null, null,
+                List.of(), List.of(),
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                "EUR", "CARD", null, null, null, null, null
+            )
         );
-        when(saleItemRepository.findBySaleId(100L)).thenReturn(List.of());
 
         SaleResponse result = saleService.checkout(customer, validRequest);
 

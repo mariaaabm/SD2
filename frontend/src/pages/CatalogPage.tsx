@@ -33,6 +33,14 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
     listCategories().then(setCategories).catch(() => {});
   }, []);
 
+  // Sincroniza com a URL (ex.: nova pesquisa feita a partir do header)
+  useEffect(() => {
+    setSearchQuery(initialSearch ?? "");
+    setActiveSearch(initialSearch ?? "");
+    setSelectedCategoryId(initialCategoryId);
+    setPage(0);
+  }, [initialSearch, initialCategoryId]);
+
   useEffect(() => {
     let ignore = false;
     setLoading(true);

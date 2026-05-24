@@ -1,7 +1,7 @@
 @echo off
 echo A arrancar SportFlow...
 
-start "Backend" cmd /k "cd backend && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=demo"
+start "Backend" cmd /k "cd backend && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev"
 
 timeout /t 20 /nobreak >nul
 

@@ -2,16 +2,15 @@ package pt.ubi.gruposd.loja.dto;
 
 import java.math.BigDecimal;
 
-public record SaleItemResponse(
-    Long id,
+public record InvoiceLine(
     Long productId,
-    String productName,
+    String description,
     Integer quantity,
-    BigDecimal unitPrice,
     BigDecimal unitPriceNet,
+    BigDecimal unitPriceGross,
     BigDecimal vatRate,
+    BigDecimal lineNet,
     BigDecimal vatAmount,
-    BigDecimal subtotalNet,
-    BigDecimal subtotal
+    BigDecimal lineGross
 ) {
 }

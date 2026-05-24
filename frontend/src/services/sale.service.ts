@@ -24,14 +24,82 @@ export type SaleItem = {
   productName: string;
   quantity: number;
   unitPrice: number;
+  unitPriceNet: number;
+  vatRate: number;
+  vatAmount: number;
+  subtotalNet: number;
   subtotal: number;
+};
+
+export type InvoiceIssuer = {
+  companyName: string;
+  taxId: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  email: string;
+  phone: string;
+  website: string;
+  shareCapital: string;
+  registryInfo: string;
+};
+
+export type InvoiceParty = {
+  name: string | null;
+  taxId: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  address2: string | null;
+  postalCode: string | null;
+  city: string | null;
+  region: string | null;
+  country: string | null;
+};
+
+export type InvoiceLine = {
+  productId: number;
+  description: string;
+  quantity: number;
+  unitPriceNet: number;
+  unitPriceGross: number;
+  vatRate: number;
+  lineNet: number;
+  vatAmount: number;
+  lineGross: number;
+};
+
+export type InvoiceVatSummary = {
+  rate: number;
+  base: number;
+  amount: number;
 };
 
 export type Invoice = {
   id: number;
   saleId: number;
+  documentType: string;
+  series: string;
   invoiceNumber: string;
+  formattedNumber: string;
   issuedAt: string;
+  operationDate: string | null;
+  issuer: InvoiceIssuer;
+  customer: InvoiceParty;
+  shippingTo: InvoiceParty;
+  lines: InvoiceLine[];
+  vatSummary: InvoiceVatSummary[];
+  subtotal: number;
+  vatTotal: number;
+  total: number;
+  currency: string;
+  paymentMethod: string | null;
+  paymentTerms: string | null;
+  notes: string | null;
+  atcud: string | null;
+  hashControl: string | null;
+  certificationText: string | null;
 };
 
 export type SaleStatus = "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
@@ -41,6 +109,9 @@ export type Sale = {
   customerId: number;
   customerName: string;
   createdAt: string;
+  subtotal: number;
+  vatAmount: number;
+  vatRate: number;
   total: number;
   status: SaleStatus;
   items: SaleItem[];

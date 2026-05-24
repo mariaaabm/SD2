@@ -25,8 +25,14 @@ public class Invoice {
     @Column(nullable = false, unique = true)
     private String invoiceNumber;
 
+    @Column(nullable = false, length = 20)
+    private String series = "SP";
+
     @Column(nullable = false)
     private LocalDateTime issuedAt = LocalDateTime.now();
+
+    @Column(name = "operation_date")
+    private LocalDateTime operationDate;
 
     public Long getId() {
         return id;
@@ -52,11 +58,27 @@ public class Invoice {
         this.invoiceNumber = invoiceNumber;
     }
 
+    public String getSeries() {
+        return series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
+    }
+
     public LocalDateTime getIssuedAt() {
         return issuedAt;
     }
 
     public void setIssuedAt(LocalDateTime issuedAt) {
         this.issuedAt = issuedAt;
+    }
+
+    public LocalDateTime getOperationDate() {
+        return operationDate;
+    }
+
+    public void setOperationDate(LocalDateTime operationDate) {
+        this.operationDate = operationDate;
     }
 }
