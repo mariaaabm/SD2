@@ -27,6 +27,7 @@ import pt.ubi.gruposd.loja.model.Category;
 import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
 
+// Testa o ProductService isoladamente com Mockito a simular o repositório e o CategoryService, cobre a listagem paginada com cap de 100 itens por página, a consulta por id, a criação, a atualização e a remoção, e verifica os caminhos de exceção quando o produto não existe.
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
 class ProductServiceTest {
@@ -59,6 +60,7 @@ class ProductServiceTest {
         product.setCategory(category);
     }
 
+    // Confirma que findAll devolve um PageResponse com o conteúdo mapeado para DTO e os metadados de paginação corretos.
     @Test
     void findAll_returnsPagedResponse() {
         Page<Product> page = new PageImpl<>(List.of(product));
@@ -72,6 +74,7 @@ class ProductServiceTest {
         assertThat(result.page()).isEqualTo(0);
     }
 
+    // Garante que pedir uma página com size superior a 100 é silenciosamente limitado a 100 itens, protegendo a API contra pedidos abusivos que pudessem sobrecarregar o servidor.
     @Test
     void findAll_capsPageSizeAt100() {
         Page<Product> page = new PageImpl<>(List.of());
@@ -84,6 +87,7 @@ class ProductServiceTest {
         assertThat(captor.getValue().getPageSize()).isEqualTo(100);
     }
 
+    // Verifica que findById devolve o produto pelo id mapeado para o DTO incluindo o nome da categoria associada.
     @Test
     void findById_returnsProduct_whenExists() {
         when(productRepository.findById(10L)).thenReturn(Optional.of(product));
@@ -95,6 +99,7 @@ class ProductServiceTest {
         assertThat(result.categoryName()).isEqualTo("Calçado");
     }
 
+    // Garante que tentar consultar um produto inexistente lança NotFoundException em vez de devolver null.
     @Test
     void findById_throwsNotFoundException_whenNotFound() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
@@ -103,6 +108,7 @@ class ProductServiceTest {
             .isInstanceOf(NotFoundException.class);
     }
 
+    // Confirma que criar um produto resolve a categoria, persiste a entidade e devolve a resposta já com o id atribuído pela base de dados.
     @Test
     void create_savesProductAndReturnsResponse() {
         ProductRequest request = new ProductRequest(
@@ -123,6 +129,7 @@ class ProductServiceTest {
         assertThat(result.categoryId()).isEqualTo(1L);
     }
 
+    // Verifica que update altera nome, preço e stock do produto existente e devolve a resposta com os valores novos.
     @Test
     void update_modifiesExistingProduct() {
         ProductRequest request = new ProductRequest(
@@ -138,6 +145,7 @@ class ProductServiceTest {
         assertThat(result.stock()).isEqualTo(5);
     }
 
+    // Confirma que delete sobre um produto existente chama efetivamente o repositório para o remover da base de dados.
     @Test
     void delete_callsRepositoryDelete() {
         when(productRepository.findById(10L)).thenReturn(Optional.of(product));
@@ -147,6 +155,7 @@ class ProductServiceTest {
         verify(productRepository).delete(product);
     }
 
+    // Garante que tentar apagar um produto inexistente lança NotFoundException antes de qualquer alteração à base de dados.
     @Test
     void delete_throwsNotFoundException_whenProductNotFound() {
         when(productRepository.findById(999L)).thenReturn(Optional.empty());

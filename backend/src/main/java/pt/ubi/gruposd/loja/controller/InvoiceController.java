@@ -9,6 +9,7 @@ import pt.ubi.gruposd.loja.dto.InvoiceResponse;
 import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.service.InvoiceService;
 
+// Expõe um endpoint para consultar uma fatura específica pelo id, e o serviço subjacente verifica que a fatura pertence ao cliente autenticado antes de a devolver para impedir que utilizadores vejam faturas de outros.
 @RestController
 @RequestMapping("/api/invoices")
 public class InvoiceController {

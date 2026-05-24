@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useCart } from "../../contexts/CartContext";
-import { checkout, type Sale } from "../../services/sale.service";
+import { useAuth } from "../contexts/AuthContext";
+import { useCart } from "../contexts/CartContext";
+import { checkout, type Sale } from "../services/sale.service";
 import type { AxiosError } from "axios";
 
 type ApiError = { messages: string[] };
@@ -43,6 +43,7 @@ function formatExpiry(raw: string) {
   return digits.length > 2 ? digits.slice(0, 2) + "/" + digits.slice(2) : digits;
 }
 
+// Página de checkout com formulários de contacto, morada de entrega e método de pagamento, valida todos os campos obrigatórios antes de submeter, chama o endpoint /sales/checkout e ao receber resposta limpa o carrinho e mostra a confirmação da encomenda com ligação para a fatura.
 export function CheckoutPage() {
   const { customer, isAuthenticated } = useAuth();
   const { items, total, clear } = useCart();

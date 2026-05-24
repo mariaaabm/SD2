@@ -1,3 +1,5 @@
+// Encapsula as chamadas aos endpoints de autenticação do backend, expõe os tipos partilhados com o servidor para o resto do frontend e oferece helpers para persistir e ler os dados básicos do utilizador em localStorage para manter o estado entre reloads.
+
 import { apiClient } from "../api/apiClient";
 
 export type UserRole = "ADMIN" | "CLIENT";

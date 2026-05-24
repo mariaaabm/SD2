@@ -1,3 +1,4 @@
+<!-- Define o build Maven do backend SportFlow, herda do spring-boot-starter-parent para apanhar versões compatíveis de todas as dependências do Spring, e declara as bibliotecas usadas pelo projeto como Spring Web, Data JPA, Security, JWT, MySQL, H2 para testes, Flyway para migrações, Mail para envio de emails e Springdoc para o Swagger UI. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">

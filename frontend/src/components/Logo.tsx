@@ -3,6 +3,7 @@ type LogoProps = {
   className?: string;
 };
 
+// Renderiza o logo SVG da SportFlow inline para não depender de pedidos extras ao servidor, com tamanho configurável e marcado como aria-hidden porque o texto adjacente já comunica a marca a leitores de ecrã.
 export function Logo({ size = 36, className }: LogoProps) {
   return (
     <svg

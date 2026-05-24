@@ -11,6 +11,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// Disponibiliza o estado de autenticação a toda a árvore de componentes via Context API, inicializa o utilizador a partir de localStorage para que a sessão sobreviva a reloads e revalida o token contra o backend através de /api/auth/me, limpando a sessão local se o servidor recusar.
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(() => getStoredCustomer());
   const [isLoading, setIsLoading] = useState(() => getStoredCustomer() !== null);
@@ -60,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// Hook que devolve o contexto de autenticação atual e lança erro se for usado fora do AuthProvider, ajudando a detetar cedo problemas de montagem da árvore de componentes.
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth deve ser usado dentro de AuthProvider.");

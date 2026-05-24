@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { updateProfile } from "../../services/auth.service";
+import { useAuth } from "../contexts/AuthContext";
+import { updateProfile } from "../services/auth.service";
 import type { AxiosError } from "axios";
 
 type ApiError = { messages: string[] };
 
+// Página do perfil do cliente onde é possível mudar o nome e a password, exige sempre a password atual antes de aceitar uma nova para evitar que tokens roubados consigam alterar credenciais, e atualiza o AuthContext com os dados novos quando o backend confirma.
 export function ProfilePage() {
   const { customer, applyAuth } = useAuth();
 

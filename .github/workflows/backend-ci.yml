@@ -1,3 +1,4 @@
+# Pipeline de integração contínua do backend que corre em pushes e pull requests que alterem a pasta backend, prepara um Java 21 com cache de Maven, executa os testes unitários com Mockito e depois os testes de integração com H2 in-memory, e por fim empacota o JAR para garantir que o build de produção também funciona.
 name: Backend CI
 
 on:

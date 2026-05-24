@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSale, type Sale } from "../../services/sale.service";
+import { getSale, type Sale } from "../services/sale.service";
 
 type InvoicePageProps = { saleId: number };
 
@@ -18,6 +18,7 @@ function ratePct(rate: number) {
   return `${rate.toFixed(rate % 1 === 0 ? 0 : 2)}%`;
 }
 
+// Página da fatura que carrega os dados da venda pelo id, monta o documento completo no formato PT com emitente, adquirente, linhas com IVA discriminado e totais, e oferece um botão para imprimir ou guardar como PDF via diálogo nativo do browser.
 export function InvoicePage({ saleId }: InvoicePageProps) {
   const [sale, setSale] = useState<Sale | null>(null);
   const [error, setError] = useState<string | null>(null);

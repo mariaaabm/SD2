@@ -3,6 +3,7 @@ package pt.ubi.gruposd.loja.dto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
+// Envelope genérico de paginação devolvido pela API que isola o frontend dos detalhes do Page do Spring Data, expõe apenas os campos relevantes e oferece um factory of() para converter facilmente de uma Page Spring.
 public record PageResponse<T>(
     List<T> content,
     int page,

@@ -10,6 +10,7 @@ import pt.ubi.gruposd.loja.dto.StatsProductResponse;
 import pt.ubi.gruposd.loja.dto.StatsRevenueResponse;
 import pt.ubi.gruposd.loja.service.StatsService;
 
+// Expõe os endpoints de estatísticas usados pelo dashboard de administração, devolve os produtos mais e menos vendidos, os melhores clientes e a receita agregada por período, todos restritos a utilizadores com role ADMIN.
 @RestController
 @RequestMapping("/api/stats")
 public class StatsController {

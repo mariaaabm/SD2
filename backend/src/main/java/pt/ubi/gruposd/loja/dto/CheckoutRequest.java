@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+// Payload do endpoint de checkout que junta os itens do carrinho com os dados completos de morada de envio e o método de pagamento, com validações nos campos obrigatórios para evitar encomendas malformadas.
 public record CheckoutRequest(
     @NotEmpty List<@Valid CartItemRequest> items,
     @NotBlank @Size(max = 150) String shippingName,

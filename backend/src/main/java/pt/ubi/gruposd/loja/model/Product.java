@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 
+// Entidade JPA que mapeia a tabela products e representa um artigo do catálogo da loja com preço já com IVA incluído, stock disponível, flag de ativo para esconder sem remover, e ligação à categoria a que pertence.
 @Entity
 @Table(name = "products")
 public class Product {

@@ -19,6 +19,7 @@ import pt.ubi.gruposd.loja.repository.CustomerRepository;
 import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.security.JwtService;
 
+// Gere o registo e autenticação dos clientes, encripta as passwords com BCrypt através do PasswordEncoder, valida credenciais via AuthenticationManager e devolve o JWT que o frontend usa para chamar a API protegida.
 @Service
 public class AuthService {
     private final CustomerRepository customerRepository;
@@ -38,6 +39,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    // Regista um novo cliente garantindo que o email ainda não existe, normaliza o email para minúsculas, encripta a password e devolve já um token JWT pronto para o frontend usar.
     @Transactional
     public LoginResult register(RegisterRequest request) {
         if (customerRepository.existsByEmailIgnoreCase(request.email())) {
@@ -55,6 +57,7 @@ public class AuthService {
         return new LoginResult(auth, saved);
     }
 
+    // Autentica o cliente delegando ao AuthenticationManager do Spring Security, e quando as credenciais batem certo emite um JWT novo e devolve também o objeto Customer carregado da base de dados.
     @Transactional(readOnly = true)
     public LoginResult login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -70,6 +73,7 @@ public class AuthService {
         return toResponse(userDetails.customer());
     }
 
+    // Atualiza o perfil do cliente autenticado, permite mudar o nome e opcionalmente a password, e exige a password atual correta antes de aceitar uma nova password para evitar que tokens roubados consigam alterar credenciais.
     @Transactional
     public CustomerResponse updateProfile(Customer customer, UpdateProfileRequest request) {
         Customer managed = customerRepository.findById(customer.getId())

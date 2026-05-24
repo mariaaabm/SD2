@@ -1,13 +1,14 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useCart } from "../../contexts/CartContext";
-import { useWishlist } from "../../contexts/WishlistContext";
-import { getProduct, type Product } from "../../services/product.service";
-import { getProductReviews, upsertReview, type ProductRatingResponse } from "../../services/review.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { useAuth } from "../contexts/AuthContext";
+import { useCart } from "../contexts/CartContext";
+import { useWishlist } from "../contexts/WishlistContext";
+import { getProduct, type Product } from "../services/product.service";
+import { getProductReviews, upsertReview, type ProductRatingResponse } from "../services/review.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../utils/categoryUtils";
 
 type ProductPageProps = { productId: number };
 
+// Página de detalhe de um produto que mostra imagem, descrição, preço e stock, expõe os botões de adicionar ao carrinho e favoritar, e abaixo o bloco de reviews com média de estrelas, lista de comentários e formulário para o cliente autenticado deixar a sua avaliação.
 export function ProductPage({ productId }: ProductPageProps) {
   const { addProduct } = useCart();
   const { isAuthenticated } = useAuth();

@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+// Entidade JPA que mapeia a tabela customers e representa um utilizador da loja com email único, password encriptada em BCrypt, role CLIENT ou ADMIN e data de criação automática usada na ordenação da listagem de clientes.
 @Entity
 @Table(name = "customers")
 public class Customer {

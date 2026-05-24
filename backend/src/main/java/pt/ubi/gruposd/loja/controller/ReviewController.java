@@ -14,6 +14,7 @@ import pt.ubi.gruposd.loja.dto.ReviewResponse;
 import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.service.ReviewService;
 
+// Expõe os endpoints de reviews aninhados em /api/products/{id}/reviews, permite ler o resumo de avaliação de qualquer produto sem autenticação e usa PUT na coleção para fazer upsert de uma única review por cliente.
 @RestController
 @RequestMapping("/api/products/{productId}/reviews")
 public class ReviewController {

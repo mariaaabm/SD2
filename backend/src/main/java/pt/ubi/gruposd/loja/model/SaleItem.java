@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 
+// Entidade JPA que mapeia a tabela sale_items e representa uma linha da encomenda, fixa o preço unitário no momento da venda para que alterações posteriores ao catálogo não afetem encomendas antigas.
 @Entity
 @Table(name = "sale_items")
 public class SaleItem {

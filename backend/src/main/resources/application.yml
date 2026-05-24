@@ -1,3 +1,4 @@
+# Configuração base da aplicação que define a ligação à base de dados, o Hibernate em modo validate para confiar nas migrações Flyway, o servidor SMTP, o endpoint health do Actuator e os parâmetros de segurança como o segredo JWT e os tempos de expiração, todos parametrizáveis por variáveis de ambiente para diferentes ambientes de execução.
 spring:
   application:
     name: sports-store

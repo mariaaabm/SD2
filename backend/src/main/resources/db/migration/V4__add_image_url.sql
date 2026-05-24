@@ -1,3 +1,4 @@
+-- Acrescenta a coluna image_url aos produtos e preenche cada produto existente com uma imagem do Unsplash para o catálogo deixar de mostrar placeholders genéricos no frontend.
 ALTER TABLE products ADD COLUMN image_url VARCHAR(500);
 
 UPDATE products SET image_url = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop&auto=format' WHERE name = 'Sapatilhas Running Pro';

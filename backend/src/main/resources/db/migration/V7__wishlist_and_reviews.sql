@@ -1,3 +1,5 @@
+-- Cria as tabelas que suportam as funcionalidades sociais da loja, wishlist_items para os favoritos do cliente com unicidade por (cliente, produto), e reviews para as avaliações de produtos com nota de 1 a 5 e comentário opcional.
+
 -- Wishlist (favoritos por utilizador)
 CREATE TABLE wishlist_items (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,

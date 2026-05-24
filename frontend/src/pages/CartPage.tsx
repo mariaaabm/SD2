@@ -1,6 +1,7 @@
-import { useCart } from "../../contexts/CartContext";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { useCart } from "../contexts/CartContext";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../utils/categoryUtils";
 
+// Página do carrinho que lista os produtos adicionados a partir do CartContext, permite atualizar quantidades ou remover itens, e mostra um resumo com o total e o botão para avançar para o checkout.
 export function CartPage() {
   const { items, total, updateQuantity, removeProduct } = useCart();
 

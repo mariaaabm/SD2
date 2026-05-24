@@ -1,3 +1,4 @@
+-- Insere os dados iniciais mínimos para a loja arrancar pronta a usar, com as categorias base, alguns produtos exemplo e a conta de administrador admin@store.test cuja password é password encriptada em BCrypt.
 INSERT INTO categories (name, description) VALUES
 ('Calçado', 'Sapatilhas, chuteiras e calçado desportivo'),
 ('Vestuário', 'Camisolas, calções e vestuário desportivo'),

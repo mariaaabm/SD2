@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST ao catálogo de produtos e expõe os tipos partilhados Product, PageResponse, ListProductsParams e ProductRequest para que páginas e componentes consumam a API com type-safety.
+
 import { apiClient } from "../api/apiClient";
 
 export type Product = {

@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { register } from "../../services/auth.service";
-import { Logo } from "../../components/Logo/Logo";
+import { useAuth } from "../contexts/AuthContext";
+import { register } from "../services/auth.service";
+import { Logo } from "../components/Logo";
 import type { AxiosError } from "axios";
 
 type ApiError = { messages: string[] };
 
+// Página de registo de novo cliente que recolhe nome, email e password, chama o endpoint /auth/register e em caso de sucesso já entra automaticamente com a conta nova porque o backend devolve o JWT na mesma resposta.
 export function RegisterPage() {
   const { applyAuth } = useAuth();
   const [name, setName] = useState("");

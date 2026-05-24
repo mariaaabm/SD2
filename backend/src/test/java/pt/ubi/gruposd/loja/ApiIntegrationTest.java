@@ -23,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+// Testes de integração ponta-a-ponta que sobem o ApplicationContext completo do Spring Boot com perfil test e H2 in-memory, e exercitam a API real através do MockMvc cobrindo catálogo público, paginação, registo e login, autorização por role, checkout com criação de fatura e abate de stock, e regras de acesso a endpoints administrativos.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -33,6 +34,7 @@ class ApiIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Garante que os endpoints públicos do catálogo, /api/categories e /api/products, respondem com 200 OK e devolvem os dados do seed sem precisar de autenticação.
     @Test
     void catalogEndpointsArePublic() throws Exception {
         mockMvc.perform(get("/api/categories"))
@@ -46,6 +48,7 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.totalPages", greaterThanOrEqualTo(1)));
     }
 
+    // Verifica que os parâmetros page e size do endpoint de produtos são respeitados e que a resposta inclui os metadados de paginação esperados.
     @Test
     void productsPaginationWorks() throws Exception {
         mockMvc.perform(get("/api/products?page=0&size=5"))
@@ -56,6 +59,7 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.first", is(true)));
     }
 
+    // Confirma o fluxo completo de registo seguido de login, garantindo que ambos os endpoints devolvem um JWT válido e os dados do cliente associado.
     @Test
     void registerAndLoginReturnJwtToken() throws Exception {
         String email = "cliente" + System.nanoTime() + "@store.test";
@@ -81,6 +85,7 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.token", notNullValue()));
     }
 
+    // Valida a regra de segurança que restringe a criação de produtos a administradores, confirmando que um cliente comum recebe 403 Forbidden e que um admin consegue criar normalmente.
     @Test
     void clientCannotCreateProductButAdminCan() throws Exception {
         String clientToken = registerClientAndToken();
@@ -102,6 +107,7 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.categoryId", is(1)));
     }
 
+    // Testa o fluxo principal de checkout de ponta a ponta, criando um produto novo via admin, fazendo checkout como cliente, e confirmando que a fatura é emitida, os dados de envio e pagamento são guardados e o stock é reduzido na quantidade comprada.
     @Test
     void checkoutCreatesSaleInvoiceAndReducesStock() throws Exception {
         String adminToken = loginAdminAndToken();
@@ -126,6 +132,7 @@ class ApiIntegrationTest {
             .andExpect(jsonPath("$.stock", is(2)));
     }
 
+    // Garante que a API recusa um checkout que peça mais unidades do que existem em stock devolvendo 400 Bad Request, validando a regra também ao nível HTTP e não apenas no service.
     @Test
     void checkoutRejectsInsufficientStock() throws Exception {
         String adminToken = loginAdminAndToken();
@@ -139,6 +146,7 @@ class ApiIntegrationTest {
             .andExpect(status().isBadRequest());
     }
 
+    // Confirma que os endpoints de estatísticas estão protegidos por role ADMIN, devolvendo 403 a clientes comuns e 200 a administradores.
     @Test
     void statsRequireAdminRole() throws Exception {
         String clientToken = registerClientAndToken();
@@ -153,6 +161,7 @@ class ApiIntegrationTest {
             .andExpect(status().isOk());
     }
 
+    // Garante que apenas administradores conseguem listar todas as vendas via /api/admin/sales, enquanto clientes recebem 403 mesmo que tenham feito uma compra que conste na lista.
     @Test
     void adminCanListAllSalesButClientCannot() throws Exception {
         String adminToken = loginAdminAndToken();

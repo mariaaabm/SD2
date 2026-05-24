@@ -11,6 +11,7 @@ import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.model.Review;
 import pt.ubi.gruposd.loja.repository.ReviewRepository;
 
+// Gere as avaliações e comentários dos clientes a produtos, calcula a média de estrelas e o número total de reviews por produto, e garante que cada cliente só tem uma review por produto fazendo update em vez de inserir uma segunda.
 @Service
 public class ReviewService {
 
@@ -36,6 +37,7 @@ public class ReviewService {
         return new ProductRatingResponse(avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0, count, reviews);
     }
 
+    // Cria uma review nova ou atualiza a existente do mesmo cliente para o mesmo produto, evitando duplicados e permitindo que o cliente reveja a sua opinião sem ter de apagar e reescrever.
     @Transactional
     public ReviewResponse createOrUpdate(Customer customer, Long productId, ReviewRequest request) {
         Product product = productService.findEntityById(productId);
@@ -50,11 +52,6 @@ public class ReviewService {
         review.setComment(request.comment());
 
         return toResponse(reviewRepository.save(review));
-    }
-
-    @Transactional(readOnly = true)
-    public boolean hasReviewed(Long customerId, Long productId) {
-        return reviewRepository.existsByCustomerIdAndProductId(customerId, productId);
     }
 
     private ReviewResponse toResponse(Review r) {

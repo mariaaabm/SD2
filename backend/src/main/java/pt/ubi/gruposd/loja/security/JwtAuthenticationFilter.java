@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+// Intercepta cada pedido HTTP, procura o JWT primeiro no header Authorization Bearer e depois no cookie HttpOnly jwt, valida-o e popula o SecurityContext com os detalhes do utilizador para que o resto da aplicação saiba quem está autenticado.
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;

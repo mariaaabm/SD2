@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+// Intercepta as exceções específicas da aplicação e as falhas de validação dos DTOs, converte-as numa resposta JSON consistente com timestamp, status e lista de mensagens, e devolve códigos HTTP apropriados como 404, 409, 400 ou 401 conforme o tipo da exceção lançada.
 @RestControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler(NotFoundException.class)

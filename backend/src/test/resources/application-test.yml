@@ -1,3 +1,4 @@
+# Configuração usada nos testes de integração que substitui o MySQL real por um H2 in-memory em modo MySQL para o ApiIntegrationTest correr sem dependências externas, e fornece um segredo JWT determinístico para os testes serem reprodutíveis.
 spring:
   datasource:
     url: jdbc:h2:mem:sports_store_test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1

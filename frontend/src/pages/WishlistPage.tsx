@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useCart } from "../../contexts/CartContext";
-import { useWishlist } from "../../contexts/WishlistContext";
-import { getWishlist, type WishlistItem } from "../../services/wishlist.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { useCart } from "../contexts/CartContext";
+import { useWishlist } from "../contexts/WishlistContext";
+import { getWishlist, type WishlistItem } from "../services/wishlist.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../utils/categoryUtils";
 
+// Página dedicada aos favoritos do utilizador autenticado, carrega a lista completa via /wishlist, permite remover diretamente ou adicionar ao carrinho a partir da própria página, e mostra um estado vazio com ligação para o catálogo quando a lista está vazia.
 export function WishlistPage() {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);

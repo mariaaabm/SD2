@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Arranca a stack completa via docker-compose, aguarda que o backend fique saudável e valida os principais endpoints públicos como o Swagger, o frontend e o login do admin, devolvendo erro se alguma das verificações falhar para servir como smoke test antes de demos.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST da wishlist do utilizador, expõe um endpoint leve /wishlist/ids para componentes que só precisam de saber quais ids já estão favoritados e o endpoint completo /wishlist para a página dedicada.
+
 import { apiClient } from "../api/apiClient";
 
 export type WishlistItem = {

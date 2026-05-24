@@ -1,3 +1,4 @@
+// Renderiza o rodapé fixo da loja com a marca SportFlow, ligações úteis e o copyright, e aparece em todas as páginas porque o App.tsx monta-o fora do roteamento.
 export function Footer() {
   return (
     <footer className="site-footer">

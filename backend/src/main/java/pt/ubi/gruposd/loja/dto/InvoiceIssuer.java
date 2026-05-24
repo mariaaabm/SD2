@@ -1,5 +1,6 @@
 package pt.ubi.gruposd.loja.dto;
 
+// Dados do emitente da fatura SportFlow com NIF, morada completa, contactos, capital social e registo comercial, e oferece um factory sportFlowDefault que centraliza os valores fixos da empresa.
 public record InvoiceIssuer(
     String companyName,
     String taxId,

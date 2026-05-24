@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Percorre os principais endpoints da API com curl em sequência, fazendo health check, autenticação como admin e cliente, criação de produto, checkout, consulta de fatura e leitura de estatísticas, para validar manualmente que tudo responde como esperado contra uma instância em execução.
 set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8080}"

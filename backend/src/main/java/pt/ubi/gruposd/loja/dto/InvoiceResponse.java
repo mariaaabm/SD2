@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Vista completa da fatura no formato PT que junta emitente, adquirente, morada de entrega, linhas detalhadas com IVA discriminado, resumo de IVA por taxa, totais, método de pagamento e metadados de certificação como ATCUD e hash de controlo.
 public record InvoiceResponse(
     Long id,
     Long saleId,

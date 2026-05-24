@@ -1,26 +1,27 @@
-import { Header } from "./components/Header/Header";
-import { Footer } from "./components/Footer/Footer";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
-import { WishlistPage } from "./pages/WishlistPage/WishlistPage";
-import { AdminCategoriesPage } from "./pages/AdminCategoriesPage/AdminCategoriesPage";
-import { AdminCustomersPage } from "./pages/AdminCustomersPage/AdminCustomersPage";
-import { AdminProductsPage } from "./pages/AdminProductsPage/AdminProductsPage";
-import { AdminSalesPage } from "./pages/AdminSalesPage/AdminSalesPage";
-import { AdminStatsPage } from "./pages/AdminStatsPage/AdminStatsPage";
-import { CartPage } from "./pages/CartPage/CartPage";
-import { CatalogPage } from "./pages/CatalogPage/CatalogPage";
-import { CheckoutPage } from "./pages/CheckoutPage/CheckoutPage";
-import { HomePage } from "./pages/HomePage/HomePage";
-import { InvoicePage } from "./pages/InvoicePage/InvoicePage";
-import { LoginPage } from "./pages/LoginPage/LoginPage";
-import { OrdersPage } from "./pages/OrdersPage/OrdersPage";
-import { ProductPage } from "./pages/ProductPage/ProductPage";
-import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
-import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
+import { WishlistPage } from "./pages/WishlistPage";
+import { AdminCategoriesPage } from "./pages/AdminCategoriesPage";
+import { AdminCustomersPage } from "./pages/AdminCustomersPage";
+import { AdminProductsPage } from "./pages/AdminProductsPage";
+import { AdminSalesPage } from "./pages/AdminSalesPage";
+import { AdminStatsPage } from "./pages/AdminStatsPage";
+import { CartPage } from "./pages/CartPage";
+import { CatalogPage } from "./pages/CatalogPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
+import { HomePage } from "./pages/HomePage";
+import { InvoicePage } from "./pages/InvoicePage";
+import { LoginPage } from "./pages/LoginPage";
+import { OrdersPage } from "./pages/OrdersPage";
+import { ProductPage } from "./pages/ProductPage";
+import { RegisterPage } from "./pages/RegisterPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { type ReactNode, useEffect, useState } from "react";
 
+// Hook minimalista que observa o URL atual via window.location e ouve eventos popstate para forçar re-render da árvore quando o histórico muda, evitando a dependência de bibliotecas como react-router para um SPA tão pequeno.
 function useLocation() {
   const [location, setLocation] = useState({ pathname: window.location.pathname, search: window.location.search });
 
@@ -35,6 +36,7 @@ function useLocation() {
   return location;
 }
 
+// Faz o roteamento manual mapeando o pathname e os query params para o componente da página adequado, protege rotas autenticadas e administrativas com os wrappers RequireAuth e RequireAdmin, e devolve a página 404 quando nenhum caminho corresponde.
 function Page() {
   const { pathname, search } = useLocation();
   const params = new URLSearchParams(search);
@@ -102,6 +104,7 @@ function NotFoundPage() {
   );
 }
 
+// Wrapper que protege uma página exigindo autenticação, mostra uma mensagem de espera enquanto o AuthContext ainda valida o token e redireciona para login se o utilizador não estiver autenticado.
 function RequireAuth({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) return <div className="status-message">A validar sessao...</div>;
@@ -117,6 +120,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return children;
 }
 
+// Wrapper que protege uma página restrita a administradores, exige autenticação primeiro e depois verifica o role do utilizador antes de deixar passar.
 function RequireAdmin({ children }: { children: ReactNode }) {
   const { customer, isAuthenticated, isLoading } = useAuth();
   if (isLoading) return <div className="status-message">A validar sessao...</div>;
@@ -141,6 +145,7 @@ function RequireAdmin({ children }: { children: ReactNode }) {
   return children;
 }
 
+// Componente raiz da aplicação que monta os providers de autenticação, carrinho e wishlist por essa ordem para que cada contexto consiga ler dos contextos pais, e envolve o roteamento entre o Header e o Footer comuns a todas as páginas.
 export default function App() {
   return (
     <AuthProvider>

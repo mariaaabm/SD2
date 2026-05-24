@@ -1,12 +1,13 @@
-import { useWishlist } from "../../contexts/WishlistContext";
-import type { Product } from "../../services/product.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { useWishlist } from "../contexts/WishlistContext";
+import type { Product } from "../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../utils/categoryUtils";
 
 type ProductCardProps = {
   product: Product;
   onAdd?: (product: Product) => void;
 };
 
+// Renderiza a card de um produto no catálogo com imagem, categoria, nome, descrição, preço e stock, mostra um placeholder colorido específico da categoria quando a imagem falha a carregar, e expõe ainda o botão de favorito e o botão de adicionar ao carrinho desativado quando o produto não está disponível.
 export function ProductCard({ product, onAdd }: ProductCardProps) {
   const isAvailable = product.active && product.stock > 0;
   const { toggle, isWishlisted } = useWishlist();

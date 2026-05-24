@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import pt.ubi.gruposd.loja.security.CustomerUserDetailsService;
 import pt.ubi.gruposd.loja.security.JwtAuthenticationFilter;
 
+// Configura o Spring Security para a API, desativa CSRF porque a aplicação é stateless e usa JWT em cookies HttpOnly, declara as regras de autorização por endpoint, regista o filtro de JWT antes do filtro de username e password padrão, e usa BCrypt para encriptar as passwords dos clientes.
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -28,6 +29,7 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
+    // Define a cadeia de filtros de segurança da API, abre endpoints públicos como login, registo, leitura do catálogo e Swagger, exige role ADMIN para escrita de produtos e categorias e para a área de administração, e configura sessões stateless porque a autenticação vive nos JWT.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http

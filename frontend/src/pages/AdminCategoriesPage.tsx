@@ -5,8 +5,9 @@ import {
   listCategories,
   updateCategory,
   type Category
-} from "../../services/category.service";
+} from "../services/category.service";
 
+// Página de administração de categorias com lista, formulário de criação e edição inline, e botão de remover, que consome os endpoints de categoria do backend e atualiza o estado local após cada operação para manter a UI sincronizada.
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Category | null>(null);

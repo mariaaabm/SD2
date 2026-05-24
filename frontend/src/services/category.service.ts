@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST de categorias usadas pelo menu de navegação, pela pesquisa do catálogo e pela área de administração, com tipos partilhados Category e CategoryRequest.
+
 import { apiClient } from "../api/apiClient";
 
 export type Category = {

@@ -11,6 +11,7 @@ import pt.ubi.gruposd.loja.model.Category;
 import pt.ubi.gruposd.loja.repository.CategoryRepository;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
 
+// Trata do CRUD de categorias de produtos, valida que não existem nomes duplicados e bloqueia a remoção de categorias que ainda têm produtos associados para preservar a integridade referencial da base de dados.
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;

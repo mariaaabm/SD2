@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import pt.ubi.gruposd.loja.model.Product;
 
+// Constrói as Specifications JPA que aplicam os filtros dinâmicos da pesquisa de produtos por categoria, por flag de ativo e por termo livre via LIKE, evitando ter de escrever várias variantes do mesmo query no repositório.
 public class ProductSpecifications {
     private ProductSpecifications() {}
 

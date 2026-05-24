@@ -21,6 +21,7 @@ import pt.ubi.gruposd.loja.model.Sale;
 import pt.ubi.gruposd.loja.repository.InvoiceRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 
+// Cria, persiste e devolve as faturas associadas a uma venda confirmada, gera o número sequencial no formato SP{ano}/{id}, calcula a discriminação de IVA a partir do total da venda e monta o DTO completo que a página da fatura precisa de mostrar.
 @Service
 public class InvoiceService {
     private static final String DEFAULT_SERIES = "SP";
@@ -39,6 +40,7 @@ public class InvoiceService {
         this.saleItemRepository = saleItemRepository;
     }
 
+    // Cria e persiste uma fatura nova associada à venda dada, atribui a série padrão SP, gera o número sequencial baseado no ano da venda e no id, e regista a data de emissão e a data da operação para constarem no documento.
     @Transactional
     public Invoice createForSale(Sale sale) {
         Invoice invoice = new Invoice();
@@ -68,6 +70,7 @@ public class InvoiceService {
         return buildResponse(invoice);
     }
 
+    // Monta a resposta completa da fatura agrupando os dados do emitente, do adquirente, das linhas com IVA discriminado, do resumo de IVA por taxa, dos totais e dos metadados de certificação para a página de fatura conseguir renderizar tudo num único pedido.
     public InvoiceResponse toResponse(Invoice invoice, Sale sale, List<SaleItemResponse> items) {
         InvoiceIssuer issuer = InvoiceIssuer.sportFlowDefault();
         InvoiceParty customer = buildCustomerParty(sale);
@@ -206,6 +209,7 @@ public class InvoiceService {
         return "AAAAAAAA-" + invoice.getId();
     }
 
+    // Calcula um hash SHA-256 a partir do número da fatura, data de emissão e total para simular o hash de controlo das faturas certificadas pela AT, e devolve apenas alguns caracteres separados por reticências como acontece em faturas reais.
     private String buildHash(Invoice invoice, BigDecimal total) {
         String payload = invoice.getInvoiceNumber() + "|"
             + (invoice.getIssuedAt() != null ? invoice.getIssuedAt().toString() : "")

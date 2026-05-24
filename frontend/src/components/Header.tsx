@@ -1,15 +1,16 @@
 import { useState, useEffect, type FormEvent } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useCart } from "../../contexts/CartContext";
-import { listCategories, type Category } from "../../services/category.service";
-import { Logo } from "../Logo/Logo";
-import { useWishlist } from "../../contexts/WishlistContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useCart } from "../contexts/CartContext";
+import { listCategories, type Category } from "../services/category.service";
+import { Logo } from "./Logo";
+import { useWishlist } from "../contexts/WishlistContext";
 
 function navigate(path: string) {
   window.history.pushState({}, "", path);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
+// Renderiza o cabeçalho principal da loja com logo, barra de pesquisa global, ações do utilizador (login, perfil, carrinho, favoritos) e o menu de navegação por categorias carregadas do backend, e adapta-se ao role do utilizador mostrando ligações de administração apenas para admins.
 export function Header() {
   const { customer, isAuthenticated, logout } = useAuth();
   const { items } = useCart();
@@ -29,6 +30,7 @@ export function Header() {
     navigate("/");
   }
 
+  // Trata a submissão da barra de pesquisa do cabeçalho, navega para o catálogo com o termo no query string ou para o catálogo limpo se a pesquisa estiver vazia, e fecha o menu mobile para o utilizador ver imediatamente os resultados.
   function handleSearch(e: FormEvent) {
     e.preventDefault();
     if (query.trim()) {

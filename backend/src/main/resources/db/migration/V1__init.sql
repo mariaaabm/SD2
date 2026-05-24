@@ -1,4 +1,4 @@
--- SportFlow — Schema inicial (MySQL 8.0+)
+-- SportFlow — Schema inicial (MySQL 8.0+). Cria as tabelas base do projeto, customers, categories, products, sales, sale_items e invoices, com constraints de chaves estrangeiras e checks de integridade, e adiciona índices nas colunas mais consultadas para acelerar o catálogo e a listagem de encomendas.
 
 CREATE TABLE customers (
     id          BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,

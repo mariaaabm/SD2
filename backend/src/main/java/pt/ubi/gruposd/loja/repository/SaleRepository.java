@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pt.ubi.gruposd.loja.model.Sale;
 
+// Repositório Spring Data JPA para vendas com queries derivadas para listagens ordenadas por data, e queries JPQL agregadas para o ranking de melhores clientes e para a receita acumulada num intervalo de datas usadas pelo StatsService.
 public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Sale> findAllByOrderByCreatedAtDesc();
 

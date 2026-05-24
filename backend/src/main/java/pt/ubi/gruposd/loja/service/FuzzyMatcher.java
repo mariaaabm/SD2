@@ -3,6 +3,7 @@ package pt.ubi.gruposd.loja.service;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
+// Fornece pesquisa aproximada por distância de Levenshtein normalizada, usada como fallback quando a pesquisa exata LIKE não devolve resultados, e assim termos com erros de digitação como "futbol" ou "moshila" ainda encontram "Futebol" e "Mochila".
 public final class FuzzyMatcher {
     private static final Pattern DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
     private static final Pattern NON_WORD = Pattern.compile("[^\\p{L}\\p{N}]+");
@@ -10,13 +11,14 @@ public final class FuzzyMatcher {
 
     private FuzzyMatcher() {}
 
+    // Normaliza a string passando a minúsculas e removendo todos os diacríticos via decomposição Unicode NFD, para que comparações entre "Competição" e "competicao" funcionem de forma consistente.
     public static String normalize(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s, Normalizer.Form.NFD);
         return DIACRITICS.matcher(nfd).replaceAll("").toLowerCase();
     }
 
-    /** Highest similarity (0..1) between any token in {@code text} and the normalized query. */
+    // Calcula a maior similaridade entre o termo de pesquisa e qualquer palavra do texto dado, partindo o texto em tokens por espaços e pontuação e devolvendo o melhor rácio encontrado entre 0 e 1.
     public static double bestScore(String text, String queryNormalized) {
         if (text == null || text.isBlank() || queryNormalized.isBlank()) return 0;
         double best = 0;
@@ -34,6 +36,7 @@ public final class FuzzyMatcher {
         return 1.0 - ((double) levenshtein(a, b) / max);
     }
 
+    // Calcula a distância de Levenshtein entre duas strings usando programação dinâmica com dois vetores em vez de uma matriz completa, o que reduz a memória para O(min(n,m)) e mantém o algoritmo rápido para palavras curtas como nomes de produtos.
     static int levenshtein(String a, String b) {
         int n = a.length(), m = b.length();
         if (n == 0) return m;

@@ -24,6 +24,7 @@ import pt.ubi.gruposd.loja.repository.ProductRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 import pt.ubi.gruposd.loja.repository.SaleRepository;
 
+// Orquestra o checkout completo do cliente desde a validação do carrinho até à criação da fatura, calcula a base tributável e o IVA assumindo que os preços do catálogo já incluem IVA à taxa padrão de 23%, e expõe ainda a listagem e atualização de estado das vendas para clientes e administradores.
 @Service
 public class SaleService {
     static final BigDecimal DEFAULT_VAT_RATE = new BigDecimal("23.00");
@@ -52,6 +53,7 @@ public class SaleService {
         this.emailService = emailService;
     }
 
+    // Processa o checkout do cliente, valida o stock disponível para cada item, abate as quantidades vendidas, grava a venda com a discriminação de IVA e gera a fatura associada, e dispara ainda um email assíncrono de confirmação para o endereço do cliente autenticado.
     @Transactional
     public SaleResponse checkout(Customer customer, CheckoutRequest request) {
         if (request.items().isEmpty()) {
@@ -220,6 +222,7 @@ public class SaleService {
         );
     }
 
+    // Calcula o valor sem IVA a partir de um valor com IVA incluído, dividindo pelo fator (1 + taxa/100) e arredondando a duas casas decimais com HALF_UP para garantir consistência com a forma como as faturas reais apresentam os totais.
     static BigDecimal netFromGross(BigDecimal gross, BigDecimal vatRatePercent) {
         if (gross == null) {
             return BigDecimal.ZERO;

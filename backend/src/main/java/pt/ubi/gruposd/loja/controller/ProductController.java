@@ -17,6 +17,7 @@ import pt.ubi.gruposd.loja.dto.ProductRequest;
 import pt.ubi.gruposd.loja.dto.ProductResponse;
 import pt.ubi.gruposd.loja.service.ProductService;
 
+// Expõe os endpoints do catálogo de produtos com pesquisa, filtro por categoria e paginação para o frontend, e ainda os endpoints de criação, atualização e remoção restritos a administradores pela configuração de segurança.
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {

@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+// Entidade JPA que mapeia a tabela categories e agrupa os produtos da loja em famílias como Calçado, Vestuário ou Equipamento, com nome único usado também na navegação do frontend.
 @Entity
 @Table(name = "categories")
 public class Category {

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { ProductCard } from "../../components/ProductCard/ProductCard";
-import { useCart } from "../../contexts/CartContext";
-import { listCategories, type Category } from "../../services/category.service";
-import { listProducts, type Product } from "../../services/product.service";
+import { ProductCard } from "../components/ProductCard";
+import { useCart } from "../contexts/CartContext";
+import { listCategories, type Category } from "../services/category.service";
+import { listProducts, type Product } from "../services/product.service";
 
 const PAGE_SIZE = 20;
 
@@ -16,6 +16,7 @@ function navigate(path: string) {
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
+// Página do catálogo com filtros por categoria, pesquisa e paginação, sincroniza o estado com a URL para que pesquisas e filtros sejam partilháveis e funcionem com o botão voltar do browser, e mostra um estado vazio amigável quando a pesquisa não devolve nada.
 export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPageProps) {
   const { addProduct } = useCart();
   const [categories, setCategories] = useState<Category[]>([]);

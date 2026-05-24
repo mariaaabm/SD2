@@ -8,6 +8,7 @@ import pt.ubi.gruposd.loja.dto.CustomerResponse;
 import pt.ubi.gruposd.loja.model.Customer;
 import pt.ubi.gruposd.loja.repository.CustomerRepository;
 
+// Expõe os endpoints administrativos de gestão de clientes, restritos a utilizadores com role ADMIN pela configuração de segurança, e devolve a lista ordenada por data de criação descendente para mostrar primeiro os clientes mais recentes.
 @RestController
 @RequestMapping("/api/admin/customers")
 public class AdminCustomerController {

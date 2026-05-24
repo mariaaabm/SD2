@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
+// Entidade JPA que mapeia a tabela refresh_tokens e guarda os tokens UUID emitidos para prolongar a sessão sem voltar a pedir credenciais, com data de expiração para invalidação automática.
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {

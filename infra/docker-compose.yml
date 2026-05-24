@@ -1,3 +1,4 @@
+# Variante alternativa do docker-compose que expõe as portas 8080 do backend, 5173 do frontend e 3306 do MySQL diretamente para a máquina host, usada pelos scripts validate-stack.sh e validate-demo-api.sh para correr smoke tests contra a API a partir de fora dos containers.
 services:
   db:
     image: mysql:8.0

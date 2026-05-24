@@ -1,3 +1,5 @@
+// Centraliza os mapas de cor, fundo, ícone e imagem associados a cada categoria de produto e expõe getters com fallback razoável, evitando duplicar estes valores em cada componente que mostra produtos como o ProductCard, a CartPage ou a HomePage.
+
 export const CATEGORY_COLORS: Record<string, string> = {
   "Calcado":    "#003ec7",
   "Vestuario":  "#fe6b00",

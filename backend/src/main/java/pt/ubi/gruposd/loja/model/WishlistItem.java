@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+// Entidade JPA que mapeia a tabela wishlist_items e representa um produto favoritado por um cliente, com unicidade por par cliente e produto para evitar duplicados quando o utilizador carrega no coração mais que uma vez.
 @Entity
 @Table(name = "wishlist_items")
 public class WishlistItem {

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { useCart } from "../../contexts/CartContext";
-import { listCategories, type Category } from "../../services/category.service";
-import { listProducts, type Product } from "../../services/product.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon, getCategoryImage } from "../../utils/categoryUtils";
-import { ProductCard } from "../../components/ProductCard/ProductCard";
+import { useCart } from "../contexts/CartContext";
+import { listCategories, type Category } from "../services/category.service";
+import { listProducts, type Product } from "../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon, getCategoryImage } from "../utils/categoryUtils";
+import { ProductCard } from "../components/ProductCard";
 
 function navigate(path: string) {
   window.history.pushState({}, "", path);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
+// Página inicial da loja com hero, lista de categorias em destaque e os produtos mais recentes do catálogo, e permite adicionar produtos diretamente ao carrinho sem ter de abrir o detalhe.
 export function HomePage() {
   const { addProduct } = useCart();
   const [categories, setCategories] = useState<Category[]>([]);

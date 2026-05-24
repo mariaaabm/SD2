@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pt.ubi.gruposd.loja.repository.CustomerRepository;
 
+// Carrega o Customer da base de dados pelo email para o Spring Security e devolve-o embrulhado em CustomerUserDetails para que o resto do pipeline de autenticação consiga aceder à entidade completa, não apenas ao username.
 @Service
 public class CustomerUserDetailsService implements UserDetailsService {
     private final CustomerRepository customerRepository;

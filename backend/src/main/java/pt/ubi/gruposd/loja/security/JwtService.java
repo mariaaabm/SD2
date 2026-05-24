@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import pt.ubi.gruposd.loja.model.Customer;
 
+// Gera e valida os JWT que autenticam pedidos à API, assina-os com uma chave HMAC-SHA256 derivada do segredo configurado em application.yml e inclui claims com o id do cliente e o role para o servidor não ter de consultar a base de dados em cada pedido.
 @Service
 public class JwtService {
     private final SecretKey secretKey;

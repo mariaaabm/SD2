@@ -21,6 +21,7 @@ import pt.ubi.gruposd.loja.model.Category;
 import pt.ubi.gruposd.loja.repository.CategoryRepository;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
 
+// Testa o CategoryService de forma isolada com Mockito a simular os repositórios de categorias e produtos, cobrindo as operações CRUD, a deteção de nomes duplicados ao criar e atualizar e o bloqueio da remoção de categorias que ainda têm produtos associados.
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
 
@@ -43,6 +44,7 @@ class CategoryServiceTest {
         category.setDescription("Todo o calçado desportivo");
     }
 
+    // Confirma que findAll devolve todas as categorias mapeadas para o DTO CategoryResponse, mantendo o nome inalterado.
     @Test
     void findAll_returnsAllCategories() {
         when(categoryRepository.findAll()).thenReturn(List.of(category));
@@ -53,6 +55,7 @@ class CategoryServiceTest {
         assertThat(result.get(0).name()).isEqualTo("Calçado");
     }
 
+    // Verifica que findById devolve corretamente a categoria existente identificada pelo id.
     @Test
     void findById_returnsCategory_whenExists() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
@@ -63,6 +66,7 @@ class CategoryServiceTest {
         assertThat(result.name()).isEqualTo("Calçado");
     }
 
+    // Garante que tentar consultar uma categoria inexistente lança NotFoundException em vez de devolver null.
     @Test
     void findById_throwsNotFoundException_whenNotFound() {
         when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
@@ -71,6 +75,7 @@ class CategoryServiceTest {
             .isInstanceOf(NotFoundException.class);
     }
 
+    // Confirma que criar uma categoria com nome único é gravado e devolve a resposta já com o id atribuído pela base de dados.
     @Test
     void create_savesCategory_whenNameIsUnique() {
         CategoryRequest request = new CategoryRequest("Vestuário", "Roupas desportivas");
@@ -88,6 +93,7 @@ class CategoryServiceTest {
         verify(categoryRepository).save(any(Category.class));
     }
 
+    // Garante que criar uma categoria com nome já existente é rejeitado com ConflictException, mantendo a unicidade do campo nome na tabela.
     @Test
     void create_throwsConflict_whenNameAlreadyExists() {
         CategoryRequest request = new CategoryRequest("Calçado", null);
@@ -97,6 +103,7 @@ class CategoryServiceTest {
             .isInstanceOf(ConflictException.class);
     }
 
+    // Verifica que tentar renomear uma categoria para um nome já usado por outra é rejeitado com ConflictException.
     @Test
     void update_throwsConflict_whenNewNameConflicts() {
         CategoryRequest request = new CategoryRequest("Vestuário", null);
@@ -107,6 +114,7 @@ class CategoryServiceTest {
             .isInstanceOf(ConflictException.class);
     }
 
+    // Garante que atualizar uma categoria mantendo o mesmo nome é permitido, evitando que o check de unicidade falsamente bloqueie alterações apenas à descrição.
     @Test
     void update_allowsSameName_forSameCategory() {
         CategoryRequest request = new CategoryRequest("Calçado", "Desc atualizada");
@@ -118,6 +126,7 @@ class CategoryServiceTest {
         assertThat(result.description()).isEqualTo("Desc atualizada");
     }
 
+    // Confirma que apagar uma categoria sem produtos associados chama efetivamente o delete do repositório.
     @Test
     void delete_removesCategory_whenNoProductsAssociated() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
@@ -128,6 +137,7 @@ class CategoryServiceTest {
         verify(categoryRepository).delete(category);
     }
 
+    // Verifica que apagar uma categoria que ainda tem produtos é bloqueado com ConflictException, protegendo a integridade referencial da tabela products.
     @Test
     void delete_throwsConflict_whenCategoryHasProducts() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));

@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+// Entidade JPA que mapeia a tabela reviews e guarda a avaliação que um cliente atribui a um produto com nota de 1 a 5 estrelas e comentário opcional, com unicidade por par cliente e produto garantida na base de dados.
 @Entity
 @Table(name = "reviews")
 public class Review {

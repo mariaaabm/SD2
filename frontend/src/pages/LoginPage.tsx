@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { login } from "../../services/auth.service";
-import { Logo } from "../../components/Logo/Logo";
+import { useAuth } from "../contexts/AuthContext";
+import { login } from "../services/auth.service";
+import { Logo } from "../components/Logo";
 import type { AxiosError } from "axios";
 
 type ApiError = { messages: string[] };
 
+// Página de entrada onde o utilizador introduz email e password, chama o endpoint /auth/login e em caso de sucesso atualiza o AuthContext e redireciona para a página inicial, mostrando a primeira mensagem de erro devolvida pelo backend quando as credenciais estão erradas.
 export function LoginPage() {
   const { applyAuth } = useAuth();
   const [email, setEmail] = useState("");

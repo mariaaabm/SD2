@@ -18,6 +18,7 @@ import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.repository.ProductRepository;
 import pt.ubi.gruposd.loja.repository.ProductSpecifications;
 
+// Gere o CRUD de produtos e a pesquisa paginada com filtros por categoria e por termo livre, e quando a pesquisa exata por LIKE não devolve nada faz fallback para uma pesquisa fuzzy baseada em distância de Levenshtein para tolerar erros de digitação.
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -28,6 +29,7 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
+    // Devolve uma página de produtos filtrados por categoria e termo de pesquisa, limita o tamanho da página a 100 para proteger a API contra pedidos abusivos e dispara o fallback fuzzy apenas quando o caminho rápido por LIKE não devolve resultados.
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search, int page, int size) {
         int safeSize = Math.min(size, 100);
@@ -44,6 +46,7 @@ public class ProductService {
         return fuzzyFallback(categoryId, activeOnly, search, page, safeSize);
     }
 
+    // Carrega todos os produtos compatíveis com o filtro de categoria, calcula o melhor score de similaridade entre o termo de pesquisa e o nome ou descrição de cada um, mantém só os que ultrapassam o limiar mínimo e paginam o resultado ordenado por relevância.
     private PageResponse<ProductResponse> fuzzyFallback(
         Long categoryId, Boolean activeOnly, String search, int page, int size
     ) {

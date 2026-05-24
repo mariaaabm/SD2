@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// Configura os metadados da especificação OpenAPI gerada pelo Springdoc, que ficam visíveis na página /swagger-ui.html para developers explorarem e testarem a API sem precisar de ferramentas externas.
 @Configuration
 public class OpenApiConfig {
     @Bean

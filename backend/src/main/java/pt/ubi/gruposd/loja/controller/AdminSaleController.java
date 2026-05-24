@@ -12,6 +12,7 @@ import pt.ubi.gruposd.loja.dto.SaleResponse;
 import pt.ubi.gruposd.loja.dto.UpdateSaleStatusRequest;
 import pt.ubi.gruposd.loja.service.SaleService;
 
+// Expõe os endpoints administrativos sobre vendas, permite listar todas as vendas existentes na loja e mudar o estado de uma encomenda específica para acompanhar o ciclo desde CONFIRMED até DELIVERED ou CANCELLED.
 @RestController
 @RequestMapping("/api/admin/sales")
 public class AdminSaleController {

@@ -1,3 +1,4 @@
+-- Cria a tabela refresh_tokens que armazena os tokens emitidos para prolongar a sessão sem voltar a pedir credenciais, com expiração e cascade delete para apagar os tokens automaticamente quando o cliente é removido.
 CREATE TABLE refresh_tokens (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id BIGINT NOT NULL,

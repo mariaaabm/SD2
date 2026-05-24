@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// Entidade JPA que mapeia a tabela sales e representa uma encomenda confirmada de um cliente, guarda o total com IVA, a base tributável e o valor de IVA já calculados no checkout, os dados completos da morada de entrega e o método de pagamento escolhido.
 @Entity
 @Table(name = "sales")
 public class Sale {

@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+// Entidade JPA que mapeia a tabela invoices e representa a fatura emitida para uma venda, identificada pela série e pelo número sequencial no formato SP{ano}/{id} e datada com momento de emissão e data da operação.
 @Entity
 @Table(name = "invoices")
 public class Invoice {

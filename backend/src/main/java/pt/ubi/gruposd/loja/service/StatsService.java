@@ -13,6 +13,7 @@ import pt.ubi.gruposd.loja.dto.StatsRevenueResponse;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 import pt.ubi.gruposd.loja.repository.SaleRepository;
 
+// Produz as estatísticas mostradas no dashboard de administração, incluindo os produtos mais e menos vendidos, os melhores clientes por volume de compras e a receita agregada por dia, semana ou mês usando consultas SQL agregadas no repositório.
 @Service
 public class StatsService {
     private final SaleItemRepository saleItemRepository;
@@ -52,6 +53,7 @@ public class StatsService {
             .toList();
     }
 
+    // Calcula a receita total dentro do período indicado, traduz os parâmetros day, week ou month para intervalos concretos de datas a começar na segunda-feira ou no primeiro dia do mês, e devolve o intervalo usado para o frontend conseguir mostrá-lo ao utilizador.
     @Transactional(readOnly = true)
     public StatsRevenueResponse revenue(String period) {
         LocalDate today = LocalDate.now();

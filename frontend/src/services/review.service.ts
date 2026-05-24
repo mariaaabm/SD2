@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST de reviews aninhadas em /products/{id}/reviews, devolve o resumo de avaliação com média e contagem e suporta criar ou atualizar a review do utilizador autenticado para o produto.
+
 import { apiClient } from "../api/apiClient";
 
 export type ReviewResponse = {

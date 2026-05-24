@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import pt.ubi.gruposd.loja.model.Review;
 
+// Repositório Spring Data JPA para reviews com queries para listar por produto, encontrar e verificar a review existente do par cliente-produto, e queries JPQL agregadas para calcular a média e a contagem de avaliações que aparecem no resumo do produto.
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByProductIdOrderByCreatedAtDesc(Long productId);
     Optional<Review> findByCustomerIdAndProductId(Long customerId, Long productId);

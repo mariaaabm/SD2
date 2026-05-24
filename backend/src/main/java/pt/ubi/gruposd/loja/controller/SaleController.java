@@ -16,6 +16,7 @@ import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.service.InvoiceService;
 import pt.ubi.gruposd.loja.service.SaleService;
 
+// Expõe os endpoints de vendas para clientes autenticados, suporta o checkout do carrinho e a consulta das encomendas pessoais e respetivas faturas, e os métodos de serviço garantem que cada utilizador só vê dados das suas próprias vendas.
 @RestController
 @RequestMapping("/api/sales")
 public class SaleController {

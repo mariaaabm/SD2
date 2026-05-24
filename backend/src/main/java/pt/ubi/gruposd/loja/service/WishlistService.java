@@ -10,6 +10,7 @@ import pt.ubi.gruposd.loja.model.Product;
 import pt.ubi.gruposd.loja.model.WishlistItem;
 import pt.ubi.gruposd.loja.repository.WishlistRepository;
 
+// Gere a lista de favoritos do cliente, garantindo que o mesmo produto só pode estar uma vez na wishlist e devolvendo logo o item existente em vez de criar duplicados quando o cliente carrega no coração mais que uma vez.
 @Service
 public class WishlistService {
 
@@ -58,11 +59,6 @@ public class WishlistService {
             throw new NotFoundException("Produto não está na wishlist.");
         }
         wishlistRepository.deleteByCustomerIdAndProductId(customer.getId(), productId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isWishlisted(Long customerId, Long productId) {
-        return wishlistRepository.existsByCustomerIdAndProductId(customerId, productId);
     }
 
     private WishlistResponse toResponse(WishlistItem item) {

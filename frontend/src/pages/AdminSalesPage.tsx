@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { listAdminSales, updateSaleStatus, type Sale, type SaleStatus } from "../../services/sale.service";
+import { listAdminSales, updateSaleStatus, type Sale, type SaleStatus } from "../services/sale.service";
 
 const STATUS_LABELS: Record<SaleStatus, string> = {
   CONFIRMED:  "Confirmada",
@@ -22,6 +22,7 @@ const PAYMENT_LABELS: Record<string, string> = {
   COD:        "Entrega",
 };
 
+// Página de administração que lista todas as vendas da loja com cliente, total, método de pagamento e estado, permite expandir cada venda para ver os itens, mudar o estado para o passo seguinte no ciclo da encomenda e abrir a fatura associada.
 export function AdminSalesPage() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [expanded, setExpanded] = useState<number | null>(null);

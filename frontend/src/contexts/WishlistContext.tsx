@@ -14,6 +14,7 @@ const WishlistContext = createContext<WishlistContextType>({
   isWishlisted: () => false,
 });
 
+// Mantém em memória a lista de ids dos produtos favoritados pelo utilizador autenticado para evitar consultar o backend de cada vez que uma card precisa de pintar o coração, sincroniza com o backend a cada login e redireciona para a página de entrada quando um utilizador não autenticado tenta favoritar algo.
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth();
   const [wishlistIds, setWishlistIds] = useState<number[]>([]);

@@ -27,6 +27,7 @@ import pt.ubi.gruposd.loja.service.AuthService.LoginResult;
 import pt.ubi.gruposd.loja.service.RefreshTokenService;
 import pt.ubi.gruposd.loja.service.RefreshTokenService.RefreshResult;
 
+// Expõe os endpoints de autenticação como register, login, refresh, logout, me e updateProfile, e guarda o JWT e o refresh token em cookies HttpOnly com SameSite Strict para que o frontend não tenha de manipular tokens em JavaScript e fique protegido contra XSS.
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -70,6 +71,7 @@ public class AuthController {
         return result.auth();
     }
 
+    // Renova o JWT de acesso lendo o refresh token do cookie, valida-o e roda-o por um novo, e devolve também os dados do cliente para o frontend conseguir restaurar o estado de sessão sem voltar a fazer login.
     @PostMapping("/refresh")
     public CustomerResponse refresh(HttpServletRequest request, HttpServletResponse response) {
         String token = extractCookie(request, "refresh_token");
@@ -121,6 +123,7 @@ public class AuthController {
             .orElse(null);
     }
 
+    // Coloca o JWT num cookie HttpOnly com SameSite Strict para impedir que JavaScript no browser o consiga ler e bloquear envio em pedidos cross-site, e define a validade igual à do próprio token para o cookie expirar com ele.
     private void setJwtCookie(HttpServletResponse response, String token) {
         ResponseCookie cookie = ResponseCookie.from("jwt", token)
             .httpOnly(true)

@@ -1,3 +1,4 @@
+# Pipeline de integração contínua do frontend que corre em pushes e pull requests que alterem a pasta frontend, prepara um Node 20 com cache de npm, instala as dependências de forma determinística com npm ci, faz type-check com TypeScript sem emitir ficheiros e por fim corre o build de produção com Vite.
 name: Frontend CI
 
 on:

@@ -33,6 +33,7 @@ import pt.ubi.gruposd.loja.repository.ProductRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 import pt.ubi.gruposd.loja.repository.SaleRepository;
 
+// Testa o SaleService de forma isolada com Mockito a simular os repositórios, o InvoiceService e o EmailService, verifica que o checkout reduz stock e cria a fatura, que valida stock insuficiente, produto inativo e produto inexistente, e que a mudança de estado só atua sobre vendas existentes.
 @ExtendWith(MockitoExtension.class)
 class SaleServiceTest {
 
@@ -48,6 +49,7 @@ class SaleServiceTest {
     private Product product;
     private CheckoutRequest validRequest;
 
+    // Prepara antes de cada teste uma instância nova do SaleService com todos os mocks injetados, e cria os objetos auxiliares cliente, produto e pedido de checkout válidos que a maior parte dos testes reutiliza.
     @BeforeEach
     void setUp() {
         saleService = new SaleService(
@@ -81,6 +83,7 @@ class SaleServiceTest {
         );
     }
 
+    // Garante que um checkout com stock suficiente cria a venda, abate as unidades vendidas ao stock do produto e dispara a criação da fatura associada.
     @Test
     void checkout_createsSaleAndReducesStock() {
         Sale savedSale = new Sale();
@@ -114,6 +117,7 @@ class SaleServiceTest {
         verify(invoiceService).createForSale(savedSale);
     }
 
+    // Verifica que tentar comprar mais unidades do que existem em stock rejeita o pedido com BadRequestException e mensagem que identifica o problema.
     @Test
     void checkout_throwsBadRequest_whenInsufficientStock() {
         product.setStock(1);
@@ -129,6 +133,7 @@ class SaleServiceTest {
             .hasMessageContaining("Stock insuficiente");
     }
 
+    // Verifica que comprar um produto marcado como inativo é bloqueado com BadRequestException, mesmo que ainda haja stock disponível na base de dados.
     @Test
     void checkout_throwsBadRequest_whenProductInactive() {
         product.setActive(false);
@@ -144,6 +149,7 @@ class SaleServiceTest {
             .hasMessageContaining("indisponivel");
     }
 
+    // Verifica que um pedido de checkout que referencia um produto inexistente é rejeitado com NotFoundException em vez de criar uma venda inválida.
     @Test
     void checkout_throwsBadRequest_whenProductNotFound() {
         when(saleRepository.save(any(Sale.class))).thenAnswer(inv -> {
@@ -157,6 +163,7 @@ class SaleServiceTest {
             .isInstanceOf(NotFoundException.class);
     }
 
+    // Confirma que a mudança de estado de uma venda atualiza o campo na entidade gerida pela transação e devolve um SaleResponse já com o novo estado.
     @Test
     void updateStatus_changesStatusAndReturnsResponse() {
         Sale sale = new Sale();
@@ -175,6 +182,7 @@ class SaleServiceTest {
         assertThat(result.status()).isEqualTo(SaleStatus.PROCESSING);
     }
 
+    // Verifica que tentar mudar o estado de uma venda que não existe lança NotFoundException em vez de criar uma venda nova ou falhar silenciosamente.
     @Test
     void updateStatus_throwsNotFoundException_whenSaleNotFound() {
         when(saleRepository.findById(999L)).thenReturn(Optional.empty());
@@ -183,6 +191,7 @@ class SaleServiceTest {
             .isInstanceOf(NotFoundException.class);
     }
 
+    // Garante que a listagem das vendas do cliente usa o método filtrado por customerId em vez do método que devolveria todas as vendas, evitando expor vendas de outros clientes.
     @Test
     void findCustomerSales_returnsOnlyThatCustomersSales() {
         Sale sale = new Sale();

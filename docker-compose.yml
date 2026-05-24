@@ -1,3 +1,4 @@
+# Orquestração Docker que arranca toda a stack SportFlow numa única rede privada, com MySQL 8 com healthcheck para o backend só iniciar quando a base de dados está pronta, o backend Spring Boot que aplica as migrações Flyway e expõe a API só dentro da rede, e o frontend nginx que serve a SPA e faz proxy de /api para o backend, exposto em localhost:3000.
 services:
   db:
     image: mysql:8.0

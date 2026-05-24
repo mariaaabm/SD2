@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST de estatísticas usadas no dashboard de administração, devolve produtos mais e menos vendidos, melhores clientes e receita agregada por dia, semana ou mês.
+
 import { apiClient } from "../api/apiClient";
 
 export type StatsProduct = {

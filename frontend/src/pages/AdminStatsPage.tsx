@@ -7,8 +7,9 @@ import {
   type StatsCustomer,
   type StatsProduct,
   type StatsRevenue
-} from "../../services/stats.service";
+} from "../services/stats.service";
 
+// Dashboard de estatísticas para administradores que mostra os produtos mais e menos vendidos, os melhores clientes por valor gasto e a receita do dia, semana ou mês, e dispara todos os pedidos em paralelo no mount para minimizar o tempo de carregamento.
 export function AdminStatsPage() {
   const [topProducts, setTopProducts] = useState<StatsProduct[]>([]);
   const [leastProducts, setLeastProducts] = useState<StatsProduct[]>([]);

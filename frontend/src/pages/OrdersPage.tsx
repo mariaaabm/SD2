@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { listSales, type Sale } from "../../services/sale.service";
+import { listSales, type Sale } from "../services/sale.service";
 
+// Página do histórico de encomendas do cliente autenticado, carrega a lista do backend ordenada por data descendente e oferece em cada cartão a ligação para a fatura correspondente.
 export function OrdersPage() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [error, setError] = useState<string | null>(null);

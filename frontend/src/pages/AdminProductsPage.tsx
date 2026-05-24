@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { listCategories, type Category } from "../../services/category.service";
-import { createProduct, deleteProduct, listProducts, updateProduct, type Product } from "../../services/product.service";
-import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../../utils/categoryUtils";
+import { listCategories, type Category } from "../services/category.service";
+import { createProduct, deleteProduct, listProducts, updateProduct, type Product } from "../services/product.service";
+import { getCategoryBg, getCategoryColor, getCategoryIcon } from "../utils/categoryUtils";
 
 type ProductForm = {
   name: string;
@@ -15,6 +15,7 @@ type ProductForm = {
 
 const emptyForm: ProductForm = { name: "", description: "", price: "", stock: "", categoryId: "", active: true, imageUrl: "" };
 
+// Página de administração de produtos com formulário de criação e edição inline, listagem em tabela com imagem, preço, stock e ações, e dropdown para escolher a categoria a partir das que foram carregadas do backend.
 export function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

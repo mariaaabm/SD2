@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/apiClient";
-import type { UserRole } from "../../services/auth.service";
+import { apiClient } from "../api/apiClient";
+import type { UserRole } from "../services/auth.service";
 
 type CustomerRow = {
   id: number;
@@ -9,6 +9,7 @@ type CustomerRow = {
   role: UserRole;
 };
 
+// Página de administração que lista todos os clientes registados na loja com nome, email e role, suporta pesquisa local por qualquer um destes campos para filtrar resultados sem ter de voltar a chamar o backend.
 export function AdminCustomersPage() {
   const [customers, setCustomers] = useState<CustomerRow[]>([]);
   const [loading, setLoading] = useState(true);

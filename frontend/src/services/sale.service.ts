@@ -1,3 +1,5 @@
+// Encapsula as chamadas REST de vendas e faturas, expõe os tipos partilhados Sale, Invoice, InvoiceLine, InvoiceParty e companhia para o checkout, a listagem de encomendas do cliente, a página de fatura e a área de administração consumirem a API com type-safety.
+
 import { apiClient } from "../api/apiClient";
 
 export type CheckoutItem = {
@@ -144,11 +146,6 @@ export async function getSale(saleId: number) {
 
 export async function listAdminSales() {
   const response = await apiClient.get<Sale[]>("/admin/sales");
-  return response.data;
-}
-
-export async function getSaleInvoice(saleId: number) {
-  const response = await apiClient.get<Invoice>(`/sales/${saleId}/invoice`);
   return response.data;
 }
 

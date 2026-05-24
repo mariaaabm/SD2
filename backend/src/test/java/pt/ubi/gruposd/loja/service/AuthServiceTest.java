@@ -23,6 +23,7 @@ import pt.ubi.gruposd.loja.model.UserRole;
 import pt.ubi.gruposd.loja.repository.CustomerRepository;
 import pt.ubi.gruposd.loja.security.JwtService;
 
+// Testa o AuthService isoladamente com Mockito a simular o repositório, o PasswordEncoder, o AuthenticationManager e o JwtService, cobrindo o registo de novos clientes, a deteção de emails duplicados, a normalização do email para minúsculas e os vários caminhos de updateProfile incluindo a verificação da password atual.
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -41,6 +42,7 @@ class AuthServiceTest {
     private AuthService authService;
     private Customer customer;
 
+    // Cria antes de cada teste uma instância nova do AuthService com os mocks injetados e um cliente exemplo já preenchido para evitar repetição de boilerplate nos testes individuais.
     @BeforeEach
     void setUp() {
         authService = new AuthService(customerRepository, passwordEncoder, authenticationManager, jwtService);
@@ -53,6 +55,7 @@ class AuthServiceTest {
         customer.setRole(UserRole.CLIENT);
     }
 
+    // Verifica que um registo válido encripta a password, grava o cliente novo e devolve já o JWT pronto a usar para o utilizador não ter de fazer login a seguir ao registo.
     @Test
     void register_savesNewCustomer_andReturnsToken() {
         RegisterRequest request = new RegisterRequest("João Silva", "joao@teste.pt", "password123");
@@ -68,6 +71,7 @@ class AuthServiceTest {
         assertThat(result.auth().customer().role()).isEqualTo(UserRole.CLIENT);
     }
 
+    // Garante que tentar registar com um email já existente lança ConflictException em vez de criar uma conta duplicada na base de dados.
     @Test
     void register_throwsConflict_whenEmailAlreadyExists() {
         RegisterRequest request = new RegisterRequest("João Silva", "joao@teste.pt", "password123");
@@ -77,6 +81,7 @@ class AuthServiceTest {
             .isInstanceOf(ConflictException.class);
     }
 
+    // Confirma que o email é guardado sempre em minúsculas mesmo quando o utilizador escreve em maiúsculas, para garantir consistência nas pesquisas case-insensitive e evitar contas duplicadas com casing diferente.
     @Test
     void register_lowercasesEmail() {
         RegisterRequest request = new RegisterRequest("Maria", "MARIA@TESTE.PT", "pass");
@@ -96,6 +101,7 @@ class AuthServiceTest {
         assertThat(captor.getValue().getEmail()).isEqualTo("maria@teste.pt");
     }
 
+    // Verifica que enviar apenas o campo nome atualiza o nome do cliente sem mexer nos restantes campos.
     @Test
     void updateProfile_updatesName_whenProvided() {
         UpdateProfileRequest request = new UpdateProfileRequest("Novo Nome", null, null);
@@ -107,6 +113,7 @@ class AuthServiceTest {
         assertThat(result.name()).isEqualTo("Novo Nome");
     }
 
+    // Garante que a mudança de password é recusada com UnauthorizedException quando a password atual indicada não corresponde ao hash guardado, protegendo contra tokens roubados que tentem alterar credenciais.
     @Test
     void updateProfile_throwsUnauthorized_whenCurrentPasswordWrong() {
         UpdateProfileRequest request = new UpdateProfileRequest(null, "wrongpass", "newpass");
@@ -117,6 +124,7 @@ class AuthServiceTest {
             .isInstanceOf(UnauthorizedException.class);
     }
 
+    // Confirma que se a password atual for válida a password nova é encriptada e gravada no cliente, substituindo o hash antigo.
     @Test
     void updateProfile_changesPassword_whenCurrentPasswordCorrect() {
         UpdateProfileRequest request = new UpdateProfileRequest(null, "oldpass", "newpass");

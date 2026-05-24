@@ -22,6 +22,7 @@ type CartProviderProps = {
   children: ReactNode;
 };
 
+// Mantém o carrinho do utilizador em estado React e persiste-o em localStorage para que sobreviva a reloads ou ao fecho do separador, expondo helpers para adicionar, atualizar quantidade, remover e limpar, e garantindo sempre que a quantidade nunca ultrapassa o stock disponível do produto.
 export function CartProvider({ children }: CartProviderProps) {
   const [items, setItems] = useState<CartItem[]>(() => {
     const raw = localStorage.getItem("cartItems");

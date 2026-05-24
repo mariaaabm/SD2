@@ -16,6 +16,7 @@ import pt.ubi.gruposd.loja.dto.CategoryRequest;
 import pt.ubi.gruposd.loja.dto.CategoryResponse;
 import pt.ubi.gruposd.loja.service.CategoryService;
 
+// Expõe o CRUD público de categorias de produtos para o frontend popular o menu de navegação e para a área de administração gerir o catálogo, e devolve 201 Created com Location no header quando uma categoria é adicionada com sucesso.
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {

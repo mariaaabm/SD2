@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Cria a instância única do axios usada por todos os serviços do frontend, configura a base URL a partir da variável de ambiente VITE_API_BASE_URL ou usa /api por defeito, e ativa withCredentials para enviar os cookies HttpOnly de autenticação.
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
   withCredentials: true,
@@ -16,6 +17,7 @@ function processQueue(error: unknown) {
   failedQueue = [];
 }
 
+// Interceptor que captura respostas 401 e tenta renovar a sessão chamando /auth/refresh transparentemente, e em caso de sucesso repete o pedido original; se vários pedidos falharem ao mesmo tempo, enfileira-os para só fazer um refresh e libertar todos quando este termina.
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
