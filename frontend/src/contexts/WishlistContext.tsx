@@ -24,8 +24,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     getWishlistIds().then(setWishlistIds).catch(() => {});
   }, [isAuthenticated]);
 
+  // Toggle otimista: atualiza o estado local imediatamente para UI responsiva.
+  // Numa implementação mais robusta, o estado seria revertido se a chamada ao servidor falhasse.
   async function toggle(productId: number) {
     if (!isAuthenticated) {
+      // Redireciona para login em vez de mostrar um erro para o utilizador perceber o que tem de fazer.
       window.location.href = "/login";
       return;
     }

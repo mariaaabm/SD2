@@ -47,6 +47,8 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    // POST /api/auth/register — cria conta, define os cookies de sessão e devolve os dados do cliente.
+    // O JWT é devolvido tanto no cookie como no body para que clientes não-browser (Swagger) o possam usar.
     @PostMapping("/register")
     public AuthResponse register(
         @Valid @RequestBody RegisterRequest request,
@@ -59,6 +61,7 @@ public class AuthController {
         return result.auth();
     }
 
+    // POST /api/auth/login — autentica o utilizador, define os cookies e devolve os dados.
     @PostMapping("/login")
     public AuthResponse login(
         @Valid @RequestBody LoginRequest request,
@@ -91,6 +94,9 @@ public class AuthController {
         );
     }
 
+    // POST /api/auth/logout — invalida o refresh token na BD e limpa ambos os cookies.
+    // O JWT de acesso continua tecnicamente válido até expirar (15 min), mas sem o refresh
+    // token o cliente não pode obter um novo, efetivamente encerrando a sessão.
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         String token = extractCookie(request, "refresh_token");
@@ -101,11 +107,14 @@ public class AuthController {
         clearRefreshCookie(response);
     }
 
+    // GET /api/auth/me — devolve os dados do cliente autenticado pelo JWT no cookie.
+    // Usado pelo frontend ao iniciar para validar se a sessão guardada em localStorage ainda é válida.
     @GetMapping("/me")
     public CustomerResponse me(@AuthenticationPrincipal CustomerUserDetails userDetails) {
         return authService.me(userDetails);
     }
 
+    // PATCH /api/auth/profile — permite ao utilizador autenticado atualizar o nome e/ou a password.
     @PatchMapping("/profile")
     public CustomerResponse updateProfile(
         @AuthenticationPrincipal CustomerUserDetails userDetails,
@@ -114,6 +123,7 @@ public class AuthController {
         return authService.updateProfile(userDetails.customer(), request);
     }
 
+    // Extrai o valor de um cookie pelo nome; devolve null se o browser não enviou cookies (ex.: pedidos do Swagger).
     private String extractCookie(HttpServletRequest request, String name) {
         if (request.getCookies() == null) return null;
         return Arrays.stream(request.getCookies())
@@ -134,6 +144,8 @@ public class AuthController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
+    // O refresh token tem path=/api/auth para que o browser o envie APENAS nos pedidos para /api/auth/*
+    // e não em todos os pedidos da API, reduzindo a exposição do token de longa duração.
     private void setRefreshCookie(HttpServletResponse response, String token) {
         ResponseCookie cookie = ResponseCookie.from("refresh_token", token)
             .httpOnly(true)

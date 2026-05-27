@@ -20,21 +20,25 @@ public class StatsController {
         this.statsService = statsService;
     }
 
+    // GET /api/stats/products/top-selling — produtos ordenados por unidades vendidas (descendente). Requer ROLE_ADMIN.
     @GetMapping("/products/top-selling")
     public List<StatsProductResponse> topSellingProducts() {
         return statsService.topSellingProducts();
     }
 
+    // GET /api/stats/products/least-selling — produtos ordenados por unidades vendidas (ascendente). Requer ROLE_ADMIN.
     @GetMapping("/products/least-selling")
     public List<StatsProductResponse> leastSellingProducts() {
         return statsService.leastSellingProducts();
     }
 
+    // GET /api/stats/customers/best — clientes ordenados pelo valor total gasto. Requer ROLE_ADMIN.
     @GetMapping("/customers/best")
     public List<StatsCustomerResponse> bestCustomers() {
         return statsService.bestCustomers();
     }
 
+    // GET /api/stats/revenue?period=day|week|month — receita total no período. Requer ROLE_ADMIN.
     @GetMapping("/revenue")
     public StatsRevenueResponse revenue(@RequestParam(defaultValue = "day") String period) {
         return statsService.revenue(period);

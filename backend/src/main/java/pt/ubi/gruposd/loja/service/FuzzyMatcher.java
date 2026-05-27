@@ -30,6 +30,9 @@ public final class FuzzyMatcher {
         return best;
     }
 
+    // Calcula o rácio de similaridade como 1 - (distância / comprimento_máximo),
+    // dando um valor entre 0 (completamente diferentes) e 1 (idênticos).
+    // Exemplo: "bola" vs "bota" → distância 1, max 4, ratio = 0.75 (acima do limiar mínimo de 0.6).
     static double ratio(String a, String b) {
         int max = Math.max(a.length(), b.length());
         if (max == 0) return 1.0;

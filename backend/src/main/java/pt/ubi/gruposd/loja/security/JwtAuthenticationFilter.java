@@ -32,6 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String token = extractToken(request);
 
+        // Se não há token, deixa o pedido passar — o Spring Security recusará o acesso se
+        // o endpoint exigir autenticação, devolvendo 403 ou 401 conforme a configuração.
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
@@ -41,14 +43,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             username = jwtService.extractUsername(token);
         } catch (RuntimeException e) {
+            // Token malformado, assinatura inválida ou expirado — continua sem autenticar.
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Só autentica se ainda não existe autenticação no contexto (ex.: pedido já autenticado por outro meio).
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(token, userDetails)) {
+                // Cria o token de autenticação com as autoridades (ROLE_*) do utilizador.
+                // O segundo argumento é null porque JWT não usa credenciais após autenticação.
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
                 );

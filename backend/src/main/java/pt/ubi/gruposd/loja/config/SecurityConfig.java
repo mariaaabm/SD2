@@ -50,6 +50,8 @@ public class SecurityConfig {
             .build();
     }
 
+    // Liga o CustomerUserDetailsService e o BCryptPasswordEncoder ao pipeline de autenticação
+    // do Spring Security para que o AuthenticationManager saiba como carregar e verificar utilizadores.
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -58,11 +60,14 @@ public class SecurityConfig {
         return provider;
     }
 
+    // Expõe o AuthenticationManager como bean para o AuthService o injetar e delegar o login.
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
+    // BCrypt com fator de custo padrão (~10 rondas) que torna ataques de força bruta impraticáveis
+    // mesmo que a base de dados seja comprometida, porque cada hash demora ~100ms a calcular.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

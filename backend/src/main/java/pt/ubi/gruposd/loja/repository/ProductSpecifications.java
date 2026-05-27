@@ -23,8 +23,9 @@ public class ProductSpecifications {
             }
 
             if (search != null && !search.isBlank()) {
-                // A colacao utf8mb4_0900_ai_ci aplicada em V10 torna o LIKE
-                // insensivel a maiusculas/minusculas e a acentos.
+                // A colacao utf8mb4_0900_ai_ci (configurada na migração Flyway V10) torna o LIKE
+                // insensível a maiúsculas/minúsculas e a acentos na base de dados MySQL/MariaDB.
+                // Em H2 (testes) este comportamento pode ser diferente — o fallback fuzzy cobre esses casos.
                 String pattern = "%" + search.trim() + "%";
                 predicates.add(cb.or(
                     cb.like(root.get("name"), pattern),

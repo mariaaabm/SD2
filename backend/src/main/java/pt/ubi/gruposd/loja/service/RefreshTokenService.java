@@ -25,6 +25,8 @@ public class RefreshTokenService {
         this.refreshDays = refreshDays;
     }
 
+    // Cria um refresh token UUID aleatório com validade configurável (padrão 7 dias).
+    // UUID.randomUUID() usa SecureRandom internamente, o que é suficientemente seguro para este uso.
     @Transactional
     public String createForCustomer(Customer customer) {
         RefreshToken rt = new RefreshToken();

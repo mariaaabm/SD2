@@ -34,6 +34,8 @@ export function ProfilePage() {
     setSavingName(true);
     try {
       const updated = await updateProfile({ name: name.trim() });
+      // Atualiza o AuthContext com os dados novos para o Header mostrar o nome correto.
+      // Reutiliza o token existente porque só o perfil mudou, não as credenciais de acesso.
       applyAuth({ token: localStorage.getItem("authToken")!, customer: updated });
       setNameSuccess("Nome atualizado com sucesso.");
     } catch (err) {

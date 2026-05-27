@@ -29,6 +29,9 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
             }}
           />
         ) : null}
+        {/* Quando existe imageUrl, o placeholder é criado com display:none e só aparece
+            se a imagem falhar a carregar (ver onError acima). Quando não há imageUrl,
+            o placeholder aparece logo como fallback colorido baseado na categoria. */}
         {product.imageUrl ? (
           <div
             className="product-card__placeholder"

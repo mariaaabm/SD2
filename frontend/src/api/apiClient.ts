@@ -9,9 +9,15 @@ export const apiClient = axios.create({
   }
 });
 
+// Bandeira global que impede múltiplos pedidos de refresh concorrentes.
+// Sem este mecanismo, se 3 pedidos falharem com 401 ao mesmo tempo,
+// seria disparado um refresh por cada um, podendo consumir o token de rotação.
 let isRefreshing = false;
 let failedQueue: Array<{ resolve: (v: unknown) => void; reject: (e: unknown) => void }> = [];
 
+// Liberta todos os pedidos que estavam à espera do refresh:
+// se o refresh teve sucesso, resolve-os (e serão repetidos pelo caller);
+// se falhou, rejeita-os para que o erro chegue ao componente.
 function processQueue(error: unknown) {
   failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve(undefined)));
   failedQueue = [];

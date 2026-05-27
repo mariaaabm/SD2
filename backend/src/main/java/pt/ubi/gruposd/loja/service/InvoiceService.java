@@ -8,11 +8,7 @@ import java.util.HexFormat;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ubi.gruposd.loja.dto.InvoiceIssuer;
-import pt.ubi.gruposd.loja.dto.InvoiceLine;
-import pt.ubi.gruposd.loja.dto.InvoiceParty;
 import pt.ubi.gruposd.loja.dto.InvoiceResponse;
-import pt.ubi.gruposd.loja.dto.InvoiceVatSummary;
 import pt.ubi.gruposd.loja.dto.SaleItemResponse;
 import pt.ubi.gruposd.loja.exception.NotFoundException;
 import pt.ubi.gruposd.loja.model.Customer;
@@ -72,12 +68,12 @@ public class InvoiceService {
 
     // Monta a resposta completa da fatura agrupando os dados do emitente, do adquirente, das linhas com IVA discriminado, do resumo de IVA por taxa, dos totais e dos metadados de certificação para a página de fatura conseguir renderizar tudo num único pedido.
     public InvoiceResponse toResponse(Invoice invoice, Sale sale, List<SaleItemResponse> items) {
-        InvoiceIssuer issuer = InvoiceIssuer.sportFlowDefault();
-        InvoiceParty customer = buildCustomerParty(sale);
-        InvoiceParty shipping = buildShippingParty(sale);
+        InvoiceResponse.Issuer issuer = InvoiceResponse.Issuer.sportFlowDefault();
+        InvoiceResponse.Party customer = buildCustomerParty(sale);
+        InvoiceResponse.Party shipping = buildShippingParty(sale);
 
-        List<InvoiceLine> lines = items.stream()
-            .map(item -> new InvoiceLine(
+        List<InvoiceResponse.Line> lines = items.stream()
+            .map(item -> new InvoiceResponse.Line(
                 item.productId(),
                 item.productName(),
                 item.quantity(),
@@ -94,8 +90,8 @@ public class InvoiceService {
         BigDecimal vatAmount = sale.getVatAmount() == null ? BigDecimal.ZERO : sale.getVatAmount();
         BigDecimal vatRate = sale.getVatRate() == null ? SaleService.DEFAULT_VAT_RATE : sale.getVatRate();
 
-        List<InvoiceVatSummary> vatSummary = List.of(
-            new InvoiceVatSummary(vatRate, subtotal, vatAmount)
+        List<InvoiceResponse.VatSummary> vatSummary = List.of(
+            new InvoiceResponse.VatSummary(vatRate, subtotal, vatAmount)
         );
 
         String formattedNumber = formatNumber(invoice);
@@ -159,9 +155,9 @@ public class InvoiceService {
         return toResponse(invoice, sale, items);
     }
 
-    private InvoiceParty buildCustomerParty(Sale sale) {
+    private InvoiceResponse.Party buildCustomerParty(Sale sale) {
         Customer customer = sale.getCustomer();
-        return new InvoiceParty(
+        return new InvoiceResponse.Party(
             sale.getShippingName() != null ? sale.getShippingName() : customer.getName(),
             "Consumidor Final",
             customer.getEmail(),
@@ -175,8 +171,8 @@ public class InvoiceService {
         );
     }
 
-    private InvoiceParty buildShippingParty(Sale sale) {
-        return new InvoiceParty(
+    private InvoiceResponse.Party buildShippingParty(Sale sale) {
+        return new InvoiceResponse.Party(
             sale.getShippingName(),
             null,
             null,
@@ -190,12 +186,17 @@ public class InvoiceService {
         );
     }
 
+    // Verificação de autorização: lança NotFoundException (não UnauthorizedException) para não
+    // revelar ao atacante que a fatura existe mas pertence a outro cliente.
     private void ensureInvoiceBelongsToCustomer(Invoice invoice, Customer customer) {
         if (!invoice.getSale().getCustomer().getId().equals(customer.getId())) {
             throw new NotFoundException("Fatura nao encontrada.");
         }
     }
 
+    // Gera o número da fatura no formato SP{ano}/{id com 6 dígitos} — ex.: SP2025/000042.
+    // A série "SP" identifica a série de faturação e o ano evita colisões entre exercícios fiscais.
+    // O id é zero-padded a 6 dígitos para ordenação alfanumérica correta.
     private String generateInvoiceNumber(Sale sale) {
         int year = sale.getCreatedAt() != null ? sale.getCreatedAt().getYear() : LocalDateTime.now().getYear();
         return String.format("%s%d/%06d", DEFAULT_SERIES, year, sale.getId());

@@ -23,6 +23,9 @@ public class ReviewService {
         this.productService = productService;
     }
 
+    // Agrega média e contagem separadamente da lista de reviews completa.
+    // Math.round(avg * 10.0) / 10.0 arredonda a 1 casa decimal para mostrar "4.3 estrelas" em vez de "4.33...".
+    // Quando não há reviews, avg é null (SQL AVG de conjunto vazio) e é convertido para 0.0.
     @Transactional(readOnly = true)
     public ProductRatingResponse getProductRatings(Long productId) {
         List<ReviewResponse> reviews = reviewRepository

@@ -25,11 +25,14 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    // GET /api/products/{productId}/reviews — devolve média, contagem e lista de reviews; sem autenticação.
     @GetMapping
     public ProductRatingResponse getReviews(@PathVariable Long productId) {
         return reviewService.getProductRatings(productId);
     }
 
+    // PUT /api/products/{productId}/reviews — cria ou atualiza a review do utilizador autenticado para este produto.
+    // Usa PUT (idempotente) em vez de POST porque a semântica é "definir a minha review" e não "acrescentar uma nova".
     @PutMapping
     public ReviewResponse upsertReview(
         @PathVariable Long productId,

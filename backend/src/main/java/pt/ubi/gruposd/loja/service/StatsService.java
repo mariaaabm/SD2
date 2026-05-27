@@ -80,6 +80,9 @@ public class StatsService {
         return new StatsRevenueResponse(start, end.minusDays(1), revenue);
     }
 
+    // As queries JPQL do SaleItemRepository devolvem Object[] não tipado por limitação do JPA.
+    // A ordem das colunas é: [0]=productId (Long), [1]=productName (String), [2]=quantitySold (Long).
+    // Um cast errado aqui causaria ClassCastException em runtime — deve estar sincronizado com a query.
     private StatsProductResponse toProductStats(Object[] row) {
         return new StatsProductResponse(
             (Long) row[0],

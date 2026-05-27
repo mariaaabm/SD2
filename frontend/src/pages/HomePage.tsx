@@ -16,6 +16,9 @@ export function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [featured, setFeatured] = useState<Product[]>([]);
 
+  // Carrega categorias e produtos em paralelo no mount — o array de dependências vazio []
+  // garante que só corre uma vez (equivale ao componentDidMount das classes).
+  // size:8 limita os produtos em destaque a 2 linhas de 4 cards no grid padrão.
   useEffect(() => {
     listCategories().then(setCategories).catch(() => {});
     listProducts({ activeOnly: true, size: 8 }).then((data) => setFeatured(data.content)).catch(() => {});

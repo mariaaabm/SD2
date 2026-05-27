@@ -48,6 +48,8 @@ export function ProductPage({ productId }: ProductPageProps) {
     setTimeout(() => setAdded(false), 2000);
   }
 
+  // Após submeter a review, re-busca o resumo completo do backend para mostrar a média atualizada.
+  // Uma alternativa mais eficiente seria calcular localmente, mas re-buscar garante consistência.
   async function handleSubmitReview(e: FormEvent) {
     e.preventDefault();
     if (userRating === 0) { setReviewError("Seleciona uma classificacao."); return; }
@@ -68,6 +70,8 @@ export function ProductPage({ productId }: ProductPageProps) {
 
   const wishlisted = isWishlisted(product.id);
 
+  // Quando o utilizador passa o rato por cima das estrelas, mostra a classificação de hover
+  // em vez da selecionada, para dar feedback visual antes de confirmar a escolha.
   const displayRating = hoverRating || userRating;
 
   return (

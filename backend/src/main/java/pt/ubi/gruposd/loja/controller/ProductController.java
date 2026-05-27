@@ -27,6 +27,9 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // GET /api/products — listagem paginada do catálogo; disponível sem autenticação (SecurityConfig).
+    // activeOnly=false por defeito para que a área de admin veja também produtos inativos.
+    // O parâmetro search ativa a pesquisa exata por LIKE com fallback fuzzy no ProductService.
     @GetMapping
     public PageResponse<ProductResponse> findAll(
         @RequestParam(required = false) Long categoryId,
@@ -38,11 +41,14 @@ public class ProductController {
         return productService.findAll(categoryId, activeOnly, search, page, size);
     }
 
+    // GET /api/products/{id} — detalhe de um produto específico; disponível sem autenticação.
     @GetMapping("/{id}")
     public ProductResponse findById(@PathVariable Long id) {
         return productService.findById(id);
     }
 
+    // POST /api/products — cria produto e devolve 201 Created com header Location apontando para o novo recurso.
+    // Requer ROLE_ADMIN (SecurityConfig).
     @PostMapping
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
         ProductResponse response = productService.create(request);
@@ -51,11 +57,13 @@ public class ProductController {
             .body(response);
     }
 
+    // PUT /api/products/{id} — substitui completamente os dados do produto. Requer ROLE_ADMIN.
     @PutMapping("/{id}")
     public ProductResponse update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
         return productService.update(id, request);
     }
 
+    // DELETE /api/products/{id} — remove o produto e devolve 204 No Content. Requer ROLE_ADMIN.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);

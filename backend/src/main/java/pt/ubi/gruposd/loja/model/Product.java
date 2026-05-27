@@ -36,6 +36,9 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    // FetchType.LAZY evita carregar a categoria automaticamente em cada query de produto.
+    // Na listagem do catálogo, o ProductService projeta a categoria via toResponse(),
+    // o que força o carregamento explícito apenas para os produtos realmente devolvidos.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

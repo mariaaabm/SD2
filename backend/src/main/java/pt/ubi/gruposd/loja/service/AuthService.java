@@ -94,6 +94,8 @@ public class AuthService {
         return toResponse(customerRepository.save(managed));
     }
 
+    // Mapeia a entidade Customer para o DTO de resposta garantindo que o passwordHash
+    // nunca é incluído na resposta da API, mesmo que o Jackson tentasse serializá-lo.
     private CustomerResponse toResponse(Customer customer) {
         return new CustomerResponse(
             customer.getId(),
@@ -103,5 +105,7 @@ public class AuthService {
         );
     }
 
+    // Record que agrupa o AuthResponse (com JWT) e o Customer (entidade JPA) para o
+    // AuthController poder criar o refresh token e definir os cookies sem precisar de voltar a consultar a BD.
     public record LoginResult(AuthResponse auth, Customer customer) {}
 }

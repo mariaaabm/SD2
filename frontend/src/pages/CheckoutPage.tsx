@@ -34,10 +34,14 @@ const PAYMENT_ICONS: Record<PaymentMethod, string> = {
   COD:        "🚚",
 };
 
+// Formata o número do cartão agrupando em blocos de 4 dígitos (ex.: "4111 1111 1111 1111")
+// para melhorar a legibilidade e detetar erros de introdução mais facilmente.
+// Nota: estes dados de cartão NÃO são enviados para o backend — o checkout apenas envia o paymentMethod.
 function formatCardNumber(raw: string) {
   return raw.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
 }
 
+// Formata a validade no formato MM/AA inserindo automaticamente a barra após os primeiros 2 dígitos.
 function formatExpiry(raw: string) {
   const digits = raw.replace(/\D/g, "").slice(0, 4);
   return digits.length > 2 ? digits.slice(0, 2) + "/" + digits.slice(2) : digits;

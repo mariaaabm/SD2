@@ -10,6 +10,9 @@ export function Footer() {
           </p>
         </div>
 
+        {/* Os categoryId 1, 2, 3 estão hardcoded no Footer — se as categorias forem recriadas
+            com IDs diferentes, estes links deixam de funcionar corretamente.
+            Uma melhoria seria carregar as categorias da API tal como o Header faz. */}
         <div className="site-footer__col">
           <h4>Loja</h4>
           <ul>

@@ -26,6 +26,8 @@ public class JwtService {
         this.expirationMinutes = expirationMinutes;
     }
 
+    // Gera um JWT assinado com HMAC-SHA256 contendo o email como subject e customerId e role como claims extras.
+    // O role no claim evita uma consulta extra à base de dados em cada pedido para verificar permissões.
     public String generateToken(Customer customer) {
         Instant now = Instant.now();
 
@@ -39,10 +41,13 @@ public class JwtService {
             .compact();
     }
 
+    // Extrai o subject (email do utilizador) do JWT sem verificar a assinatura — deve ser seguido de isTokenValid.
     public String extractUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
+    // Verifica que o token pertence ao utilizador carregado e que ainda não expirou.
+    // Ambas as condições são necessárias para aceitar o pedido como autenticado.
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isExpired(token);
@@ -52,6 +57,7 @@ public class JwtService {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
+    // Verifica a assinatura e devolve os claims do JWT; lança exceção se a assinatura for inválida ou o token malformado.
     private Claims extractClaims(String token) {
         return Jwts.parser()
             .verifyWith(secretKey)

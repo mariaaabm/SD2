@@ -9,6 +9,9 @@ const STATUS_LABELS: Record<SaleStatus, string> = {
   CANCELLED:  "Cancelada",
 };
 
+// Mapa de progressão unidirecional do estado da encomenda.
+// DELIVERED e CANCELLED não estão incluídos porque são estados terminais —
+// não faz sentido avançar a partir deles com o botão rápido.
 const STATUS_NEXT: Partial<Record<SaleStatus, SaleStatus>> = {
   CONFIRMED:  "PROCESSING",
   PROCESSING: "SHIPPED",
@@ -57,6 +60,8 @@ export function AdminSalesPage() {
     (s.invoice?.invoiceNumber ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
+  // Total calculado sobre os resultados filtrados pela pesquisa, não sobre todas as vendas,
+  // para dar feedback imediato ao admin quando filtra por cliente ou período específico.
   const totalRevenue = filtered.reduce((sum, s) => sum + s.total, 0);
 
   return (

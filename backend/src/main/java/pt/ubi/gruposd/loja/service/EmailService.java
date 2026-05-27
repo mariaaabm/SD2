@@ -63,6 +63,8 @@ public class EmailService {
                 """.formatted(item.productName(), item.quantity(), item.subtotal()));
         }
 
+        // Traduz os códigos internos dos métodos de pagamento para etiquetas em português
+        // para o email ser mais legível para o utilizador final.
         String paymentLabel = switch (sale.paymentMethod() == null ? "" : sale.paymentMethod()) {
             case "CARD"       -> "Cartão de crédito/débito";
             case "MBWAY"      -> "MB Way";

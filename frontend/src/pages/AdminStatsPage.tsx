@@ -19,12 +19,16 @@ export function AdminStatsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // O useEffect corre sempre que "period" muda, re-buscando a receita com o novo intervalo.
+  // Os outros dados (produtos e clientes) não dependem do período mas são recarregados igualmente
+  // para simplificar o código — numa app maior, cada secção teria o seu próprio estado.
   useEffect(() => {
     async function loadStats() {
       setLoading(true);
       setError(null);
 
       try {
+        // Dispara os 4 pedidos em paralelo para reduzir o tempo total de carregamento.
         const [top, least, customers, revenueData] = await Promise.all([
           getTopSellingProducts(),
           getLeastSellingProducts(),

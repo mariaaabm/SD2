@@ -25,6 +25,8 @@ export function AdminProductsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Carrega produtos e categorias em paralelo para minimizar o tempo de espera.
+  // size: 100 é suficiente para a administração mas seria necessário paginação num catálogo muito grande.
   async function loadData() {
     const [productData, categoryData] = await Promise.all([listProducts({ size: 100 }), listCategories()]);
     setProducts(productData.content);

@@ -28,6 +28,8 @@ public class SaleController {
         this.invoiceService = invoiceService;
     }
 
+    // POST /api/sales/checkout — processa a compra do carrinho, valida stock, debita quantidades
+    // e cria a venda + fatura numa única transação.
     @PostMapping("/checkout")
     public SaleResponse checkout(
         @AuthenticationPrincipal CustomerUserDetails userDetails,
@@ -36,11 +38,14 @@ public class SaleController {
         return saleService.checkout(userDetails.customer(), request);
     }
 
+    // GET /api/sales — lista as encomendas do utilizador autenticado; o serviço filtra por customerId
+    // para garantir que cada cliente só vê as suas próprias compras.
     @GetMapping
     public List<SaleResponse> findMySales(@AuthenticationPrincipal CustomerUserDetails userDetails) {
         return saleService.findCustomerSales(userDetails.customer());
     }
 
+    // GET /api/sales/{id} — devolve uma venda específica verificando que pertence ao utilizador autenticado.
     @GetMapping("/{id}")
     public SaleResponse findMySaleById(
         @AuthenticationPrincipal CustomerUserDetails userDetails,
@@ -49,6 +54,7 @@ public class SaleController {
         return saleService.findCustomerSaleById(userDetails.customer(), id);
     }
 
+    // GET /api/sales/{id}/invoice — devolve a fatura da venda verificando que pertence ao utilizador.
     @GetMapping("/{id}/invoice")
     public InvoiceResponse findMySaleInvoice(
         @AuthenticationPrincipal CustomerUserDetails userDetails,

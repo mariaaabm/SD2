@@ -43,6 +43,9 @@ export function CatalogPage({ initialCategoryId, initialSearch }: CatalogPagePro
   }, [initialSearch, initialCategoryId]);
 
   useEffect(() => {
+    // A variável "ignore" implementa o padrão de cleanup do useEffect para React:
+    // se o utilizador muda de filtro antes de a resposta chegar, o resultado antigo é descartado
+    // e não sobrescreve o estado da pesquisa mais recente.
     let ignore = false;
     setLoading(true);
     setError(null);

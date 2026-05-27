@@ -61,6 +61,8 @@ function Page() {
     return <RequireAuth><WishlistPage /></RequireAuth>;
   }
 
+  // Extrai o saleId do path /orders/{id}/invoice e valida que é um número finito
+  // para evitar renderizar a InvoicePage com NaN em caso de URL malformado.
   if (pathname.startsWith("/orders/") && pathname.endsWith("/invoice")) {
     const saleId = Number(pathname.replace("/orders/", "").replace("/invoice", ""));
     return Number.isFinite(saleId)
@@ -145,7 +147,10 @@ function RequireAdmin({ children }: { children: ReactNode }) {
   return children;
 }
 
-// Componente raiz da aplicação que monta os providers de autenticação, carrinho e wishlist por essa ordem para que cada contexto consiga ler dos contextos pais, e envolve o roteamento entre o Header e o Footer comuns a todas as páginas.
+// Componente raiz da aplicação que monta os providers de autenticação, carrinho e wishlist por essa ordem
+// para que cada contexto consiga ler dos contextos pais:
+// - CartProvider não depende de auth (carrinho persiste em localStorage)
+// - WishlistProvider depende de AuthContext para saber se sincroniza com o servidor
 export default function App() {
   return (
     <AuthProvider>

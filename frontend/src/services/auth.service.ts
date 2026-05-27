@@ -61,21 +61,29 @@ export async function logoutApi() {
   }
 }
 
+// Guarda o token e os dados do cliente em localStorage para que o AuthContext
+// consiga restaurar a sessão após um reload sem ter de voltar a fazer login.
+// Nota: o JWT real está também no cookie HttpOnly — o token aqui é redundante mas
+// permite ao frontend saber o role do utilizador sem precisar de fazer uma chamada ao servidor.
 export function saveAuth(response: AuthResponse) {
   localStorage.setItem("authToken", response.token);
   localStorage.setItem("authCustomer", JSON.stringify(response.customer));
 }
 
+// Lê os dados do cliente de localStorage, usada na inicialização do AuthContext
+// para não mostrar a página de login para utilizadores que já têm sessão ativa.
 export function getStoredCustomer() {
   const raw = localStorage.getItem("authCustomer");
   return raw ? (JSON.parse(raw) as Customer) : null;
 }
 
+// Remove os dados de sessão do localStorage (não invalida o cookie — isso é feito pelo logoutApi).
 export function clearLocalAuth() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("authCustomer");
 }
 
+// Alias de clearLocalAuth exposto para uso direto em contextos que não precisam de chamar a API.
 export function logout() {
   clearLocalAuth();
 }

@@ -16,6 +16,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(() => getStoredCustomer());
   const [isLoading, setIsLoading] = useState(() => getStoredCustomer() !== null);
 
+  // Valida o token contra o backend ao montar: se o cookie ainda é válido, GET /auth/me responde 200
+  // e atualiza o customer com dados frescos; se não, limpa o estado local para forçar novo login.
+  // A flag "active" evita atualizar o estado de um componente já desmontado (React Strict Mode).
   useEffect(() => {
     if (!customer) {
       setIsLoading(false);
@@ -29,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (active) setCustomer(current);
       })
       .catch(() => {
+        // Token expirado ou cookie inválido — limpa os dados locais e mostra o utilizador como deslogado.
         if (active) {
           clearLocalAuth();
           setCustomer(null);

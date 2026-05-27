@@ -18,6 +18,8 @@ export function WishlistPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Chama toggle() do WishlistContext para remover do servidor e depois filtra a lista local
+  // imediatamente para o utilizador ver o produto desaparecer sem esperar por uma nova consulta ao backend.
   async function handleRemove(productId: number) {
     await toggle(productId);
     setItems((prev) => prev.filter((i) => i.productId !== productId));
@@ -72,6 +74,9 @@ export function WishlistPage() {
                 <div className="wishlist-card__price">{item.price.toFixed(2)} €</div>
 
                 <div className="wishlist-card__actions">
+                  {/* categoryId: 0 é um placeholder porque o WishlistItem não inclui o categoryId numérico —
+                      só o nome da categoria. O CartContext e o CheckoutPage não precisam do categoryId,
+                      por isso isto funciona, mas é tecnicamente um dado incompleto. */}
                   <button
                     type="button"
                     className="btn-add"

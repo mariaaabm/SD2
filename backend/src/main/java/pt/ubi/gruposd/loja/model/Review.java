@@ -28,6 +28,8 @@ public class Review {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    // TINYINT ocupa apenas 1 byte, suficiente para valores de 1 a 5, e é mais eficiente que INT.
+    // A unicidade por (customer_id, product_id) deve ser garantida por unique constraint na migração SQL.
     @Column(nullable = false, columnDefinition = "TINYINT")
     private Integer rating;
 

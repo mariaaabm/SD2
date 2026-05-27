@@ -23,6 +23,8 @@ export function AdminCustomersPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Filtragem local no cliente — eficiente porque a lista de clientes é carregada de uma vez
+  // e o número de utilizadores tipicamente não é suficientemente grande para exigir paginação.
   const filtered = customers.filter((c) =>
     search.trim() === "" ||
     c.name.toLowerCase().includes(search.toLowerCase()) ||

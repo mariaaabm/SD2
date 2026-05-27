@@ -10,10 +10,12 @@ const PAYMENT_LABELS: Record<string, string> = {
   COD:        "Pagamento na entrega",
 };
 
+// Formata um valor monetário no formato pt-PT (ex.: "42,00 €") usando a API nativa do browser.
 function money(value: number, currency = "EUR") {
   return new Intl.NumberFormat("pt-PT", { style: "currency", currency }).format(value);
 }
 
+// Formata a taxa de IVA sem casas decimais desnecessárias (23% em vez de 23.00%).
 function ratePct(rate: number) {
   return `${rate.toFixed(rate % 1 === 0 ? 0 : 2)}%`;
 }
@@ -62,6 +64,8 @@ export function InvoicePage({ saleId }: InvoicePageProps) {
       ? PAYMENT_LABELS[invoice.paymentMethod]
       : invoice.paymentMethod ?? "—";
 
+  // Só mostra a secção de morada de entrega separada quando é diferente da morada do adquirente
+  // para evitar repetir a mesma informação duas vezes no documento.
   const shippingDiffers =
     shipping && shipping.address && shipping.address !== customer.address;
 
