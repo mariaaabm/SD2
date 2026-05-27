@@ -89,7 +89,7 @@ chmod +x mvnw
 bash mvnw spring-boot:run -q \
   -Dspring-boot.run.profiles=dev \
   -Dmaven.test.skip=true \
-  -Dspring-boot.run.jvmArguments="-Xms256m -Xmx512m -XX:TieredStopAtLevel=1 -noverify" \
+  -Dspring-boot.run.jvmArguments="-Xms256m -Xmx512m -XX:TieredStopAtLevel=1" \
   > "$BACKEND_LOG" 2>&1 &
 echo $! > "$BACKEND_PID_FILE"
 
