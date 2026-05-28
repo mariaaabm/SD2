@@ -3,7 +3,8 @@ package pt.ubi.gruposd.loja.service;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
-// Fornece pesquisa aproximada por distância de Levenshtein normalizada, usada como fallback quando a pesquisa exata LIKE não devolve resultados, e assim termos com erros de digitação como "futbol" ou "moshila" ainda encontram "Futebol" e "Mochila".
+// Pesquisa aproximada por distância de Levenshtein.
+// Usado como fallback quando o LIKE não encontra nada — tolera erros de digitação como "futbol" → "Futebol".
 public final class FuzzyMatcher {
     private static final Pattern DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
     private static final Pattern NON_WORD = Pattern.compile("[^\\p{L}\\p{N}]+");
@@ -11,14 +12,14 @@ public final class FuzzyMatcher {
 
     private FuzzyMatcher() {}
 
-    // Normaliza a string passando a minúsculas e removendo todos os diacríticos via decomposição Unicode NFD, para que comparações entre "Competição" e "competicao" funcionem de forma consistente.
+    // Remove acentos e converte para minúsculas para comparações consistentes (ex.: "Competição" = "competicao").
     public static String normalize(String s) {
         if (s == null) return "";
         String nfd = Normalizer.normalize(s, Normalizer.Form.NFD);
         return DIACRITICS.matcher(nfd).replaceAll("").toLowerCase();
     }
 
-    // Calcula a maior similaridade entre o termo de pesquisa e qualquer palavra do texto dado, partindo o texto em tokens por espaços e pontuação e devolvendo o melhor rácio encontrado entre 0 e 1.
+    // Devolve o melhor score de similaridade (0 a 1) entre o termo e qualquer palavra do texto.
     public static double bestScore(String text, String queryNormalized) {
         if (text == null || text.isBlank() || queryNormalized.isBlank()) return 0;
         double best = 0;
@@ -30,16 +31,14 @@ public final class FuzzyMatcher {
         return best;
     }
 
-    // Calcula o rácio de similaridade como 1 - (distância / comprimento_máximo),
-    // dando um valor entre 0 (completamente diferentes) e 1 (idênticos).
-    // Exemplo: "bola" vs "bota" → distância 1, max 4, ratio = 0.75 (acima do limiar mínimo de 0.6).
+    // Similaridade = 1 - (distância / tamanho_maior). Ex.: "bola" vs "bota" → 0.75 (acima do mínimo 0.6).
     static double ratio(String a, String b) {
         int max = Math.max(a.length(), b.length());
         if (max == 0) return 1.0;
         return 1.0 - ((double) levenshtein(a, b) / max);
     }
 
-    // Calcula a distância de Levenshtein entre duas strings usando programação dinâmica com dois vetores em vez de uma matriz completa, o que reduz a memória para O(min(n,m)) e mantém o algoritmo rápido para palavras curtas como nomes de produtos.
+    // Distância de Levenshtein com dois vetores em vez de matriz completa — mais eficiente em memória.
     static int levenshtein(String a, String b) {
         int n = a.length(), m = b.length();
         if (n == 0) return m;

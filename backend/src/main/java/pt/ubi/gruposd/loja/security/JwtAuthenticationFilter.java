@@ -13,7 +13,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-// Intercepta cada pedido HTTP, procura o JWT primeiro no header Authorization Bearer e depois no cookie HttpOnly jwt, valida-o e popula o SecurityContext com os detalhes do utilizador para que o resto da aplicação saiba quem está autenticado.
+// Filtro que corre em cada pedido HTTP e autentica o utilizador pelo JWT.
+// Lê o token do header Authorization (Swagger) ou do cookie HttpOnly jwt (browser).
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
@@ -32,8 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String token = extractToken(request);
 
-        // Se não há token, deixa o pedido passar — o Spring Security recusará o acesso se
-        // o endpoint exigir autenticação, devolvendo 403 ou 401 conforme a configuração.
+        // Sem token: passa o pedido adiante. O Spring Security rejeita-o se o endpoint exigir autenticação.
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
@@ -48,13 +48,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Só autentica se ainda não existe autenticação no contexto (ex.: pedido já autenticado por outro meio).
+        // Só autentica se o contexto ainda não tem autenticação (evita autenticar duas vezes).
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(token, userDetails)) {
-                // Cria o token de autenticação com as autoridades (ROLE_*) do utilizador.
-                // O segundo argumento é null porque JWT não usa credenciais após autenticação.
+                // Autentica com as autoridades (ROLE_*) do utilizador. Credentials=null porque o JWT já garantiu a identidade.
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
                 );

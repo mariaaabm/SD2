@@ -52,8 +52,7 @@ public class CategoryService {
     public CategoryResponse update(Long id, CategoryRequest request) {
         Category category = findEntityById(id);
 
-        // A verificação de unicidade só se aplica se o nome realmente mudou para evitar
-        // um falso conflito quando o admin guarda a categoria com o mesmo nome.
+        // Só verifica duplicados se o nome mudou (evitar conflito falso ao guardar sem alterar o nome).
         if (!category.getName().equalsIgnoreCase(request.name())
             && categoryRepository.existsByNameIgnoreCase(request.name())) {
             throw new ConflictException("Ja existe uma categoria com esse nome.");
@@ -62,8 +61,7 @@ public class CategoryService {
         category.setName(request.name());
         category.setDescription(request.description());
 
-        // Não é preciso chamar save() aqui porque a entidade está no contexto JPA
-        // (managed state) e o Hibernate deteta automaticamente as alterações no commit da transação.
+        // Não precisa de save() — o Hibernate deteta as alterações automaticamente (entidade gerida pelo JPA).
         return toResponse(category);
     }
 

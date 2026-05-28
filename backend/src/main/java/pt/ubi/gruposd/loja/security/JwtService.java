@@ -12,7 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import pt.ubi.gruposd.loja.model.Customer;
 
-// Gera e valida os JWT que autenticam pedidos à API, assina-os com uma chave HMAC-SHA256 derivada do segredo configurado em application.yml e inclui claims com o id do cliente e o role para o servidor não ter de consultar a base de dados em cada pedido.
+// Gera e valida JSON Web Tokens (JWT) assinados com HMAC-SHA256.
+// Cada token inclui o email, id e role do utilizador para não precisar de ir à base de dados a cada pedido.
 @Service
 public class JwtService {
     private final SecretKey secretKey;
@@ -26,8 +27,7 @@ public class JwtService {
         this.expirationMinutes = expirationMinutes;
     }
 
-    // Gera um JWT assinado com HMAC-SHA256 contendo o email como subject e customerId e role como claims extras.
-    // O role no claim evita uma consulta extra à base de dados em cada pedido para verificar permissões.
+    // Cria o JWT com o email (subject), id e role do utilizador, assinado com a chave secreta.
     public String generateToken(Customer customer) {
         Instant now = Instant.now();
 
@@ -41,13 +41,12 @@ public class JwtService {
             .compact();
     }
 
-    // Extrai o subject (email do utilizador) do JWT sem verificar a assinatura — deve ser seguido de isTokenValid.
+    // Extrai o email (subject) do token. Usar sempre antes de isTokenValid para verificar a assinatura.
     public String extractUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
-    // Verifica que o token pertence ao utilizador carregado e que ainda não expirou.
-    // Ambas as condições são necessárias para aceitar o pedido como autenticado.
+    // Verifica se o token pertence ao utilizador e ainda não expirou.
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isExpired(token);
@@ -57,7 +56,7 @@ public class JwtService {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    // Verifica a assinatura e devolve os claims do JWT; lança exceção se a assinatura for inválida ou o token malformado.
+    // Lê os claims do JWT verificando a assinatura. Lança exceção se o token for inválido ou expirado.
     private Claims extractClaims(String token) {
         return Jwts.parser()
             .verifyWith(secretKey)

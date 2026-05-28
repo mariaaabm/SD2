@@ -38,9 +38,7 @@ public class WishlistService {
             .toList();
     }
 
-    // Adiciona o produto à wishlist ou, se já estiver lá, devolve o item existente sem duplicar.
-    // Esta abordagem idempotente evita erros 409 quando o frontend tenta adicionar o mesmo produto duas vezes
-    // por duplo clique ou estado de UI desatualizado.
+    // Adiciona o produto à wishlist. Se já estiver lá, devolve o item existente sem criar duplicados.
     @Transactional
     public WishlistResponse add(Customer customer, Long productId) {
         if (wishlistRepository.existsByCustomerIdAndProductId(customer.getId(), productId)) {
@@ -64,8 +62,7 @@ public class WishlistService {
         wishlistRepository.deleteByCustomerIdAndProductId(customer.getId(), productId);
     }
 
-    // Mapeia WishlistItem para o DTO de resposta; usa doubleValue() no preço porque a API
-    // JavaScript/TypeScript trabalha com number e não precisa da precisão total de BigDecimal.
+    // Converte WishlistItem para DTO. O preço usa doubleValue() porque o frontend trabalha com number JavaScript.
     private WishlistResponse toResponse(WishlistItem item) {
         Product p = item.getProduct();
         return new WishlistResponse(

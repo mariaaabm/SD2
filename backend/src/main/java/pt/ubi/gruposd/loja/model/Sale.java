@@ -41,14 +41,12 @@ public class Sale {
     @Column(name = "vat_rate", nullable = false, precision = 5, scale = 2)
     private BigDecimal vatRate = new BigDecimal("23.00");
 
-    // Status gravado como String (EnumType.STRING) em vez de ordinal para que adicionar
-    // novos estados no futuro não quebre os dados já existentes na base de dados.
+    // Gravado como String (não número) para que adicionar novos estados no futuro não quebre dados antigos.
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private SaleStatus status = SaleStatus.CONFIRMED;
 
-    // Os dados de entrega são desnormalizados na venda e não referenciados a uma morada
-    // separada, para que alterações futuras ao perfil do cliente não alterem encomendas passadas.
+    // Morada copiada diretamente na venda (não referenciada) para não ser afetada por alterações futuras ao perfil.
     @Column(name = "shipping_name", length = 150)
     private String shippingName;
 

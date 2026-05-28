@@ -11,7 +11,8 @@ import pt.ubi.gruposd.loja.model.Customer;
 import pt.ubi.gruposd.loja.model.RefreshToken;
 import pt.ubi.gruposd.loja.repository.RefreshTokenRepository;
 
-// Gere os refresh tokens que permitem prolongar a sessão sem voltar a pedir credenciais, gera tokens aleatórios via UUID e implementa rotação ao validar para que cada refresh consuma o token antigo e crie um novo, mitigando ataques por reutilização.
+// Gere os refresh tokens que prolongam a sessão sem pedir login novamente.
+// Usa rotação: ao renovar, o token antigo é eliminado e um novo é criado (evita reutilização de tokens roubados).
 @Service
 public class RefreshTokenService {
     private final RefreshTokenRepository repo;
@@ -25,8 +26,7 @@ public class RefreshTokenService {
         this.refreshDays = refreshDays;
     }
 
-    // Cria um refresh token UUID aleatório com validade configurável (padrão 7 dias).
-    // UUID.randomUUID() usa SecureRandom internamente, o que é suficientemente seguro para este uso.
+    // Cria um token UUID aleatório (usa SecureRandom internamente) com validade de 7 dias por defeito.
     @Transactional
     public String createForCustomer(Customer customer) {
         RefreshToken rt = new RefreshToken();
@@ -36,7 +36,7 @@ public class RefreshTokenService {
         return repo.save(rt).getToken();
     }
 
-    // Valida o refresh token, verifica que ainda não expirou, apaga-o e emite imediatamente um novo, devolvendo também o cliente associado para o caller poder gerar um JWT de acesso fresco.
+    // Verifica se o token é válido e não expirou, apaga-o e cria um novo. Devolve o cliente para gerar um JWT novo.
     @Transactional
     public RefreshResult validateAndRotate(String token) {
         RefreshToken rt = repo.findByToken(token)

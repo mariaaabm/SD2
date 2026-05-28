@@ -12,7 +12,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pt.ubi.gruposd.loja.dto.SaleResponse;
 
-// Envia o email de confirmação de encomenda construindo um HTML estilizado com o resumo dos produtos, morada de entrega e método de pagamento, e usa o JavaMailSender em modo assíncrono para não bloquear a resposta do checkout enquanto o SMTP está a ser contactado.
+// Envia o email HTML de confirmação de encomenda após o checkout.
+// O envio é assíncrono (@Async) para não atrasar a resposta ao cliente. Pode ser desativado com app.mail.enabled=false.
 @Service
 public class EmailService {
 
@@ -28,7 +29,7 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    // Envia o email de confirmação ao cliente após o checkout, mas só dispara o envio se a propriedade app.mail.enabled estiver ativa, e qualquer falha de SMTP é apenas registada em log para não comprometer a transação da venda.
+    // Envia o email de confirmação. Se mail.enabled=false ou houver erro SMTP, regista em log sem interromper a venda.
     @Async
     public void sendOrderConfirmation(String toEmail, String customerName, SaleResponse sale) {
         if (!mailEnabled) {
@@ -50,7 +51,7 @@ public class EmailService {
         }
     }
 
-    // Constrói o corpo HTML do email com tabela de produtos, totais, morada e método de pagamento formatados em pt-PT, e usa estilos inline porque a maior parte dos clientes de email ignora CSS externo ou tags style no head.
+    // Gera o HTML do email com tabela de produtos, totais, morada e pagamento. Estilos inline porque os clientes de email ignoram CSS externo.
     private String buildHtml(String customerName, SaleResponse sale) {
         StringBuilder items = new StringBuilder();
         for (var item : sale.items()) {

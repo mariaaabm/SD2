@@ -27,7 +27,8 @@ import pt.ubi.gruposd.loja.service.AuthService.LoginResult;
 import pt.ubi.gruposd.loja.service.RefreshTokenService;
 import pt.ubi.gruposd.loja.service.RefreshTokenService.RefreshResult;
 
-// Expõe os endpoints de autenticação como register, login, refresh, logout, me e updateProfile, e guarda o JWT e o refresh token em cookies HttpOnly com SameSite Strict para que o frontend não tenha de manipular tokens em JavaScript e fique protegido contra XSS.
+// Endpoints de autenticação em /api/auth (register, login, logout, refresh, me, profile).
+// Os tokens são guardados em cookies HttpOnly — o browser envia-os automaticamente sem precisar de JavaScript.
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -74,7 +75,7 @@ public class AuthController {
         return result.auth();
     }
 
-    // Renova o JWT de acesso lendo o refresh token do cookie, valida-o e roda-o por um novo, e devolve também os dados do cliente para o frontend conseguir restaurar o estado de sessão sem voltar a fazer login.
+    // Renova o JWT usando o refresh token do cookie. Roda o refresh token (apaga o antigo, cria um novo).
     @PostMapping("/refresh")
     public CustomerResponse refresh(HttpServletRequest request, HttpServletResponse response) {
         String token = extractCookie(request, "refresh_token");
@@ -94,9 +95,7 @@ public class AuthController {
         );
     }
 
-    // POST /api/auth/logout — invalida o refresh token na BD e limpa ambos os cookies.
-    // O JWT de acesso continua tecnicamente válido até expirar (15 min), mas sem o refresh
-    // token o cliente não pode obter um novo, efetivamente encerrando a sessão.
+    // Invalida o refresh token na BD e limpa os cookies. O JWT expira sozinho em 15 min.
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         String token = extractCookie(request, "refresh_token");
@@ -107,8 +106,7 @@ public class AuthController {
         clearRefreshCookie(response);
     }
 
-    // GET /api/auth/me — devolve os dados do cliente autenticado pelo JWT no cookie.
-    // Usado pelo frontend ao iniciar para validar se a sessão guardada em localStorage ainda é válida.
+    // Devolve os dados do utilizador autenticado. Usado pelo frontend para restaurar a sessão ao arrancar.
     @GetMapping("/me")
     public CustomerResponse me(@AuthenticationPrincipal CustomerUserDetails userDetails) {
         return authService.me(userDetails);
@@ -123,7 +121,7 @@ public class AuthController {
         return authService.updateProfile(userDetails.customer(), request);
     }
 
-    // Extrai o valor de um cookie pelo nome; devolve null se o browser não enviou cookies (ex.: pedidos do Swagger).
+    // Lê o valor de um cookie pelo nome; devolve null se o browser não enviou cookies.
     private String extractCookie(HttpServletRequest request, String name) {
         if (request.getCookies() == null) return null;
         return Arrays.stream(request.getCookies())
@@ -133,7 +131,7 @@ public class AuthController {
             .orElse(null);
     }
 
-    // Coloca o JWT num cookie HttpOnly com SameSite Strict para impedir que JavaScript no browser o consiga ler e bloquear envio em pedidos cross-site, e define a validade igual à do próprio token para o cookie expirar com ele.
+    // Cookie HttpOnly + SameSite Strict: o JavaScript não consegue ler o token e não é enviado em pedidos cross-site.
     private void setJwtCookie(HttpServletResponse response, String token) {
         ResponseCookie cookie = ResponseCookie.from("jwt", token)
             .httpOnly(true)
@@ -144,8 +142,7 @@ public class AuthController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    // O refresh token tem path=/api/auth para que o browser o envie APENAS nos pedidos para /api/auth/*
-    // e não em todos os pedidos da API, reduzindo a exposição do token de longa duração.
+    // path=/api/auth: o browser só envia este cookie nos pedidos de autenticação, não em toda a API.
     private void setRefreshCookie(HttpServletResponse response, String token) {
         ResponseCookie cookie = ResponseCookie.from("refresh_token", token)
             .httpOnly(true)

@@ -4,7 +4,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// Configura o CORS para a API permitir pedidos vindos dos URL do frontend em desenvolvimento (Vite na porta 5173 e Docker na porta 3000), e ativa allowCredentials para que os cookies HttpOnly de autenticação sejam enviados nos pedidos cross-origin.
+// Permite que o frontend (Vite :5173 em dev, Docker :3000 em produção) aceda à API.
+// allowCredentials é necessário para os cookies de autenticação serem enviados nos pedidos.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override

@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import pt.ubi.gruposd.loja.model.Product;
 
-// Constrói as Specifications JPA que aplicam os filtros dinâmicos da pesquisa de produtos por categoria, por flag de ativo e por termo livre via LIKE, evitando ter de escrever várias variantes do mesmo query no repositório.
+// Constrói filtros dinâmicos JPA para a pesquisa de produtos.
+// Combina filtros por categoria, por estado (ativo/inativo) e por texto via LIKE numa única query.
 public class ProductSpecifications {
     private ProductSpecifications() {}
 
@@ -23,9 +24,8 @@ public class ProductSpecifications {
             }
 
             if (search != null && !search.isBlank()) {
-                // A colacao utf8mb4_0900_ai_ci (configurada na migração Flyway V10) torna o LIKE
-                // insensível a maiúsculas/minúsculas e a acentos na base de dados MySQL/MariaDB.
-                // Em H2 (testes) este comportamento pode ser diferente — o fallback fuzzy cobre esses casos.
+                // O LIKE é case-insensitive e ignora acentos em MySQL (colação utf8mb4_0900_ai_ci).
+                // Em H2 (testes) o comportamento pode diferir — o fallback fuzzy cobre esses casos.
                 String pattern = "%" + search.trim() + "%";
                 predicates.add(cb.or(
                     cb.like(root.get("name"), pattern),

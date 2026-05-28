@@ -23,9 +23,7 @@ public class ReviewService {
         this.productService = productService;
     }
 
-    // Agrega média e contagem separadamente da lista de reviews completa.
-    // Math.round(avg * 10.0) / 10.0 arredonda a 1 casa decimal para mostrar "4.3 estrelas" em vez de "4.33...".
-    // Quando não há reviews, avg é null (SQL AVG de conjunto vazio) e é convertido para 0.0.
+    // Calcula média (arredondada a 1 decimal) e contagem de reviews. Devolve 0.0 se não houver nenhuma.
     @Transactional(readOnly = true)
     public ProductRatingResponse getProductRatings(Long productId) {
         List<ReviewResponse> reviews = reviewRepository
@@ -40,7 +38,7 @@ public class ReviewService {
         return new ProductRatingResponse(avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0, count, reviews);
     }
 
-    // Cria uma review nova ou atualiza a existente do mesmo cliente para o mesmo produto, evitando duplicados e permitindo que o cliente reveja a sua opinião sem ter de apagar e reescrever.
+    // Cria ou atualiza a review do cliente para este produto (um cliente = uma review por produto).
     @Transactional
     public ReviewResponse createOrUpdate(Customer customer, Long productId, ReviewRequest request) {
         Product product = productService.findEntityById(productId);

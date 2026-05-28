@@ -17,7 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import pt.ubi.gruposd.loja.security.CustomerUserDetailsService;
 import pt.ubi.gruposd.loja.security.JwtAuthenticationFilter;
 
-// Configura o Spring Security para a API, desativa CSRF porque a aplicação é stateless e usa JWT em cookies HttpOnly, declara as regras de autorização por endpoint, regista o filtro de JWT antes do filtro de username e password padrão, e usa BCrypt para encriptar as passwords dos clientes.
+// Define as regras de segurança da API: quem pode aceder a quê, como se autentica e como se encriptam as passwords.
+// Usa JWT em cookies HttpOnly (stateless — sem sessões no servidor) e BCrypt para as passwords.
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -29,7 +30,10 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    // Define a cadeia de filtros de segurança da API, abre endpoints públicos como login, registo, leitura do catálogo e Swagger, exige role ADMIN para escrita de produtos e categorias e para a área de administração, e configura sessões stateless porque a autenticação vive nos JWT.
+    // Regras de acesso:
+    // - Público: login, registo, catálogo (GET), Swagger
+    // - ADMIN: escrita de produtos/categorias, estatísticas, backoffice
+    // - Autenticado: tudo o resto (encomendas, wishlist, perfil)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -50,8 +54,7 @@ public class SecurityConfig {
             .build();
     }
 
-    // Liga o CustomerUserDetailsService e o BCryptPasswordEncoder ao pipeline de autenticação
-    // do Spring Security para que o AuthenticationManager saiba como carregar e verificar utilizadores.
+    // Liga o serviço de utilizadores e o BCrypt ao pipeline de autenticação do Spring Security.
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -66,8 +69,7 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    // BCrypt com fator de custo padrão (~10 rondas) que torna ataques de força bruta impraticáveis
-    // mesmo que a base de dados seja comprometida, porque cada hash demora ~100ms a calcular.
+    // BCrypt com ~10 rondas: cada hash demora ~100ms, o que torna ataques de força bruta impraticáveis.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

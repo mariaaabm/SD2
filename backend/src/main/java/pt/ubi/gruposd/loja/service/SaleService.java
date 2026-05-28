@@ -24,7 +24,8 @@ import pt.ubi.gruposd.loja.repository.ProductRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 import pt.ubi.gruposd.loja.repository.SaleRepository;
 
-// Orquestra o checkout completo do cliente desde a validação do carrinho até à criação da fatura, calcula a base tributável e o IVA assumindo que os preços do catálogo já incluem IVA à taxa padrão de 23%, e expõe ainda a listagem e atualização de estado das vendas para clientes e administradores.
+// Gere todo o processo de compra: valida stock, debita quantidades, calcula IVA (23%), cria a venda e a fatura, e envia email de confirmação.
+// Também expõe a consulta e atualização de estado das vendas para clientes e administradores.
 @Service
 public class SaleService {
     static final BigDecimal DEFAULT_VAT_RATE = new BigDecimal("23.00");
@@ -53,7 +54,7 @@ public class SaleService {
         this.emailService = emailService;
     }
 
-    // Processa o checkout do cliente, valida o stock disponível para cada item, abate as quantidades vendidas, grava a venda com a discriminação de IVA e gera a fatura associada, e dispara ainda um email assíncrono de confirmação para o endereço do cliente autenticado.
+    // Processa o checkout: valida e debita stock, cria a venda com IVA discriminado, gera a fatura e envia email de confirmação.
     @Transactional
     public SaleResponse checkout(Customer customer, CheckoutRequest request) {
         if (request.items().isEmpty()) {
@@ -84,8 +85,7 @@ public class SaleService {
             Product product = productRepository.findById(itemRequest.productId())
                 .orElseThrow(() -> new NotFoundException("Produto nao encontrado."));
 
-            // Verifica ativo e stock antes de debitar para garantir consistência.
-            // Numa loja de alto volume seria necessário bloquear a linha (SELECT FOR UPDATE).
+            // Verifica se o produto está ativo e tem stock suficiente antes de debitar.
             if (!Boolean.TRUE.equals(product.getActive())) {
                 throw new BadRequestException("Produto indisponivel: " + product.getName());
             }
@@ -94,7 +94,7 @@ public class SaleService {
                 throw new BadRequestException("Stock insuficiente para o produto: " + product.getName());
             }
 
-            // Abate o stock imediatamente — o Hibernate vai fazer UPDATE na BD no commit da transação.
+            // Debita o stock — o Hibernate faz o UPDATE na BD quando a transação fechar (commit).
             product.setStock(product.getStock() - itemRequest.quantity());
 
             SaleItem saleItem = new SaleItem();
@@ -107,8 +107,7 @@ public class SaleService {
             saleItems.add(saleItem);
         }
 
-        // Os preços no catálogo já incluem IVA, por isso extraímos o valor sem IVA
-        // a partir do total com IVA usando a fórmula: net = gross / (1 + rate/100).
+        // Os preços já incluem IVA — calcula a base tributável: net = gross / (1 + taxa/100).
         BigDecimal subtotal = netFromGross(total, DEFAULT_VAT_RATE);
         BigDecimal vatAmount = total.subtract(subtotal);
 
@@ -125,9 +124,7 @@ public class SaleService {
         return response;
     }
 
-    // Atualiza o estado da venda sem validar transições permitidas — um admin pode passar diretamente
-    // de CONFIRMED para DELIVERED ou para CANCELLED. Numa loja real seria sensato validar
-    // que o novo estado é acessível a partir do estado atual.
+    // Atualiza o estado da venda (ex.: CONFIRMED → SHIPPED). Um admin pode saltar estados livremente.
     @Transactional
     public SaleResponse updateStatus(Long saleId, SaleStatus status) {
         Sale sale = saleRepository.findById(saleId)
@@ -136,8 +133,7 @@ public class SaleService {
         return toResponse(sale, saleItemRepository.findBySaleId(sale.getId()), findInvoice(sale));
     }
 
-    // Para cada venda são feitas 2 queries extra (items + invoice) — potencial N+1.
-    // Com paginação ou poucos registos não é problema, mas com muitas vendas devia usar fetch join.
+    // Lista as encomendas do cliente do mais recente para o mais antigo.
     @Transactional(readOnly = true)
     public List<SaleResponse> findCustomerSales(Customer customer) {
         return saleRepository.findByCustomerIdOrderByCreatedAtDesc(customer.getId())
@@ -159,8 +155,7 @@ public class SaleService {
         Sale sale = saleRepository.findById(saleId)
             .orElseThrow(() -> new NotFoundException("Venda nao encontrada."));
 
-        // Lança NotFoundException em vez de UnauthorizedException para não revelar ao atacante
-        // que a venda existe mas pertence a outro utilizador (security-through-obscurity básico).
+        // 404 em vez de 401 para não revelar que a venda existe mas é de outro utilizador.
         if (!sale.getCustomer().getId().equals(customer.getId())) {
             throw new NotFoundException("Venda nao encontrada.");
         }
@@ -168,9 +163,7 @@ public class SaleService {
         return toResponse(sale, saleItemRepository.findBySaleId(sale.getId()), findInvoice(sale));
     }
 
-    // Monta o DTO de resposta de venda com os items e a fatura associada.
-    // O null-coalescing no vatRate e nos campos de IVA garante compatibilidade com
-    // vendas antigas criadas antes de esses campos existirem na base de dados.
+    // Monta o DTO de resposta com os items, fatura e totais de IVA.
     private SaleResponse toResponse(Sale sale, List<SaleItem> saleItems, Invoice invoice) {
         BigDecimal vatRate = sale.getVatRate() == null ? DEFAULT_VAT_RATE : sale.getVatRate();
 
@@ -237,7 +230,7 @@ public class SaleService {
         );
     }
 
-    // Calcula o valor sem IVA a partir de um valor com IVA incluído, dividindo pelo fator (1 + taxa/100) e arredondando a duas casas decimais com HALF_UP para garantir consistência com a forma como as faturas reais apresentam os totais.
+    // Calcula o valor sem IVA a partir de um valor que já inclui IVA: net = gross / (1 + taxa/100).
     static BigDecimal netFromGross(BigDecimal gross, BigDecimal vatRatePercent) {
         if (gross == null) {
             return BigDecimal.ZERO;

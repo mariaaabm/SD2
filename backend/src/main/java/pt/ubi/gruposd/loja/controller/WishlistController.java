@@ -13,7 +13,8 @@ import pt.ubi.gruposd.loja.dto.WishlistResponse;
 import pt.ubi.gruposd.loja.security.CustomerUserDetails;
 import pt.ubi.gruposd.loja.service.WishlistService;
 
-// Expõe os endpoints da wishlist do cliente autenticado, devolve a lista completa ou apenas os ids dos produtos quando o frontend só precisa de marcar quais já estão favoritados nas cards, e suporta adicionar e remover por productId.
+// Endpoints da lista de favoritos do cliente autenticado em /api/wishlist.
+// Suporta listar, adicionar e remover produtos favoritos.
 @RestController
 @RequestMapping("/api/wishlist")
 public class WishlistController {

@@ -8,14 +8,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-// Tratamento centralizado de exceções para todos os controllers da API.
-// @RestControllerAdvice intercepta exceções lançadas em qualquer controller e devolve
-// sempre o mesmo formato JSON — ApiError com timestamp, status, nome do erro e mensagens —
-// para que o frontend possa processar erros de forma uniforme sem verificar formatos diferentes.
+// Interceta exceções de qualquer controller e converte-as em respostas JSON uniformes.
+// Assim o frontend recebe sempre o mesmo formato de erro, independentemente do que correu mal.
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    // DTO de resposta de erro — record imutável com os campos que o frontend espera no campo "messages".
+    // Formato de erro devolvido pela API: timestamp, código HTTP, nome do erro e lista de mensagens.
     public record ApiError(LocalDateTime timestamp, int status, String error, List<String> messages) {}
 
     // Recurso não encontrado → HTTP 404
@@ -42,8 +40,7 @@ public class ApiExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, List.of(exception.getMessage()));
     }
 
-    // Erros de validação do Bean Validation (@NotNull, @Size, etc.) → HTTP 400 com lista de campos inválidos.
-    // Devolve múltiplas mensagens numa só resposta para que o frontend possa mostrar todos os erros de uma vez.
+    // Erros de validação de campos (@NotNull, @Size, etc.) → HTTP 400 com a lista de todos os campos inválidos.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException exception) {
         List<String> messages = exception.getBindingResult()
@@ -60,7 +57,7 @@ public class ApiExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, List.of(exception.getMessage()));
     }
 
-    // Constrói o envelope de resposta de erro com o timestamp do momento exato do erro para facilitar o diagnóstico em logs.
+    // Monta a resposta de erro com o timestamp, código HTTP, nome e mensagens.
     private ResponseEntity<ApiError> build(HttpStatus status, List<String> messages) {
         return ResponseEntity.status(status).body(
             new ApiError(LocalDateTime.now(), status.value(), status.getReasonPhrase(), messages)

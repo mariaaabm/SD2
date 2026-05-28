@@ -15,10 +15,8 @@ import pt.ubi.gruposd.loja.model.Customer;
 import pt.ubi.gruposd.loja.repository.CustomerRepository;
 import pt.ubi.gruposd.loja.service.SaleService;
 
-// Agrupa os endpoints de backoffice em /api/admin — todos protegidos a ROLE_ADMIN na SecurityConfig.
-// Permite ao administrador ver todas as vendas, atualizar o estado de uma encomenda e listar clientes.
-// Nota de design: a listagem de clientes acede diretamente ao repositório em vez de delegar a um
-// serviço porque a lógica é trivial — apenas mapeamento para DTO sem regras de negócio adicionais.
+// Endpoints do backoffice em /api/admin — apenas acessíveis a utilizadores com role ADMIN.
+// Permite listar todas as vendas, mudar o estado de uma encomenda e ver os clientes registados.
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -46,8 +44,7 @@ public class AdminController {
         return saleService.updateStatus(id, request.status());
     }
 
-    // GET /api/admin/customers — devolve todos os clientes registados ordenados por data de criação descendente.
-    // O mapeamento para CustomerResponse aqui garante que o passwordHash nunca é exposto na API.
+    // GET /api/admin/customers — todos os clientes do mais recente para o mais antigo. O passwordHash nunca é incluído na resposta.
     @GetMapping("/customers")
     public List<CustomerResponse> findAllCustomers() {
         return customerRepository.findAllByOrderByCreatedAtDesc()

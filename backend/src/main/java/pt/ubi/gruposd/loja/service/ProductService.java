@@ -29,7 +29,7 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
-    // Devolve uma página de produtos filtrados por categoria e termo de pesquisa, limita o tamanho da página a 100 para proteger a API contra pedidos abusivos e dispara o fallback fuzzy apenas quando o caminho rápido por LIKE não devolve resultados.
+    // Pesquisa paginada com filtros. Se o LIKE não devolver resultados, faz fallback para pesquisa fuzzy (Levenshtein).
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(Long categoryId, Boolean activeOnly, String search, int page, int size) {
         int safeSize = Math.min(size, 100);
@@ -46,10 +46,8 @@ public class ProductService {
         return fuzzyFallback(categoryId, activeOnly, search, page, safeSize);
     }
 
-    // Carrega todos os produtos compatíveis com o filtro de categoria, calcula o melhor score de similaridade
-    // entre o termo de pesquisa e o nome ou descrição de cada um, mantém só os que ultrapassam o limiar mínimo
-    // e pagina o resultado ordenado por relevância.
-    // ATENÇÃO: carrega todos os produtos em memória — pode ser lento com catálogos muito grandes.
+    // Compara o termo com nome e descrição de cada produto por distância de Levenshtein e ordena por relevância.
+    // Atenção: carrega todos os produtos em memória — pode ser lento com catálogos muito grandes.
     private PageResponse<ProductResponse> fuzzyFallback(
         Long categoryId, Boolean activeOnly, String search, int page, int size
     ) {
@@ -105,25 +103,20 @@ public class ProductService {
         return toResponse(product);
     }
 
-    // Remove o produto fisicamente da base de dados.
-    // Nota: produtos com SaleItems associados falharão por constraint de chave estrangeira.
-    // Uma abordagem mais segura seria fazer soft delete (active = false) em vez de remover.
+    // Remove o produto. Falha com erro de constraint se tiver itens de venda associados.
     @Transactional
     public void delete(Long id) {
         productRepository.delete(findEntityById(id));
     }
 
-    // Método auxiliar que expõe a entidade JPA para uso interno nos serviços de review e wishlist
-    // sem passar pelo mapeamento para DTO, evitando a criação de múltiplos objetos intermédios.
+    // Devolve a entidade JPA diretamente (sem converter para DTO) para uso interno noutros serviços.
     @Transactional(readOnly = true)
     public Product findEntityById(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Produto nao encontrado."));
     }
 
-    // Aplica os dados do request a um produto (novo ou existente).
-    // active == null é tratado como true por defeito para que ao criar um produto sem indicar
-    // o campo ativo, o produto fique ativo imediatamente e apareça no catálogo.
+    // Preenche os campos do produto. Se active vier null, fica ativo por defeito.
     private void applyRequest(Product product, ProductRequest request) {
         Category category = categoryService.findEntityById(request.categoryId());
         product.setName(request.name());
@@ -135,8 +128,7 @@ public class ProductService {
         product.setImageUrl(request.imageUrl());
     }
 
-    // Mapeia Product para ProductResponse incluindo o nome e id da categoria para o frontend
-    // não ter de fazer um pedido extra a /api/categories para mostrar o nome na card.
+    // Converte Product para DTO incluindo nome e id da categoria (evita pedido extra ao catálogo).
     private ProductResponse toResponse(Product product) {
         Category category = product.getCategory();
         return new ProductResponse(

@@ -17,7 +17,8 @@ import pt.ubi.gruposd.loja.model.Sale;
 import pt.ubi.gruposd.loja.repository.InvoiceRepository;
 import pt.ubi.gruposd.loja.repository.SaleItemRepository;
 
-// Cria, persiste e devolve as faturas associadas a uma venda confirmada, gera o número sequencial no formato SP{ano}/{id}, calcula a discriminação de IVA a partir do total da venda e monta o DTO completo que a página da fatura precisa de mostrar.
+// Cria e monta as faturas das vendas confirmadas.
+// Gera o número sequencial (ex.: SP2025/000042), calcula o IVA e produz o DTO completo para a página de fatura.
 @Service
 public class InvoiceService {
     private static final String DEFAULT_SERIES = "SP";
@@ -36,7 +37,7 @@ public class InvoiceService {
         this.saleItemRepository = saleItemRepository;
     }
 
-    // Cria e persiste uma fatura nova associada à venda dada, atribui a série padrão SP, gera o número sequencial baseado no ano da venda e no id, e regista a data de emissão e a data da operação para constarem no documento.
+    // Cria e grava uma fatura nova para a venda dada com série SP, número sequencial, data de emissão e data da operação.
     @Transactional
     public Invoice createForSale(Sale sale) {
         Invoice invoice = new Invoice();
@@ -66,7 +67,7 @@ public class InvoiceService {
         return buildResponse(invoice);
     }
 
-    // Monta a resposta completa da fatura agrupando os dados do emitente, do adquirente, das linhas com IVA discriminado, do resumo de IVA por taxa, dos totais e dos metadados de certificação para a página de fatura conseguir renderizar tudo num único pedido.
+    // Monta o DTO completo da fatura com emitente, cliente, linhas de produto, totais de IVA e metadados de certificação.
     public InvoiceResponse toResponse(Invoice invoice, Sale sale, List<SaleItemResponse> items) {
         InvoiceResponse.Issuer issuer = InvoiceResponse.Issuer.sportFlowDefault();
         InvoiceResponse.Party customer = buildCustomerParty(sale);
@@ -186,17 +187,14 @@ public class InvoiceService {
         );
     }
 
-    // Verificação de autorização: lança NotFoundException (não UnauthorizedException) para não
-    // revelar ao atacante que a fatura existe mas pertence a outro cliente.
+    // Lança NotFoundException (e não 401) para não revelar que a fatura existe mas pertence a outro cliente.
     private void ensureInvoiceBelongsToCustomer(Invoice invoice, Customer customer) {
         if (!invoice.getSale().getCustomer().getId().equals(customer.getId())) {
             throw new NotFoundException("Fatura nao encontrada.");
         }
     }
 
-    // Gera o número da fatura no formato SP{ano}/{id com 6 dígitos} — ex.: SP2025/000042.
-    // A série "SP" identifica a série de faturação e o ano evita colisões entre exercícios fiscais.
-    // O id é zero-padded a 6 dígitos para ordenação alfanumérica correta.
+    // Formato: SP{ano}/{id com 6 dígitos} → ex.: SP2025/000042.
     private String generateInvoiceNumber(Sale sale) {
         int year = sale.getCreatedAt() != null ? sale.getCreatedAt().getYear() : LocalDateTime.now().getYear();
         return String.format("%s%d/%06d", DEFAULT_SERIES, year, sale.getId());
@@ -210,7 +208,7 @@ public class InvoiceService {
         return "AAAAAAAA-" + invoice.getId();
     }
 
-    // Calcula um hash SHA-256 a partir do número da fatura, data de emissão e total para simular o hash de controlo das faturas certificadas pela AT, e devolve apenas alguns caracteres separados por reticências como acontece em faturas reais.
+    // Simula o hash de controlo AT: SHA-256 do número+data+total, devolvendo 4 caracteres separados por reticências.
     private String buildHash(Invoice invoice, BigDecimal total) {
         String payload = invoice.getInvoiceNumber() + "|"
             + (invoice.getIssuedAt() != null ? invoice.getIssuedAt().toString() : "")

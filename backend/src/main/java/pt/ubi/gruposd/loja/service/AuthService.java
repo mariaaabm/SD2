@@ -39,7 +39,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    // Regista um novo cliente garantindo que o email ainda não existe, normaliza o email para minúsculas, encripta a password e devolve já um token JWT pronto para o frontend usar.
+    // Regista um novo cliente: verifica que o email não existe, encripta a password com BCrypt e devolve o JWT.
     @Transactional
     public LoginResult register(RegisterRequest request) {
         if (customerRepository.existsByEmailIgnoreCase(request.email())) {
@@ -57,7 +57,7 @@ public class AuthService {
         return new LoginResult(auth, saved);
     }
 
-    // Autentica o cliente delegando ao AuthenticationManager do Spring Security, e quando as credenciais batem certo emite um JWT novo e devolve também o objeto Customer carregado da base de dados.
+    // Autentica o cliente via Spring Security (verifica email+password) e devolve um JWT novo.
     @Transactional(readOnly = true)
     public LoginResult login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -73,7 +73,7 @@ public class AuthService {
         return toResponse(userDetails.customer());
     }
 
-    // Atualiza o perfil do cliente autenticado, permite mudar o nome e opcionalmente a password, e exige a password atual correta antes de aceitar uma nova password para evitar que tokens roubados consigam alterar credenciais.
+    // Atualiza nome e/ou password. Para mudar a password é obrigatório fornecer a password atual.
     @Transactional
     public CustomerResponse updateProfile(Customer customer, UpdateProfileRequest request) {
         Customer managed = customerRepository.findById(customer.getId())
@@ -94,8 +94,7 @@ public class AuthService {
         return toResponse(customerRepository.save(managed));
     }
 
-    // Mapeia a entidade Customer para o DTO de resposta garantindo que o passwordHash
-    // nunca é incluído na resposta da API, mesmo que o Jackson tentasse serializá-lo.
+    // Converte Customer para DTO. O passwordHash nunca é incluído na resposta.
     private CustomerResponse toResponse(Customer customer) {
         return new CustomerResponse(
             customer.getId(),
@@ -105,7 +104,6 @@ public class AuthService {
         );
     }
 
-    // Record que agrupa o AuthResponse (com JWT) e o Customer (entidade JPA) para o
-    // AuthController poder criar o refresh token e definir os cookies sem precisar de voltar a consultar a BD.
+    // Agrupa o JWT e o Customer para o AuthController criar o refresh token e definir os cookies.
     public record LoginResult(AuthResponse auth, Customer customer) {}
 }

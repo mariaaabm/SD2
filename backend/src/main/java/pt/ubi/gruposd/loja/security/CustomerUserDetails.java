@@ -7,7 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ubi.gruposd.loja.model.Customer;
 
-// Adapta a entidade Customer ao contrato UserDetails que o Spring Security espera, mapeia o role do utilizador para uma autoridade com prefixo ROLE_ usada nas regras hasRole da configuração de segurança, e expõe o Customer original aos controllers via método customer().
+// Adapta a entidade Customer ao formato que o Spring Security espera (UserDetails).
+// Converte o role (ex.: ADMIN) para "ROLE_ADMIN" e expõe o Customer via customer().
 public class CustomerUserDetails implements UserDetails {
     private final Customer customer;
 

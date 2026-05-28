@@ -53,7 +53,7 @@ public class StatsService {
             .toList();
     }
 
-    // Calcula a receita total dentro do período indicado, traduz os parâmetros day, week ou month para intervalos concretos de datas a começar na segunda-feira ou no primeiro dia do mês, e devolve o intervalo usado para o frontend conseguir mostrá-lo ao utilizador.
+    // Calcula a receita total no período (day, week, month). Converte o período em datas concretas de início e fim.
     @Transactional(readOnly = true)
     public StatsRevenueResponse revenue(String period) {
         LocalDate today = LocalDate.now();
@@ -80,9 +80,7 @@ public class StatsService {
         return new StatsRevenueResponse(start, end.minusDays(1), revenue);
     }
 
-    // As queries JPQL do SaleItemRepository devolvem Object[] não tipado por limitação do JPA.
-    // A ordem das colunas é: [0]=productId (Long), [1]=productName (String), [2]=quantitySold (Long).
-    // Um cast errado aqui causaria ClassCastException em runtime — deve estar sincronizado com a query.
+    // Converte o Object[] da query JPQL para DTO. Ordem: [0]=productId, [1]=productName, [2]=quantitySold.
     private StatsProductResponse toProductStats(Object[] row) {
         return new StatsProductResponse(
             (Long) row[0],
